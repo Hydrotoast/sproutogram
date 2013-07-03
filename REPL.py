@@ -2,7 +2,7 @@ from SimpleCV import *
 from Preprocess import *
 
 class REPL(object):
-"""Read-Eval-Print-Loop for interacting with the BVSproutExtractor."""
+	"""Read-Eval-Print-Loop for interacting with the BVSproutExtractor."""
 	def __init__(self):
 		self.display = Display()
 
