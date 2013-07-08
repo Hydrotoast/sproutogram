@@ -13,6 +13,6 @@ class REPL(object):
 			if line == 'done':
 				break
 			cannyMin, cannyMax, dilationCount = map(int, line.split(','))
-			frame = approach1(img, cannyMin, cannyMax, dilationCount)
+			frame = approach(img, cannyMin, cannyMax, dilationCount)
 			self.display = frame.show()
 		self.display.quit()
