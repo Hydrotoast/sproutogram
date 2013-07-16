@@ -21,5 +21,5 @@ class REPL(object):
 			else:
 				frame = Preprocess.approach(img)
 			self.display = frame.show()
-			frame.save('result.jpg')
+			frame.save('data/output/result.jpg')
 		self.display.quit()
