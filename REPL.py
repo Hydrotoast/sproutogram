@@ -1,5 +1,5 @@
 from SimpleCV import *
-from Preprocess import *
+import Preprocess
 
 class REPL(object):
 	"""Read-Eval-Print-Loop for interacting with the BVSproutExtractor."""
@@ -10,9 +10,16 @@ class REPL(object):
 		done = False
 		while not done:
 			line = raw_input('Enter Parameters (cannyMin,cannyMax,dilateCount): ')
+			reload(Preprocess)
 			if line == 'done':
 				break
-			cannyMin, cannyMax, dilationCount = map(int, line.split(','))
-			frame = approach(img, cannyMin, cannyMax, dilationCount)
+			data = line.split(',')
+			if len(data) == 3:
+				data = map(int, data)
+				cannyMin, cannyMax, dilationCount = data
+				frame = Preprocess.approach(img, cannyMin, cannyMax, dilationCount)
+			else:
+				frame = Preprocess.approach(img)
 			self.display = frame.show()
+			frame.save('result.jpg')
 		self.display.quit()

@@ -3,9 +3,9 @@ from REPL import REPL
 
 def main():
 	repl = REPL()
-	img = Image('three_beads.jpg')
+	img = Image('mono.jpg')
 	img = img.resize(w=510)
 	repl.run(img)
-	
+
 if __name__ == '__main__':
 	main()
