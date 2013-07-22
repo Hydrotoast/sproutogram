@@ -4,7 +4,7 @@ from REPL import REPL
 def main():
 	repl = REPL()
 	img = Image('data/samples/mono.jpg')
-	img = img.resize(w=510)
+	img = img.resize(w=800)
 	repl.run(img)
 
 if __name__ == '__main__':

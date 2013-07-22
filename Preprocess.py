@@ -1,5 +1,11 @@
+from math import *
+from sets import Set
+
 from SimpleCV import *
 from SteerableFilter import SteerableFilter
+
+from Geometry import *
+from DisjointSet import *
 
 def alpha_gen():
 	start = ord('A')
@@ -18,7 +24,11 @@ def approach(img, cannyMin=100, cannyMax=300, dilateCount=3):
 
 	rCoff = 1.614
 	circleMask = Image(imgEdges.size())
-	circleMask.dl().circle((circles[0].x, circles[0].y), circles[0].radius() * rCoff, filled=True, color=Color.WHITE)
+	circleMask.dl().circle(
+		(circles[0].x, circles[0].y),
+		circles[0].radius() * rCoff,
+		filled=True,
+		color=Color.WHITE)
 	circleMask = circleMask.applyLayers()
 	imgEdges = imgEdges - circleMask
 
@@ -36,14 +46,58 @@ def approach(img, cannyMin=100, cannyMax=300, dilateCount=3):
 	# Find the skeleton
 	skeleton = closedImgEdges.skeletonize(10)
 	blobs = skeleton.findBlobs()
+	labeledBlobs = zip(alpha_gen(), blobs)
+	blobSegments = []
 	if blobs:
+		# Acquire blob segments
+		for label, blob in labeledBlobs:
+			sortedContour = sorted(
+				blob.contour(), 
+				key = lambda x: euclidDistance(x, (circles[0].x, circles[0].y)))
+			start = sortedContour[0]
+			end = sortedContour[-1]
+
+			skeleton.dl().circle((start[0], start[1]), 8, color=Color.RED)
+			skeleton.dl().circle((end[0], end[1]), 8, color=Color.BLUE)
+
+			radialSegment = RadialSegment(label, start, end, blob)
+			blobSegments.append(radialSegment)
 		blobs.draw(Color.GREEN)
 	print '%d %s' % (len(blobs), 'blobs found')
 
+	sprouts = []
+	distanceThreshold = 20
+	hypoSegments = []
+	for blobSegmentEnd in blobSegments:
+		for blobSegmentStart in blobSegments:
+			if blobSegmentEnd.label == blobSegmentStart.label:
+				continue
+			distance = euclidDistance(blobSegmentEnd.end, blobSegmentStart.start)
+			if distance < distanceThreshold:
+				hypoSegments.append((blobSegmentEnd, blobSegmentStart))
+	
+	setItems = DisjointSet(blobSegments)
+	for hypoSegment in hypoSegments:
+		setItems.union(
+			setItems.find(hypoSegment[0]), 
+			setItems.find(hypoSegment[1]))
+	uniqueParents = []
+	for key, value in setItems.nodes.items():
+		uniqueParents.append(value.parent)
+
+	sprouts = list(set(uniqueParents))
+	print '%d sprouts found'  % len(sprouts)
+	for sprout in sprouts:
+		print sprout
+
 	# Label blobs
 	textLayer = DrawingLayer(skeleton.size())
-	for letter, blob in zip(alpha_gen(), blobs):
-		textLayer.text(letter, blob.centroid(), color=Color.GREEN, alpha=255) #, blob.centroid(), color=Color.GREEN)
+	for label, blob in labeledBlobs:
+		textLayer.text(
+			label,
+			blob.centroid(),
+			color=Color.GREEN,
+			alpha=255)
 	skeleton.addDrawingLayer(textLayer)
 	skeleton = skeleton.applyLayers()
 
