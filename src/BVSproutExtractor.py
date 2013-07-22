@@ -3,7 +3,7 @@ from REPL import REPL
 
 def main():
 	repl = REPL()
-	img = Image('data/samples/mono.jpg')
+	img = Image('../data/samples/mono.jpg')
 	img = img.resize(w=800)
 	repl.run(img)
 

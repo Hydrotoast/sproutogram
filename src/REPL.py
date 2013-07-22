@@ -23,7 +23,7 @@ class REPL(object):
 
 			# Display and save the frame
 			self.display = frame.show()
-			frame.save('data/output/result.jpg')
+			frame.save('../data/output/result.jpg')
 		self.display.quit()
 
 	def parseLine(self, line):
