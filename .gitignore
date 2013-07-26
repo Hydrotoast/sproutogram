@@ -1,1 +1,6 @@
+# Auxiliary Python files
 *.pyc
+
+# Auxiliary TeX files
+*.log
+*.aux
