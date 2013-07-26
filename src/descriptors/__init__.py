@@ -1,2 +1,0 @@
-from BeadDescriptor import BeadDescriptor
-from SproutDescriptor import SproutDescriptor
