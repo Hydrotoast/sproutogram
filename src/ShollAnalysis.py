@@ -1,5 +1,7 @@
 from SimpleCV import Color
+
 from collections import deque
+import operator
 
 class ShollAnalyzer(object):
 	"""
@@ -13,7 +15,9 @@ class ShollAnalyzer(object):
 
 		self.__crossings = {}
 		self.__sproutCount = None
+		self.__criticalValue = None
 		self.__sproutMaximum = None
+		self.__ramificationIndex = None
 
 	def generateCircularCoordinates(self, origin, radius):
 		"""
@@ -81,17 +85,35 @@ class ShollAnalyzer(object):
 
 	@property
 	def crossings(self):
+		"""Returns a cached list of crossings as a function of radius."""
 		return self.__crossings
 
 	@property
 	def sproutCount(self):
+		"""Returns a count of the primary sprouts."""
 		if not self.__sproutCount:
 			self.__sproutCount = sum(self.crossings.values()[:5]) / 5
 		return self.__sproutCount
 
+	@property
+	def criticalValue(self):
+		"""Returns the critical value which is the radius at which the maximum
+		number of crossings occur."""
+		if not self.__criticalValue:
+			self.__criticalValue = max(self.crossings, operator.itemgetter(1))[0]
+		return self.__criticalValue
 
 	@property
 	def sproutMaximum(self):
+		"""Returns the maximum number of crossings of all radii."""
 		if not self.__sproutMaximum:
 			self.__sproutMaximum = max(self.crossings.values())
 		return self.__sproutMaximum
+
+	@property
+	def ramificationIndex(self):
+		"""Returns the Shoenen Ramification Index which is a ratio for
+		branching factor."""
+		if not self.__ramificationIndex:
+			self.__ramificationIndex = self.sproutMaximum / self.sproutCount
+		self.__ramificationIndex
