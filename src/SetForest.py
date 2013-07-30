@@ -1,9 +1,12 @@
 class SetForestNode(object):
+	"""A node in a Disjoint Set Forest."""
 	def __init__(self, item):
 		self.data = item
 		self.parent = item
 
 class SetForest(object):
+	"""Implementation of a Disjoint Set Forest to use the Union-Find
+	algorithms."""
 	def __init__(self, items):
 		self.nodes = {item: SetForestNode(item) for item in items}
 
