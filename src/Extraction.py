@@ -6,7 +6,7 @@ from SetForest import *
 from SproutSegmentation import *
 import utils
 
-class NoBeadException(Exception)
+class NoBeadException(Exception):
 	pass
 
 class ExtractorBase(object):
@@ -47,7 +47,8 @@ class BeadExtractor(ExtractorBase):
 		circles = self.img.findCircle(canny=250, thresh=120, distance=150)
 		if not circles:
 			raise NoBeadException()
-		return FeatureSet(circles)
+		beads = [Bead(self.img, circle) for circle in circles]
+		return FeatureSet(beads)
 
 class SproutExtractor(ExtractorBase):
 	"""
@@ -62,13 +63,30 @@ class SproutExtractor(ExtractorBase):
 		# Strategies
 		self.segmentStrat = segmentStrat
 
+	def maskBeads(self, img):
+		"""Mask the beads."""
+		maskedImg = img
+		for bead in self.beads:
+			goldenRatio = 1.614
+			circleMask = Image(self.img.size())
+			circleMask.dl().circle(
+				(bead.x, bead.y),
+				bead.radius() * goldenRatio,
+				filled = True,
+				color = Color.WHITE)
+			circleMask = circleMask.applyLayers()
+			maskedImg = maskedImg - circleMask
+			maskedImg = maskedImg.applyLayers()
+		return maskedImg
+
 	def preprocess(self):
 		cannyMin, cannyMax = (100, 300)
-		dilateCount = 3
+		dilateCount = 2
 		imgEdges = self.img.edges(cannyMin, cannyMax)
+		imgEdges = self.maskBeads(imgEdges)
 
 		dilatedEdges = imgEdges.dilate(dilateCount)
-		skeleton = dilatedEdges.skeletonize(10)
+		skeleton = dilatedEdges.skeletonize(3)
 
 		self.img = skeleton
 
@@ -92,8 +110,9 @@ class HLSGExtractor(ExtractorBase):
 	def preprocess(self):
 		pass
 
-	def maskBeads(self, img, beads):
+	def maskBeads(self, beads):
 		"""Mask the beads."""
+		maskedImg = self.img
 		for bead in beads:
 			goldenRatio = 1.614
 			circleMask = Image(self.img.size())
@@ -103,9 +122,8 @@ class HLSGExtractor(ExtractorBase):
 				filled = True,
 				color = Color.WHITE)
 			circleMask = circleMask.applyLayers()
-
-		maskedImg = self.img - circleMask
-		maskedImg = maskedImg.applyLayers()
+			maskedImg = maskedImg - circleMask
+			maskedImg = maskedImg.applyLayers()
 		return maskedImg
 
 	def mapSproutsToBeads(self, sprouts, beads):
@@ -140,7 +158,7 @@ class HLSGExtractor(ExtractorBase):
 			beads = beadExtractor.extract()
 
 			# Extract sprouts
-			maskedImg = self.maskBeads(self.img, beads)
+			maskedImg = self.maskBeads(beads)
 			sproutExtractor = SproutExtractor(maskedImg, beads)
 			sprouts = sproutExtractor.extract()
 			hlsgs = self.mapSproutsToBeads(sprouts, beads)

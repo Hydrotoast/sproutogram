@@ -50,11 +50,10 @@ class SproutSegmenter(object):
 		Returns:
 			A list of generated rays defined radially outward.
 		"""
-		labeledBlobs = zip(utils.alpharange(), blobs)
 		blobSegments = []
 		if blobs:
 			# Acquire blob segments
-			for label, blob in labeledBlobs:
+			for blob in blobs:
 				bead = self.findClosestBead(blob)
 				sortedContour = sorted(
 					blob.contour(), 
@@ -62,7 +61,7 @@ class SproutSegmenter(object):
 				start = sortedContour[0]
 				end = sortedContour[-1]
 
-				radialSegment = RadialSegment(self.img, start, end, blob)
+				radialSegment = RadialSegment(self.img, start, end, blob, bead)
 				blobSegments.append(radialSegment)
 		return blobSegments
 
@@ -91,8 +90,12 @@ class SproutSegmenter(object):
 
 		sprouts = []
 		for segments in blobMap.values():
-			sprouts.append(Sprout(self.img, segments))
-				
+			sprouts.append(Sprout(self.img, segments, segments[0].bead))
+
+		# # --DEBUG
+		# FeatureSet(blobSegments).draw(color=Color.RED, width=4)
+		# sprouts = [Sprout(self.img, [segment], segment.bead) for segment in blobSegments]
+		# FeatureSet(sprouts).draw(color=Color.BLUE, width=4)
 		return sprouts
 
 	def segment(self):
@@ -100,7 +103,6 @@ class SproutSegmenter(object):
 		
 		if not blobs:
 			return []
-		print blobs
 
 		blobSegments = self.generateBlobSegments(blobs)
 
@@ -110,20 +112,4 @@ class SproutSegmenter(object):
 		connections = self.generateConnections(blobSegments)
 		sprouts = self.generateSproutSegments(blobSegments, connections)
 
-		#print '%d sprouts found'  % len(sprouts)
-
-		# Label blobs
 		return sprouts
-
-	def draw(self, display):
-		textLayer = DrawingLayer(self.img.size())
-		for label, blob in zip(utils.alpharange(), blobs):
-			textLayer.text(
-				label,
-				blob.centroid(),
-				color=Color.GREEN,
-				alpha=255)
-		self.img.addDrawingLayer(textLayer)
-		self.img = self.img.applyLayers()
-
-		display = self.img.show()

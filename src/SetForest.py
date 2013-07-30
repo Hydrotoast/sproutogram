@@ -1,11 +1,11 @@
-class DisjointSetNode(object):
+class SetForestNode(object):
 	def __init__(self, item):
 		self.data = item
 		self.parent = item
 
-class DisjointSet(object):
+class SetForest(object):
 	def __init__(self, items):
-		self.nodes = {item: DisjointSetNode(item) for item in items}
+		self.nodes = {item: SetForestNode(item) for item in items}
 
 	def find(self, item):
 		node = self.nodes[item]

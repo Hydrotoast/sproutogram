@@ -1,17 +1,20 @@
 from SimpleCV import *
-import Preprocess
+
+from Extraction import *
+
+import os
 
 class REPL(object):
 	"""Read-Eval-Print-Loop for interacting with the BVSproutExtractor."""
 	def __init__(self):
 		self.display = Display()
 
-	def run(self, img):
+	def run(self, img, filename):
 		self.img = img
 
 		done = False
 		while not done:
-			line = raw_input('Enter Parameters (cannyMin,cannyMax,dilateCount): ')
+			line = raw_input('>> ')
 
 			# Reload preprocessor before obtaining frame
 			reload(Preprocess)
@@ -23,18 +26,15 @@ class REPL(object):
 
 			# Display and save the frame
 			self.display = frame.show()
-			frame.save('../data/output/result.jpg')
+			frame.save(os.path.join('../data/output', filename))
+
 		self.display.quit()
 
 	def parseLine(self, line):
-		"""Returns a frame for the given parameters"""
+		"""Returns a frame for the given parameters."""
 		if line == 'done':
 			return False
-		data = line.split(',')
-		if len(data) == 3:
-			data = map(int, data)
-			cannyMin, cannyMax, dilationCount = data
-			frame = Preprocess.approach(self.img, cannyMin, cannyMax, dilationCount)
-		else:
-			frame = Preprocess.approach(self.img)
+		extractor = HLSGExtractor(self.img)
+		hlsgs = extractor.extract()
+		frame = hlsgs
 		return frame
