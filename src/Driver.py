@@ -5,7 +5,7 @@ import os
 from REPL import REPL
 from Extraction import *
 from ShollAnalysis import *
-from ReportGenerator import *
+from ReportGeneration import *
 
 class Driver(object):
 	def extractSprouts(self, img):
@@ -17,8 +17,6 @@ class Driver(object):
 		sprouts.draw(color=Color.RED, width=4)
 		sproutsImg = sprouts[-1].image
 		frame = img.sideBySide(sproutsImg)
-		frame.show()
-		raw_input()
 
 	def extractMonoBead(self, img):
 		extractor = HLSGExtractor(img)
@@ -37,12 +35,14 @@ class Driver(object):
 		beadExtractor = BeadExtractor(img)
 		beads = beadExtractor.extract()
 
+		# Preprocessing steps
 		imgEdges = img.edges(100,300)
 		dilatedEdges = imgEdges.dilate(2)
 		skeleton = dilatedEdges.skeletonize(10)
-		analyzer = ShollAnalyzer(skeleton)
-		analysis = analyzer.analyze(beads[0])
-		return analysis, analyzer.sproutCount(), analyzer.sproutMaximum()
+
+		analyzer = ShollAnalyzer(skeleton, beads[0])
+		analyzer.analyze()
+		return analyzer.crossings, analyzer.sproutCount, analyzer.sproutMaximum
 
 	def runExtractions(self):
 		monoBead = Image('../data/samples/mono.jpg')
@@ -53,14 +53,13 @@ class Driver(object):
 
 	def extractSelected(self):
 		imageSet = ImageSet('../data/samples/selected')
-		reportGen = ShollAnalysisReport()
-		reportGen.setOutput('../data/reports/selected.csv')
+		reportGen = ShollAnalysisReport('../data/reports/selected.csv')
 		for image in imageSet:
 			filename = os.path.basename(image.filename)
 			print 'Analyzing: %s' % filename		
 			image = image.resize(w=800)
-			analysis, sproutCount, sproutMax = self.analyzeMonoBead(image)
-			reportGen.addAnalysis(filename, analysis, sproutCount, sproutMax)
+			crossings, sproutCount, sproutMax = self.analyzeMonoBead(image)
+			reportGen.addAnalysis(filename, crossings, sproutCount, sproutMax)
 		reportGen.generate()
 
 def main():

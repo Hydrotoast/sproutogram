@@ -2,10 +2,27 @@ from SimpleCV import Color
 from collections import deque
 
 class ShollAnalyzer(object):
-	def __init__(self, img):
+	"""
+	An analayzer for quantitatively analyzing the morphological characteristics
+	of an angiogram. This analyzer depends on the known position of the bead in
+	the angiogram to perform the analysis using concentric circles.
+	"""
+	def __init__(self, img, bead):
 		self.img = img
+		self.bead = bead
 
-	def shootCircle(self, origin, radius):
+		self.__crossings = {}
+		self.__sproutCount = None
+		self.__sproutMaximum = None
+
+	def generateCircularCoordinates(self, origin, radius):
+		"""
+		Generator for circular coordinates starting from the x+ vector and
+		iterates counterclockwise.
+
+		Returns:
+			A list of circular coordinates given a specified origin and radius
+		"""
 		x = radius
 		y = 0
 		radiusError = 1 - x
@@ -43,27 +60,38 @@ class ShollAnalyzer(object):
 			for point in octant:
 				yield point
 
-	def analyze(self, bead):
-		initRadius = int(bead.radius() * 1.814)
-		maxRadius = min([bead.x, bead.y, self.img.size()[0] - bead.x, self.img.size()[1] - bead.y])
-		stepSize = 1
+	def analyze(self, stepSize = 1):
+		initRadius = int(self.bead.radius() * 1.814)
+		maxRadius = min([self.bead.x, self.bead.y, self.img.size()[0] -
+			self.bead.x, self.img.size()[1] - self.bead.y])
 
-		lastPixel = Color.WHITE[0]
-		counts = {}
+		lastPixel = Color.BLACK[0]
+		crossings = {}
 		for r in range(initRadius, maxRadius, stepSize):
-			counts.update({r: 0})
-			for x, y in self.shootCircle(bead.origin(), r):
+			crossings.update({r: 0})
+			for x, y in self.generateCircularCoordinates(self.bead.origin(), r):
 				pixel = self.img.getGrayPixel(x, y)
 				if pixel != lastPixel and lastPixel == Color.WHITE[0]:
-					counts[r] += 1
+					crossings[r] += 1
 				lastPixel = pixel
 
-		self.counts = counts
+		self.__crossings = crossings
 
-		return counts
+		return crossings
 
+	@property
+	def crossings(self):
+		return self.__crossings
+
+	@property
 	def sproutCount(self):
-		return sum(self.counts.values()[:5]) / 5
+		if not self.__sproutCount:
+			self.__sproutCount = sum(self.crossings.values()[:5]) / 5
+		return self.__sproutCount
 
+
+	@property
 	def sproutMaximum(self):
-		return max(self.counts.values())
+		if not self.__sproutMaximum:
+			self.__sproutMaximum = max(self.crossings.values())
+		return self.__sproutMaximum
