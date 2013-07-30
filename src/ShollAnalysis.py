@@ -3,6 +3,60 @@ from SimpleCV import Color
 from collections import deque
 import operator
 
+class ShollAnalysisDescriptor(object):
+	"""
+	Descriptor for a Sholl Analysis containing the raw data dump of the
+	analysis as well as other derivable calculations.
+	"""
+	def __init__(self, img, crossings):
+		self.__img = img
+		self.__crossings = crossings
+		self.__sproutCount = None
+		self.__criticalValue = None
+		self.__sproutMaximum = None
+		self.__ramificationIndex = None
+
+	@property
+	def img(self):
+		"""Returns the image analyzed."""
+		return self.__img
+
+	@property
+	def crossings(self):
+		"""Returns a cached list of crossings as a function of radius."""
+		return self.__crossings
+
+	@property
+	def sproutCount(self):
+		"""Returns a count of the primary sprouts."""
+		if not self.__sproutCount:
+			self.__sproutCount = sum(self.crossings.values()[:5]) / 5
+		return self.__sproutCount
+
+	@property
+	def criticalValue(self):
+		"""Returns the critical value which is the radius at which the maximum
+		number of crossings occur."""
+		if not self.__criticalValue:
+			self.__criticalValue = max(self.crossings.iteritems(), key=operator.itemgetter(1))[0]
+		return self.__criticalValue
+
+	@property
+	def sproutMaximum(self):
+		"""Returns the maximum number of crossings of all radii."""
+		if not self.__sproutMaximum:
+			self.__sproutMaximum = max(self.crossings.itervalues())
+		return self.__sproutMaximum
+
+	@property
+	def ramificationIndex(self):
+		"""Returns the Shoenen Ramification Index which is a ratio for
+		branching factor."""
+		if not self.__ramificationIndex:
+			self.__ramificationIndex = float(self.sproutMaximum) / float(self.sproutCount)
+		return self.__ramificationIndex
+
+
 class ShollAnalyzer(object):
 	"""
 	An analayzer for quantitatively analyzing the morphological characteristics
@@ -12,12 +66,6 @@ class ShollAnalyzer(object):
 	def __init__(self, img, bead):
 		self.img = img
 		self.bead = bead
-
-		self.__crossings = {}
-		self.__sproutCount = None
-		self.__criticalValue = None
-		self.__sproutMaximum = None
-		self.__ramificationIndex = None
 
 	def generateCircularCoordinates(self, origin, radius):
 		"""
@@ -65,6 +113,7 @@ class ShollAnalyzer(object):
 				yield point
 
 	def analyze(self, stepSize = 1):
+		"""Returns a descriptor of the analysis."""
 		initRadius = int(self.bead.radius() * 1.814)
 		maxRadius = min([self.bead.x, self.bead.y, self.img.size()[0] -
 			self.bead.x, self.img.size()[1] - self.bead.y])
@@ -79,41 +128,4 @@ class ShollAnalyzer(object):
 					crossings[r] += 1
 				lastPixel = pixel
 
-		self.__crossings = crossings
-
-		return crossings
-
-	@property
-	def crossings(self):
-		"""Returns a cached list of crossings as a function of radius."""
-		return self.__crossings
-
-	@property
-	def sproutCount(self):
-		"""Returns a count of the primary sprouts."""
-		if not self.__sproutCount:
-			self.__sproutCount = sum(self.crossings.values()[:5]) / 5
-		return self.__sproutCount
-
-	@property
-	def criticalValue(self):
-		"""Returns the critical value which is the radius at which the maximum
-		number of crossings occur."""
-		if not self.__criticalValue:
-			self.__criticalValue = max(self.crossings, operator.itemgetter(1))[0]
-		return self.__criticalValue
-
-	@property
-	def sproutMaximum(self):
-		"""Returns the maximum number of crossings of all radii."""
-		if not self.__sproutMaximum:
-			self.__sproutMaximum = max(self.crossings.values())
-		return self.__sproutMaximum
-
-	@property
-	def ramificationIndex(self):
-		"""Returns the Shoenen Ramification Index which is a ratio for
-		branching factor."""
-		if not self.__ramificationIndex:
-			self.__ramificationIndex = self.sproutMaximum / self.sproutCount
-		self.__ramificationIndex
+		return ShollAnalysisDescriptor(self.img, crossings)

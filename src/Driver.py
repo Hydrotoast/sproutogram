@@ -47,8 +47,8 @@ class Driver(object):
 		skeleton = dilatedEdges.skeletonize(10)
 
 		analyzer = ShollAnalyzer(skeleton, beads[0])
-		analyzer.analyze()
-		return analyzer.crossings, analyzer.sproutCount, analyzer.sproutMaximum
+		analysis = analyzer.analyze()
+		return analysis
 
 	def runExtractions(self):
 		monoBead = Image('../data/samples/mono.jpg')
@@ -63,8 +63,8 @@ class Driver(object):
 			filename = os.path.basename(image.filename)
 			print 'Analyzing: %s' % filename		
 			image = image.resize(w=800)
-			crossings, sproutCount, sproutMax = self.analyzeMonoBead(image)
-			reportGen.addAnalysis(filename, crossings, sproutCount, sproutMax)
+			analysis = self.analyzeMonoBead(image)
+			reportGen.addAnalysis(filename, analysis)
 		reportGen.generate()
 
 def main():
@@ -75,5 +75,5 @@ def main():
 
 if __name__ == '__main__':
 	driver = Driver()
-	driver.runExtractions()
-	# driver.extractSelected()
+	# driver.runExtractions()
+	driver.extractSelected()

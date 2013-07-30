@@ -22,24 +22,24 @@ class ShollAnalysisReport(ReportGeneratorBase):
 	def __init__(self, filename):
 		super(ShollAnalysisReport, self).__init__(filename)
 
-	def addAnalysis(self, filename, crossings, sproutCount, sproutMax):
-		self.analyses[filename] = crossings, sproutCount, sproutMax
+	def addAnalysis(self, filename, analysis):
+		self.analyses[filename] = analysis
 
 	def generate(self):
 		with open(self.output, 'w') as fh:
 			writer = csv.writer(fh)
 
 			writer.writerow(['Overview'])
-			for filename, data in self.analyses.items():
-				crossings, sproutCount, sproutMax = data
+			for filename, analysis in self.analyses.items():
 				writer.writerow([filename])
-				writer.writerow(['Sprout Count', sproutCount])
-				writer.writerow(['Sprout Max', sproutMax])
+				writer.writerow(['Sprout Count', analysis.sproutCount])
+				writer.writerow(['Critical Value', analysis.criticalValue])
+				writer.writerow(['Sprout Maximum', analysis.sproutMaximum])
+				writer.writerow(['Shoenen Ramification Index', '%.2f' % analysis.ramificationIndex])
 				writer.writerow([])
 
-			for filename, data in self.analyses.items():
-				crossings, sproutCount, sproutMax = data
+			for filename, analysis in self.analyses.items():
 				writer.writerow([filename])
-				writer.writerow(['Radius'] + crossings.keys())
-				writer.writerow(['Crossings'] + crossings.values())
+				writer.writerow(['Radius'] + analysis.crossings.keys())
+				writer.writerow(['Crossings'] + analysis.crossings.values())
 				writer.writerow([])
