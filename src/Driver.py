@@ -14,9 +14,15 @@ class Driver(object):
 
 		sproutExtractor = SproutExtractor(img, beads)
 		sprouts = sproutExtractor.extract()
-		sprouts.draw(color=Color.RED, width=4)
+
 		sproutsImg = sprouts[-1].image
-		frame = img.sideBySide(sproutsImg)
+
+		for sprout in sprouts:
+			sprout.restore(width=3, distanceThreshold=10)
+		sproutsImgRestored = sprouts[-1].image
+		sproutsImgRestored.show()
+
+		raw_input()
 
 	def extractMonoBead(self, img):
 		extractor = HLSGExtractor(img)
@@ -47,9 +53,8 @@ class Driver(object):
 	def runExtractions(self):
 		monoBead = Image('../data/samples/mono.jpg')
 		monoBead = monoBead.resize(w=800)
+		self.extractSprouts(monoBead)
 		# self.extractMonoBead(monoBead)
-		# self.extractSprouts(monoBead)
-		self.analyzeMonoBead(monoBead)
 
 	def extractSelected(self):
 		imageSet = ImageSet('../data/samples/selected')
@@ -70,5 +75,5 @@ def main():
 
 if __name__ == '__main__':
 	driver = Driver()
-	# driver.runExtractions()
-	driver.extractSelected()
+	driver.runExtractions()
+	# driver.extractSelected()

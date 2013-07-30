@@ -61,7 +61,7 @@ class SproutSegmenter(object):
 				start = sortedContour[0]
 				end = sortedContour[-1]
 
-				radialSegment = RadialSegment(self.img, start, end, blob, bead)
+				radialSegment = RadialSegment(self.img, start, end, blob)
 				blobSegments.append(radialSegment)
 		return blobSegments
 
@@ -90,16 +90,17 @@ class SproutSegmenter(object):
 
 		sprouts = []
 		for segments in blobMap.values():
-			sprouts.append(Sprout(self.img, segments, segments[0].bead))
+			sprouts.append(Sprout(segments))
 
-		# # --DEBUG
+		# --DEBUG
 		# FeatureSet(blobSegments).draw(color=Color.RED, width=4)
-		# sprouts = [Sprout(self.img, [segment], segment.bead) for segment in blobSegments]
-		# FeatureSet(sprouts).draw(color=Color.BLUE, width=4)
 		return sprouts
 
 	def segment(self):
-		blobs = self.img.findBlobs()
+		blobs = self.img.findBlobs(minsize=4)
+
+		# --DEBUG
+		# blobs.draw(color=Color.RED, width=4)
 		
 		if not blobs:
 			return []

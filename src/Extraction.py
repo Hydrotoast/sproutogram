@@ -95,7 +95,6 @@ class SproutExtractor(ExtractorBase):
 		self.segmentStrat.injectImg(self.img)
 		self.segmentStrat.injectBeads(self.beads)
 		sprouts = self.segmentStrat.segment()
-
 		return FeatureSet(sprouts)
 
 class HLSGExtractor(ExtractorBase):
