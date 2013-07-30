@@ -4,8 +4,6 @@ from Geometry import *
 from SetForest import *
 from Features import *
 
-import utils
-
 class SproutSegmenter(object):
 	def injectImg(self, img):
 		self.img = img
@@ -17,7 +15,7 @@ class SproutSegmenter(object):
 		closestBead = None
 		closestDist = float('inf')
 		for bead in self.beads:
-			dist = euclidDistance((bead.x, bead.y), blob.centroid())
+			dist = spsd.euclidean((bead.x, bead.y), blob.centroid())
 			if dist < closestDist:
 				closestDist = dist
 				closestBead = bead
@@ -37,7 +35,7 @@ class SproutSegmenter(object):
 				# Do not connect segments to each other
 				if segmentOuter == segmentInner:
 					continue
-				distance = euclidDistance(segmentOuter.end, segmentInner.start)
+				distance = spsd.euclidean(segmentOuter.end, segmentInner.start)
 				if distance < distanceThreshold:
 					connections.append((segmentOuter, segmentInner))
 		return connections
@@ -57,7 +55,7 @@ class SproutSegmenter(object):
 				bead = self.findClosestBead(blob)
 				sortedContour = sorted(
 					blob.contour(), 
-					key = lambda x: euclidDistance(x, (bead.x, bead.y)))
+					key = lambda x: spsd.euclidean(x, (bead.x, bead.y)))
 				start = sortedContour[0]
 				end = sortedContour[-1]
 

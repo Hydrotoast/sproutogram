@@ -4,7 +4,6 @@ from SimpleCV import *
 
 from SetForest import *
 from SproutSegmentation import *
-import utils
 
 class NoBeadException(Exception):
 	pass
@@ -138,7 +137,7 @@ class HLSGExtractor(ExtractorBase):
 			closestBead = None
 			closestDist = float('inf')
 			for bead in beads:
-				dist = euclidDistance((bead.x, bead.y), sprout.points[0])
+				dist = spsd.euclidean((bead.x, bead.y), sprout.points[0])
 				if dist < closestDist:
 					closestDist = dist
 					closestBead = bead
