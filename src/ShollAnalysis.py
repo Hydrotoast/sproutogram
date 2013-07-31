@@ -3,6 +3,8 @@ from SimpleCV import Color
 from collections import deque
 import operator
 
+import utils
+
 class ShollAnalysisDescriptor(object):
 	"""
 	Descriptor for a Sholl Analysis containing the raw data dump of the
@@ -41,7 +43,8 @@ class ShollAnalysisDescriptor(object):
 		:rtype: int
 		"""
 		if not self.__sproutCount:
-			self.__sproutCount = sum(self.crossings.values()[:5]) / 5
+			subs = utils.lis(self.crossings.values())
+			self.__sproutCount = sum(subs) / len(subs)
 		return self.__sproutCount
 
 	@property
@@ -142,7 +145,7 @@ class ShollAnalyzer(object):
 		"""Returns a descriptor of the analysis.
 		
 		:rtype: ``ShollAnalysisDescriptor``"""
-		initRadius = int(self.bead.radius() * 1.814)
+		initRadius = int(self.bead.radius() * 1.714)
 		maxRadius = min([self.bead.x, self.bead.y, self.img.size()[0] -
 			self.bead.x, self.img.size()[1] - self.bead.y])
 
