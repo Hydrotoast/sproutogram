@@ -1,0 +1,27 @@
+\centering
+\begin{sequencediagram}
+\newthread{client}{Client}{}
+\newinst[1]{driver}{Driver}{}
+\newinst[1]{hlsgex}{HLSG Extractor}{}
+\newinst[1]{beadex}{Bead Extractor}{}
+\newinst[1]{sproutex}{Sprout Extractor}{}
+\newinst[1]{reportgen}{Report Generator}{}
+
+\begin{call}{client}{images}{driver}{}
+	\begin{sdblock}{Main Loop}{}
+		\begin{call}{driver}{extract(img)}{hlsgex}{hlsg}
+			\begin{call}{hlsgex}{extract(img)}{beadex}{beads}
+			\end{call}
+
+			\begin{sdblock}{Sprout Loop}{}
+				\begin{call}{hlsgex}{extract(img, bead)}{sproutex}{sprouts}
+				\end{call}
+			\end{sdblock}
+		\end{call}
+	\end{sdblock}
+
+	\begin{call}{driver}{generateReport(hlsg)}{reportgen}{report}
+	\end{call}
+\end{call}
+\end{sequencediagram}
+\caption{High-Level Architecture}
