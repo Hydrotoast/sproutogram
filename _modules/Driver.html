@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Driver &mdash; Angiogram Sprout Extraction  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for Driver</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">SimpleCV</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">REPL</span> <span class="kn">import</span> <span class="n">REPL</span>
+<span class="kn">from</span> <span class="nn">Extraction</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">ShollAnalysis</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">ReportGeneration</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="Driver"><a class="viewcode-back" href="../Driver.html#Driver.Driver">[docs]</a><span class="k">class</span> <span class="nc">Driver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Driver.extractSprouts"><a class="viewcode-back" href="../Driver.html#Driver.Driver.extractSprouts">[docs]</a>	<span class="k">def</span> <span class="nf">extractSprouts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+		<span class="n">beadExtractor</span> <span class="o">=</span> <span class="n">BeadExtractor</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+		<span class="n">beads</span> <span class="o">=</span> <span class="n">beadExtractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+
+		<span class="n">sproutExtractor</span> <span class="o">=</span> <span class="n">SproutExtractor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">beads</span><span class="p">)</span>
+		<span class="n">sprouts</span> <span class="o">=</span> <span class="n">sproutExtractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+
+		<span class="n">sproutsImg</span> <span class="o">=</span> <span class="n">sprouts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">image</span>
+
+		<span class="k">for</span> <span class="n">sprout</span> <span class="ow">in</span> <span class="n">sprouts</span><span class="p">:</span>
+			<span class="n">sprout</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">distanceThreshold</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+		<span class="n">sproutsImgRestored</span> <span class="o">=</span> <span class="n">sprouts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">image</span>
+		<span class="n">sproutsImgRestored</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+		<span class="nb">raw_input</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Driver.extractMonoBead"><a class="viewcode-back" href="../Driver.html#Driver.Driver.extractMonoBead">[docs]</a>	<span class="k">def</span> <span class="nf">extractMonoBead</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+		<span class="n">extractor</span> <span class="o">=</span> <span class="n">HLSGExtractor</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+		<span class="n">hlsgs</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">hlsg</span> <span class="ow">in</span> <span class="n">hlsgs</span><span class="p">:</span>
+			<span class="n">img</span><span class="o">.</span><span class="n">dl</span><span class="p">()</span><span class="o">.</span><span class="n">circle</span><span class="p">((</span><span class="n">hlsg</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">hlsg</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">hlsg</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">radius</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">sprout</span> <span class="ow">in</span> <span class="n">hlsg</span><span class="o">.</span><span class="n">sprouts</span><span class="p">:</span>
+				<span class="n">img</span><span class="o">.</span><span class="n">dl</span><span class="p">()</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">sprout</span><span class="o">.</span><span class="n">end_points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sprout</span><span class="o">.</span><span class="n">end_points</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+		<span class="c"># hlsgs.draw()</span>
+		<span class="n">img</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+		<span class="nb">raw_input</span><span class="p">()</span>
+		<span class="c"># for hlsg in hlsgs:</span>
+		<span class="c"># 	print hlsg</span>
+</div>
+<div class="viewcode-block" id="Driver.analyzeMonoBead"><a class="viewcode-back" href="../Driver.html#Driver.Driver.analyzeMonoBead">[docs]</a>	<span class="k">def</span> <span class="nf">analyzeMonoBead</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+		<span class="n">beadExtractor</span> <span class="o">=</span> <span class="n">BeadExtractor</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+		<span class="n">beads</span> <span class="o">=</span> <span class="n">beadExtractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+
+		<span class="c"># Preprocessing steps</span>
+		<span class="n">imgEdges</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">300</span><span class="p">)</span>
+		<span class="n">dilatedEdges</span> <span class="o">=</span> <span class="n">imgEdges</span><span class="o">.</span><span class="n">dilate</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+		<span class="n">skeleton</span> <span class="o">=</span> <span class="n">dilatedEdges</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+		<span class="n">analyzer</span> <span class="o">=</span> <span class="n">ShollAnalyzer</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">beads</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">analysis</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">analysis</span>
+</div>
+<div class="viewcode-block" id="Driver.runExtractions"><a class="viewcode-back" href="../Driver.html#Driver.Driver.runExtractions">[docs]</a>	<span class="k">def</span> <span class="nf">runExtractions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">monoBead</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s">&#39;../data/samples/mono.jpg&#39;</span><span class="p">)</span>
+		<span class="n">monoBead</span> <span class="o">=</span> <span class="n">monoBead</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">extractSprouts</span><span class="p">(</span><span class="n">monoBead</span><span class="p">)</span>
+		<span class="c"># self.extractMonoBead(monoBead)</span>
+</div>
+<div class="viewcode-block" id="Driver.extractSelected"><a class="viewcode-back" href="../Driver.html#Driver.Driver.extractSelected">[docs]</a>	<span class="k">def</span> <span class="nf">extractSelected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">imageSet</span> <span class="o">=</span> <span class="n">ImageSet</span><span class="p">(</span><span class="s">&#39;../data/samples/selected&#39;</span><span class="p">)</span>
+		<span class="n">reportGen</span> <span class="o">=</span> <span class="n">ShollAnalysisReport</span><span class="p">(</span><span class="s">&#39;../data/reports/selected.csv&#39;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">imageSet</span><span class="p">:</span>
+			<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+			<span class="k">print</span> <span class="s">&#39;Analyzing: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">filename</span>		
+			<span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
+			<span class="n">analysis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzeMonoBead</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+			<span class="n">reportGen</span><span class="o">.</span><span class="n">addAnalysis</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">analysis</span><span class="p">)</span>
+		<span class="n">reportGen</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+</div></div>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../Driver.html#Driver.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+	<span class="n">repl</span> <span class="o">=</span> <span class="n">REPL</span><span class="p">()</span>
+	<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s">&#39;../data/samples/mono.jpg&#39;</span><span class="p">)</span>
+	<span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
+	<span class="n">repl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">driver</span> <span class="o">=</span> <span class="n">Driver</span><span class="p">()</span>
+	<span class="c"># driver.runExtractions()</span>
+	<span class="n">driver</span><span class="o">.</span><span class="n">extractSelected</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gio Cielo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

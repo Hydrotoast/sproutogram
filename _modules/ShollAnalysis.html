@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ShollAnalysis &mdash; Angiogram Sprout Extraction  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for ShollAnalysis</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">SimpleCV</span> <span class="kn">import</span> <span class="n">Color</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+
+<div class="viewcode-block" id="ShollAnalysisDescriptor"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalysisDescriptor">[docs]</a><span class="k">class</span> <span class="nc">ShollAnalysisDescriptor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Descriptor for a Sholl Analysis containing the raw data dump of the</span>
+<span class="sd">	analysis as well as other derivable calculations.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">crossings</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__img</span> <span class="o">=</span> <span class="n">img</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__crossings</span> <span class="o">=</span> <span class="n">crossings</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__sproutCount</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__criticalValue</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__sproutMaximum</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__ramificationIndex</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="nd">@property</span>
+<div class="viewcode-block" id="ShollAnalysisDescriptor.img"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalysisDescriptor.img">[docs]</a>	<span class="k">def</span> <span class="nf">img</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns the image analyzed.&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__img</span>
+</div>
+	<span class="nd">@property</span>
+<div class="viewcode-block" id="ShollAnalysisDescriptor.crossings"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalysisDescriptor.crossings">[docs]</a>	<span class="k">def</span> <span class="nf">crossings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns a cached list of crossings as a function of radius.&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__crossings</span>
+</div>
+	<span class="nd">@property</span>
+<div class="viewcode-block" id="ShollAnalysisDescriptor.sproutCount"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalysisDescriptor.sproutCount">[docs]</a>	<span class="k">def</span> <span class="nf">sproutCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns a count of the primary sprouts.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sproutCount</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">__sproutCount</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">crossings</span><span class="o">.</span><span class="n">values</span><span class="p">()[:</span><span class="mi">5</span><span class="p">])</span> <span class="o">/</span> <span class="mi">5</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sproutCount</span>
+</div>
+	<span class="nd">@property</span>
+<div class="viewcode-block" id="ShollAnalysisDescriptor.criticalValue"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalysisDescriptor.criticalValue">[docs]</a>	<span class="k">def</span> <span class="nf">criticalValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns the critical value which is the radius at which the maximum</span>
+<span class="sd">		number of crossings occur.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__criticalValue</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">__criticalValue</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">crossings</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__criticalValue</span>
+</div>
+	<span class="nd">@property</span>
+<div class="viewcode-block" id="ShollAnalysisDescriptor.sproutMaximum"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalysisDescriptor.sproutMaximum">[docs]</a>	<span class="k">def</span> <span class="nf">sproutMaximum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns the maximum number of crossings of all radii.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sproutMaximum</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">__sproutMaximum</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">crossings</span><span class="o">.</span><span class="n">itervalues</span><span class="p">())</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sproutMaximum</span>
+</div>
+	<span class="nd">@property</span>
+<div class="viewcode-block" id="ShollAnalysisDescriptor.ramificationIndex"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalysisDescriptor.ramificationIndex">[docs]</a>	<span class="k">def</span> <span class="nf">ramificationIndex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns the Shoenen Ramification Index which is a ratio for</span>
+<span class="sd">		branching factor.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ramificationIndex</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">__ramificationIndex</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sproutMaximum</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sproutCount</span><span class="p">)</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ramificationIndex</span>
+
+</div></div>
+<div class="viewcode-block" id="ShollAnalyzer"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">ShollAnalyzer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	An analayzer for quantitatively analyzing the morphological characteristics</span>
+<span class="sd">	of an angiogram. This analyzer depends on the known position of the bead in</span>
+<span class="sd">	the angiogram to perform the analysis using concentric circles.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">bead</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">img</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bead</span> <span class="o">=</span> <span class="n">bead</span>
+
+<div class="viewcode-block" id="ShollAnalyzer.generateCircularCoordinates"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalyzer.generateCircularCoordinates">[docs]</a>	<span class="k">def</span> <span class="nf">generateCircularCoordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Generator for circular coordinates starting from the x+ vector and</span>
+<span class="sd">		iterates counterclockwise.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			A list of circular coordinates given a specified origin and radius</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="n">radius</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">radiusError</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x</span>
+
+		<span class="n">octants</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+			<span class="n">octants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deque</span><span class="p">())</span>
+
+		<span class="k">while</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">y</span><span class="p">:</span>
+			<span class="c"># x+ Q0</span>
+			<span class="n">octants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">y</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+			<span class="c"># y- Q1</span>
+			<span class="n">octants</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">appendleft</span><span class="p">((</span><span class="n">y</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">x</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+			<span class="c"># y- Q2</span>
+			<span class="n">octants</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="o">-</span><span class="n">y</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">x</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+			<span class="c"># x- Q3</span>
+			<span class="n">octants</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">appendleft</span><span class="p">((</span><span class="o">-</span><span class="n">x</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">y</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+			<span class="c"># x- Q4</span>
+			<span class="n">octants</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="o">-</span><span class="n">x</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+			<span class="c"># y+ Q5</span>
+			<span class="n">octants</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">appendleft</span><span class="p">((</span><span class="o">-</span><span class="n">y</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+			<span class="c"># y+ Q6</span>
+			<span class="n">octants</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">y</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+			<span class="c"># x+ Q7</span>
+			<span class="n">octants</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">appendleft</span><span class="p">((</span><span class="n">x</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span> <span class="o">+</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+			<span class="n">y</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="k">if</span> <span class="n">radiusError</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">radiusError</span> <span class="o">+=</span> <span class="n">y</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">x</span> <span class="o">-=</span> <span class="mi">1</span>
+				<span class="n">radiusError</span> <span class="o">+=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
+
+		<span class="k">for</span> <span class="n">octant</span> <span class="ow">in</span> <span class="n">octants</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">octant</span><span class="p">:</span>
+				<span class="k">yield</span> <span class="n">point</span>
+</div>
+<div class="viewcode-block" id="ShollAnalyzer.analyze"><a class="viewcode-back" href="../ShollAnalysis.html#ShollAnalysis.ShollAnalyzer.analyze">[docs]</a>	<span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stepSize</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns a descriptor of the analysis.&quot;&quot;&quot;</span>
+		<span class="n">initRadius</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">radius</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1.814</span><span class="p">)</span>
+		<span class="n">maxRadius</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+
+		<span class="n">lastPixel</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">crossings</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">initRadius</span><span class="p">,</span> <span class="n">maxRadius</span><span class="p">,</span> <span class="n">stepSize</span><span class="p">):</span>
+			<span class="n">crossings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">r</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+			<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">generateCircularCoordinates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">origin</span><span class="p">(),</span> <span class="n">r</span><span class="p">):</span>
+				<span class="n">pixel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">getGrayPixel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">pixel</span> <span class="o">!=</span> <span class="n">lastPixel</span> <span class="ow">and</span> <span class="n">lastPixel</span> <span class="o">==</span> <span class="n">Color</span><span class="o">.</span><span class="n">WHITE</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+					<span class="n">crossings</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+				<span class="n">lastPixel</span> <span class="o">=</span> <span class="n">pixel</span>
+
+		<span class="k">return</span> <span class="n">ShollAnalysisDescriptor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">crossings</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gio Cielo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

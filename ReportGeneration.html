@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>ReportGeneration Module &mdash; src  documentation</title>
+    <title>ReportGeneration Module &mdash; Angiogram Sprout Extraction  documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="index.html" />
     <link rel="next" title="SetForest Module" href="SetForest.html" />
     <link rel="prev" title="REPL Module" href="REPL.html" /> 
   </head>
@@ -35,28 +35,17 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="SetForest.html" title="SetForest Module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="REPL.html" title="REPL Module"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">src  documentation</a> &raquo;</li> 
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <div class="section" id="reportgeneration-module">
-<h1>ReportGeneration Module<a class="headerlink" href="#reportgeneration-module" title="Permalink to this headline">¶</a></h1>
-</div>
-
-
-          </div>
-        </div>
-      </div>
+    </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
@@ -85,6 +74,65 @@
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-ReportGeneration">
+<span id="reportgeneration-module"></span><h1>ReportGeneration Module<a class="headerlink" href="#module-ReportGeneration" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ReportGeneration.ReportGeneratorBase">
+<em class="property">class </em><tt class="descclassname">ReportGeneration.</tt><tt class="descname">ReportGeneratorBase</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/ReportGeneration.html#ReportGeneratorBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReportGeneration.ReportGeneratorBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Abstract base class for generating reports as CSV files.</p>
+<dl class="method">
+<dt id="ReportGeneration.ReportGeneratorBase.generate">
+<tt class="descname">generate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ReportGeneration.html#ReportGeneratorBase.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReportGeneration.ReportGeneratorBase.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the report as CSV.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ReportGeneration.ShollAnalysisReport">
+<em class="property">class </em><tt class="descclassname">ReportGeneration.</tt><tt class="descname">ShollAnalysisReport</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/ReportGeneration.html#ShollAnalysisReport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReportGeneration.ShollAnalysisReport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ReportGeneration.ReportGeneratorBase" title="ReportGeneration.ReportGeneratorBase"><tt class="xref py py-class docutils literal"><span class="pre">ReportGeneration.ReportGeneratorBase</span></tt></a></p>
+<p>Generates reports given a Sholl Analysis of an angiogram. The report
+includes the primary sprout count, maximum sprout count raw data dump of
+the analysis.</p>
+<dl class="method">
+<dt id="ReportGeneration.ShollAnalysisReport.addAnalysis">
+<tt class="descname">addAnalysis</tt><big>(</big><em>filename</em>, <em>analysis</em><big>)</big><a class="reference internal" href="_modules/ReportGeneration.html#ShollAnalysisReport.addAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReportGeneration.ShollAnalysisReport.addAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends an analysis of the specified filename to the report.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> &#8211; name of the file analyzed</li>
+<li><strong>analysis</strong> &#8211; analysis of the file</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ReportGeneration.ShollAnalysisReport.generate">
+<tt class="descname">generate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ReportGeneration.html#ShollAnalysisReport.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReportGeneration.ShollAnalysisReport.generate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -94,12 +142,15 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="SetForest.html" title="SetForest Module"
              >next</a> |</li>
         <li class="right" >
           <a href="REPL.html" title="REPL Module"
              >previous</a> |</li>
-        <li><a href="index.html">src  documentation</a> &raquo;</li> 
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

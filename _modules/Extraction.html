@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Extraction &mdash; Angiogram Sprout Extraction  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for Extraction</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">SimpleCV</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">SetForest</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">SproutSegmentation</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="NoBeadException"><a class="viewcode-back" href="../Extraction.html#Extraction.NoBeadException">[docs]</a><span class="k">class</span> <span class="nc">NoBeadException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="ExtractorBase"><a class="viewcode-back" href="../Extraction.html#Extraction.ExtractorBase">[docs]</a><span class="k">class</span> <span class="nc">ExtractorBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">img</span>
+
+<div class="viewcode-block" id="ExtractorBase.preprocess"><a class="viewcode-back" href="../Extraction.html#Extraction.ExtractorBase.preprocess">[docs]</a>	<span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Preprocesses a target image before feature extraction is</span>
+<span class="sd">		performed.&quot;&quot;&quot;</span>
+		<span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="ExtractorBase.extract"><a class="viewcode-back" href="../Extraction.html#Extraction.ExtractorBase.extract">[docs]</a>	<span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Extracts a homogenous list of a single feature from a target image. The</span>
+<span class="sd">		template first applies preprocessing steps and follows with feature</span>
+<span class="sd">		extraction.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			A homogenous list of a single feature.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span>
+</div></div>
+<div class="viewcode-block" id="BeadExtractor"><a class="viewcode-back" href="../Extraction.html#Extraction.BeadExtractor">[docs]</a><span class="k">class</span> <span class="nc">BeadExtractor</span><span class="p">(</span><span class="n">ExtractorBase</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Extracts bead features from a target image using a circular hough</span>
+<span class="sd">	transformation to find the center and radius of the bead.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">BeadExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BeadExtractor.preprocess"><a class="viewcode-back" href="../Extraction.html#Extraction.BeadExtractor.preprocess">[docs]</a>	<span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">cannyMin</span><span class="p">,</span> <span class="n">cannyMax</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">cannyMin</span><span class="p">,</span> <span class="n">cannyMax</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="BeadExtractor.extract"><a class="viewcode-back" href="../Extraction.html#Extraction.BeadExtractor.extract">[docs]</a>	<span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+		<span class="n">circles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">findCircle</span><span class="p">(</span><span class="n">canny</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">circles</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">NoBeadException</span><span class="p">()</span>
+		<span class="n">beads</span> <span class="o">=</span> <span class="p">[</span><span class="n">Bead</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">circle</span><span class="p">)</span> <span class="k">for</span> <span class="n">circle</span> <span class="ow">in</span> <span class="n">circles</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">FeatureSet</span><span class="p">(</span><span class="n">beads</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="SproutExtractor"><a class="viewcode-back" href="../Extraction.html#Extraction.SproutExtractor">[docs]</a><span class="k">class</span> <span class="nc">SproutExtractor</span><span class="p">(</span><span class="n">ExtractorBase</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Extracts sprout features form a target image using segmentation</span>
+<span class="sd">	strategies and computational geometry. Sprout features extracted</span>
+<span class="sd">	from the image must belong to a specified bead.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">beads</span><span class="p">,</span> <span class="n">segmentStrat</span> <span class="o">=</span> <span class="n">SproutSegmenter</span><span class="p">()):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">beads</span> <span class="o">=</span> <span class="n">beads</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">SproutExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+		<span class="c"># Strategies</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">segmentStrat</span> <span class="o">=</span> <span class="n">segmentStrat</span>
+
+<div class="viewcode-block" id="SproutExtractor.maskBeads"><a class="viewcode-back" href="../Extraction.html#Extraction.SproutExtractor.maskBeads">[docs]</a>	<span class="k">def</span> <span class="nf">maskBeads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Mask the beads.&quot;&quot;&quot;</span>
+		<span class="n">maskedImg</span> <span class="o">=</span> <span class="n">img</span>
+		<span class="k">for</span> <span class="n">bead</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">:</span>
+			<span class="n">goldenRatio</span> <span class="o">=</span> <span class="mf">1.614</span>
+			<span class="n">circleMask</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+			<span class="n">circleMask</span><span class="o">.</span><span class="n">dl</span><span class="p">()</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
+				<span class="p">(</span><span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
+				<span class="n">bead</span><span class="o">.</span><span class="n">radius</span><span class="p">()</span> <span class="o">*</span> <span class="n">goldenRatio</span><span class="p">,</span>
+				<span class="n">filled</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+				<span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">WHITE</span><span class="p">)</span>
+			<span class="n">circleMask</span> <span class="o">=</span> <span class="n">circleMask</span><span class="o">.</span><span class="n">applyLayers</span><span class="p">()</span>
+			<span class="n">maskedImg</span> <span class="o">=</span> <span class="n">maskedImg</span> <span class="o">-</span> <span class="n">circleMask</span>
+			<span class="n">maskedImg</span> <span class="o">=</span> <span class="n">maskedImg</span><span class="o">.</span><span class="n">applyLayers</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">maskedImg</span>
+</div>
+<div class="viewcode-block" id="SproutExtractor.preprocess"><a class="viewcode-back" href="../Extraction.html#Extraction.SproutExtractor.preprocess">[docs]</a>	<span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">cannyMin</span><span class="p">,</span> <span class="n">cannyMax</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+		<span class="n">dilateCount</span> <span class="o">=</span> <span class="mi">2</span>
+		<span class="n">imgEdges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">cannyMin</span><span class="p">,</span> <span class="n">cannyMax</span><span class="p">)</span>
+		<span class="n">imgEdges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maskBeads</span><span class="p">(</span><span class="n">imgEdges</span><span class="p">)</span>
+
+		<span class="n">dilatedEdges</span> <span class="o">=</span> <span class="n">imgEdges</span><span class="o">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">dilateCount</span><span class="p">)</span>
+		<span class="n">skeleton</span> <span class="o">=</span> <span class="n">dilatedEdges</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">skeleton</span>
+</div>
+<div class="viewcode-block" id="SproutExtractor.extract"><a class="viewcode-back" href="../Extraction.html#Extraction.SproutExtractor.extract">[docs]</a>	<span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">segmentStrat</span><span class="o">.</span><span class="n">injectImg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">segmentStrat</span><span class="o">.</span><span class="n">injectBeads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">)</span>
+		<span class="n">sprouts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segmentStrat</span><span class="o">.</span><span class="n">segment</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">FeatureSet</span><span class="p">(</span><span class="n">sprouts</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="HLSGExtractor"><a class="viewcode-back" href="../Extraction.html#Extraction.HLSGExtractor">[docs]</a><span class="k">class</span> <span class="nc">HLSGExtractor</span><span class="p">(</span><span class="n">ExtractorBase</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Extracts High-Level Sprout Geometry (HLSG) features from a target image.</span>
+<span class="sd">	These features include a heterogenous composition of lower-level features:</span>
+<span class="sd">	a bead and sprouts.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">HLSGExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+	
+<div class="viewcode-block" id="HLSGExtractor.preprocess"><a class="viewcode-back" href="../Extraction.html#Extraction.HLSGExtractor.preprocess">[docs]</a>	<span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="HLSGExtractor.maskBeads"><a class="viewcode-back" href="../Extraction.html#Extraction.HLSGExtractor.maskBeads">[docs]</a>	<span class="k">def</span> <span class="nf">maskBeads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beads</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Mask the beads.&quot;&quot;&quot;</span>
+		<span class="n">maskedImg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span>
+		<span class="k">for</span> <span class="n">bead</span> <span class="ow">in</span> <span class="n">beads</span><span class="p">:</span>
+			<span class="n">goldenRatio</span> <span class="o">=</span> <span class="mf">1.614</span>
+			<span class="n">circleMask</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+			<span class="n">circleMask</span><span class="o">.</span><span class="n">dl</span><span class="p">()</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
+				<span class="p">(</span><span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
+				<span class="n">bead</span><span class="o">.</span><span class="n">radius</span><span class="p">()</span> <span class="o">*</span> <span class="n">goldenRatio</span><span class="p">,</span>
+				<span class="n">filled</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+				<span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">WHITE</span><span class="p">)</span>
+			<span class="n">circleMask</span> <span class="o">=</span> <span class="n">circleMask</span><span class="o">.</span><span class="n">applyLayers</span><span class="p">()</span>
+			<span class="n">maskedImg</span> <span class="o">=</span> <span class="n">maskedImg</span> <span class="o">-</span> <span class="n">circleMask</span>
+			<span class="n">maskedImg</span> <span class="o">=</span> <span class="n">maskedImg</span><span class="o">.</span><span class="n">applyLayers</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">maskedImg</span>
+</div>
+<div class="viewcode-block" id="HLSGExtractor.mapSproutsToBeads"><a class="viewcode-back" href="../Extraction.html#Extraction.HLSGExtractor.mapSproutsToBeads">[docs]</a>	<span class="k">def</span> <span class="nf">mapSproutsToBeads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sprouts</span><span class="p">,</span> <span class="n">beads</span><span class="p">):</span>
+		<span class="n">hlsgs</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">hlsgsMapper</span> <span class="o">=</span> <span class="p">{}</span>
+
+		<span class="c"># Initialize mapper</span>
+		<span class="k">for</span> <span class="n">bead</span> <span class="ow">in</span> <span class="n">beads</span><span class="p">:</span>
+			<span class="n">hlsgsMapper</span><span class="p">[</span><span class="n">bead</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="c"># Map sprouts</span>
+		<span class="k">for</span> <span class="n">sprout</span> <span class="ow">in</span> <span class="n">sprouts</span><span class="p">:</span>
+			<span class="n">closestBead</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="n">closestDist</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">bead</span> <span class="ow">in</span> <span class="n">beads</span><span class="p">:</span>
+				<span class="n">dist</span> <span class="o">=</span> <span class="n">spsd</span><span class="o">.</span><span class="n">euclidean</span><span class="p">((</span><span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">sprout</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+				<span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">closestDist</span><span class="p">:</span>
+					<span class="n">closestDist</span> <span class="o">=</span> <span class="n">dist</span>
+					<span class="n">closestBead</span> <span class="o">=</span> <span class="n">bead</span>
+			<span class="n">hlsgsMapper</span><span class="p">[</span><span class="n">closestBead</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sprout</span><span class="p">)</span>
+		
+		<span class="c"># Generate HLSGs</span>
+		<span class="k">for</span> <span class="n">bead</span><span class="p">,</span> <span class="n">sprouts</span> <span class="ow">in</span> <span class="n">hlsgsMapper</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="n">hlsgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HLSG</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">bead</span><span class="p">,</span> <span class="n">sprouts</span><span class="p">))</span>
+
+		<span class="k">return</span> <span class="n">hlsgs</span>
+</div>
+<div class="viewcode-block" id="HLSGExtractor.extract"><a class="viewcode-back" href="../Extraction.html#Extraction.HLSGExtractor.extract">[docs]</a>	<span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="c"># Extract beads</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">beadExtractor</span> <span class="o">=</span> <span class="n">BeadExtractor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">)</span>
+			<span class="n">beads</span> <span class="o">=</span> <span class="n">beadExtractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+
+			<span class="c"># Extract sprouts</span>
+			<span class="n">maskedImg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maskBeads</span><span class="p">(</span><span class="n">beads</span><span class="p">)</span>
+			<span class="n">sproutExtractor</span> <span class="o">=</span> <span class="n">SproutExtractor</span><span class="p">(</span><span class="n">maskedImg</span><span class="p">,</span> <span class="n">beads</span><span class="p">)</span>
+			<span class="n">sprouts</span> <span class="o">=</span> <span class="n">sproutExtractor</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+			<span class="n">hlsgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapSproutsToBeads</span><span class="p">(</span><span class="n">sprouts</span><span class="p">,</span> <span class="n">beads</span><span class="p">)</span>
+
+			<span class="k">return</span> <span class="n">FeatureSet</span><span class="p">(</span><span class="n">hlsgs</span><span class="p">)</span>
+		<span class="k">except</span> <span class="n">NoBeadException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">[]</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gio Cielo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

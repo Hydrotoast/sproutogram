@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SproutSegmentation &mdash; Angiogram Sprout Extraction  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for SproutSegmentation</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">SimpleCV</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">Geometry</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">SetForest</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">Features</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="SproutSegmenter"><a class="viewcode-back" href="../SproutSegmentation.html#SproutSegmentation.SproutSegmenter">[docs]</a><span class="k">class</span> <span class="nc">SproutSegmenter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SproutSegmenter.injectImg"><a class="viewcode-back" href="../SproutSegmentation.html#SproutSegmentation.SproutSegmenter.injectImg">[docs]</a>	<span class="k">def</span> <span class="nf">injectImg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">img</span>
+</div>
+<div class="viewcode-block" id="SproutSegmenter.injectBeads"><a class="viewcode-back" href="../SproutSegmentation.html#SproutSegmentation.SproutSegmenter.injectBeads">[docs]</a>	<span class="k">def</span> <span class="nf">injectBeads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beads</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">beads</span> <span class="o">=</span> <span class="n">beads</span>
+</div>
+<div class="viewcode-block" id="SproutSegmenter.findClosestBead"><a class="viewcode-back" href="../SproutSegmentation.html#SproutSegmentation.SproutSegmenter.findClosestBead">[docs]</a>	<span class="k">def</span> <span class="nf">findClosestBead</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blob</span><span class="p">):</span>
+		<span class="n">closestBead</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="n">closestDist</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">bead</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">:</span>
+			<span class="n">dist</span> <span class="o">=</span> <span class="n">spsd</span><span class="o">.</span><span class="n">euclidean</span><span class="p">((</span><span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">blob</span><span class="o">.</span><span class="n">centroid</span><span class="p">())</span>
+			<span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">closestDist</span><span class="p">:</span>
+				<span class="n">closestDist</span> <span class="o">=</span> <span class="n">dist</span>
+				<span class="n">closestBead</span> <span class="o">=</span> <span class="n">bead</span>
+		<span class="k">return</span> <span class="n">bead</span>
+</div>
+<div class="viewcode-block" id="SproutSegmenter.generateConnections"><a class="viewcode-back" href="../SproutSegmentation.html#SproutSegmentation.SproutSegmenter.generateConnections">[docs]</a>	<span class="k">def</span> <span class="nf">generateConnections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blobSegments</span><span class="p">,</span> <span class="n">distanceThreshold</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Generates hypothetical connections between blob segments if they are</span>
+<span class="sd">		within a thresholded neighborhood of each other.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			A list of generated, hypothetical connections.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">segmentOuter</span> <span class="ow">in</span> <span class="n">blobSegments</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">segmentInner</span> <span class="ow">in</span> <span class="n">blobSegments</span><span class="p">:</span>
+				<span class="c"># Do not connect segments to each other</span>
+				<span class="k">if</span> <span class="n">segmentOuter</span> <span class="o">==</span> <span class="n">segmentInner</span><span class="p">:</span>
+					<span class="k">continue</span>
+				<span class="n">distance</span> <span class="o">=</span> <span class="n">spsd</span><span class="o">.</span><span class="n">euclidean</span><span class="p">(</span><span class="n">segmentOuter</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">segmentInner</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;</span> <span class="n">distanceThreshold</span><span class="p">:</span>
+					<span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">segmentOuter</span><span class="p">,</span> <span class="n">segmentInner</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">connections</span>
+</div>
+<div class="viewcode-block" id="SproutSegmenter.generateBlobSegments"><a class="viewcode-back" href="../SproutSegmentation.html#SproutSegmentation.SproutSegmenter.generateBlobSegments">[docs]</a>	<span class="k">def</span> <span class="nf">generateBlobSegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blobs</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Generates a list of linear approximations for blobs. That is, blobs are</span>
+<span class="sd">		modeled as geometric rays defined radially outward.</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			A list of generated rays defined radially outward.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">blobSegments</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">blobs</span><span class="p">:</span>
+			<span class="c"># Acquire blob segments</span>
+			<span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span><span class="p">:</span>
+				<span class="n">bead</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findClosestBead</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span>
+				<span class="n">sortedContour</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+					<span class="n">blob</span><span class="o">.</span><span class="n">contour</span><span class="p">(),</span> 
+					<span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">spsd</span><span class="o">.</span><span class="n">euclidean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">)))</span>
+				<span class="n">start</span> <span class="o">=</span> <span class="n">sortedContour</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="n">end</span> <span class="o">=</span> <span class="n">sortedContour</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+				<span class="n">radialSegment</span> <span class="o">=</span> <span class="n">RadialSegment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">blob</span><span class="p">)</span>
+				<span class="n">blobSegments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">radialSegment</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">blobSegments</span>
+</div>
+<div class="viewcode-block" id="SproutSegmenter.generateSproutSegments"><a class="viewcode-back" href="../SproutSegmentation.html#SproutSegmentation.SproutSegmenter.generateSproutSegments">[docs]</a>	<span class="k">def</span> <span class="nf">generateSproutSegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blobSegments</span><span class="p">,</span> <span class="n">connections</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Generates the sprout segments as lists of blobs.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			A list of sprout segments.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">setForest</span> <span class="o">=</span> <span class="n">SetForest</span><span class="p">(</span><span class="n">blobSegments</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+			<span class="n">setForest</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
+				<span class="n">setForest</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">connection</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+				<span class="n">setForest</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">connection</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+		<span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+		<span class="n">blobMap</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">blobSegments</span><span class="p">:</span>
+			<span class="n">parent</span> <span class="o">=</span> <span class="n">setForest</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">parent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+				<span class="n">blobMap</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">parent</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">parent</span><span class="p">,</span> <span class="n">segment</span><span class="p">]))})</span>
+				<span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">blobMap</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+		<span class="n">sprouts</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">segments</span> <span class="ow">in</span> <span class="n">blobMap</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+			<span class="n">sprouts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Sprout</span><span class="p">(</span><span class="n">segments</span><span class="p">))</span>
+
+		<span class="c"># --DEBUG</span>
+		<span class="c"># FeatureSet(blobSegments).draw(color=Color.RED, width=4)</span>
+		<span class="k">return</span> <span class="n">sprouts</span>
+</div>
+<div class="viewcode-block" id="SproutSegmenter.segment"><a class="viewcode-back" href="../SproutSegmentation.html#SproutSegmentation.SproutSegmenter.segment">[docs]</a>	<span class="k">def</span> <span class="nf">segment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">blobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">findBlobs</span><span class="p">(</span><span class="n">minsize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+		<span class="c"># --DEBUG</span>
+		<span class="c"># blobs.draw(color=Color.RED, width=4)</span>
+		
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">blobs</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">[]</span>
+
+		<span class="n">blobSegments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generateBlobSegments</span><span class="p">(</span><span class="n">blobs</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">blobSegments</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">[]</span>
+
+		<span class="n">connections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generateConnections</span><span class="p">(</span><span class="n">blobSegments</span><span class="p">)</span>
+		<span class="n">sprouts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generateSproutSegments</span><span class="p">(</span><span class="n">blobSegments</span><span class="p">,</span> <span class="n">connections</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">sprouts</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gio Cielo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

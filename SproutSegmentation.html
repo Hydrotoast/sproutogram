@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>SproutSegmentation Module &mdash; src  documentation</title>
+    <title>SproutSegmentation Module &mdash; Angiogram Sprout Extraction  documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="index.html" />
     <link rel="next" title="SteerableFilter Module" href="SteerableFilter.html" />
     <link rel="prev" title="ShollAnalysis Module" href="ShollAnalysis.html" /> 
   </head>
@@ -35,28 +35,17 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="SteerableFilter.html" title="SteerableFilter Module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="ShollAnalysis.html" title="ShollAnalysis Module"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">src  documentation</a> &raquo;</li> 
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <div class="section" id="sproutsegmentation-module">
-<h1>SproutSegmentation Module<a class="headerlink" href="#sproutsegmentation-module" title="Permalink to this headline">¶</a></h1>
-</div>
-
-
-          </div>
-        </div>
-      </div>
+    </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
@@ -85,6 +74,110 @@
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-SproutSegmentation">
+<span id="sproutsegmentation-module"></span><h1>SproutSegmentation Module<a class="headerlink" href="#module-SproutSegmentation" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="SproutSegmentation.SproutSegmenter">
+<em class="property">class </em><tt class="descclassname">SproutSegmentation.</tt><tt class="descname">SproutSegmenter</tt><a class="reference internal" href="_modules/SproutSegmentation.html#SproutSegmenter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SproutSegmentation.SproutSegmenter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="SproutSegmentation.SproutSegmenter.findClosestBead">
+<tt class="descname">findClosestBead</tt><big>(</big><em>blob</em><big>)</big><a class="reference internal" href="_modules/SproutSegmentation.html#SproutSegmenter.findClosestBead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SproutSegmentation.SproutSegmenter.findClosestBead" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the bead of closest to the given blob in terms of Euclidean
+distance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>blob</strong> &#8211; blob to find the closest bead for</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">closest bead</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Bead</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="SproutSegmentation.SproutSegmenter.generateBlobSegments">
+<tt class="descname">generateBlobSegments</tt><big>(</big><em>blobs</em><big>)</big><a class="reference internal" href="_modules/SproutSegmentation.html#SproutSegmenter.generateBlobSegments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SproutSegmentation.SproutSegmenter.generateBlobSegments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a list of linear approximations for blobs. That is, blobs are
+modeled as geometric rays defined radially outward.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of generated rays defined radially outward.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">[RadialSegment]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="SproutSegmentation.SproutSegmenter.generateConnections">
+<tt class="descname">generateConnections</tt><big>(</big><em>blobSegments</em>, <em>distanceThreshold=20</em><big>)</big><a class="reference internal" href="_modules/SproutSegmentation.html#SproutSegmenter.generateConnections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SproutSegmentation.SproutSegmenter.generateConnections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates hypothetical connections between blob segments if they are
+within a thresholded neighborhood of each other.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of generated, hypothetical connections.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">[(Blob, Blob)]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="SproutSegmentation.SproutSegmenter.generateSproutSegments">
+<tt class="descname">generateSproutSegments</tt><big>(</big><em>blobSegments</em>, <em>connections</em><big>)</big><a class="reference internal" href="_modules/SproutSegmentation.html#SproutSegmenter.generateSproutSegments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SproutSegmentation.SproutSegmenter.generateSproutSegments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the sprout segments as lists of blobs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of sprout segments.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">[Sprout]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="SproutSegmentation.SproutSegmenter.injectBeads">
+<tt class="descname">injectBeads</tt><big>(</big><em>beads</em><big>)</big><a class="reference internal" href="_modules/SproutSegmentation.html#SproutSegmenter.injectBeads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SproutSegmentation.SproutSegmenter.injectBeads" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SproutSegmentation.SproutSegmenter.injectImg">
+<tt class="descname">injectImg</tt><big>(</big><em>img</em><big>)</big><a class="reference internal" href="_modules/SproutSegmentation.html#SproutSegmenter.injectImg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SproutSegmentation.SproutSegmenter.injectImg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SproutSegmentation.SproutSegmenter.segment">
+<tt class="descname">segment</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/SproutSegmentation.html#SproutSegmenter.segment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SproutSegmentation.SproutSegmenter.segment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -94,12 +187,15 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="SteerableFilter.html" title="SteerableFilter Module"
              >next</a> |</li>
         <li class="right" >
           <a href="ShollAnalysis.html" title="ShollAnalysis Module"
              >previous</a> |</li>
-        <li><a href="index.html">src  documentation</a> &raquo;</li> 
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

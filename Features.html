@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Features Module &mdash; src  documentation</title>
+    <title>Features Module &mdash; Angiogram Sprout Extraction  documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="index.html" />
     <link rel="next" title="Geometry Module" href="Geometry.html" />
     <link rel="prev" title="Extraction Module" href="Extraction.html" /> 
   </head>
@@ -35,28 +35,17 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="Geometry.html" title="Geometry Module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="Extraction.html" title="Extraction Module"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">src  documentation</a> &raquo;</li> 
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <div class="section" id="features-module">
-<h1>Features Module<a class="headerlink" href="#features-module" title="Permalink to this headline">¶</a></h1>
-</div>
-
-
-          </div>
-        </div>
-      </div>
+    </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
@@ -85,6 +74,83 @@
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-Features">
+<span id="features-module"></span><h1>Features Module<a class="headerlink" href="#module-Features" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Features.Bead">
+<em class="property">class </em><tt class="descclassname">Features.</tt><tt class="descname">Bead</tt><big>(</big><em>img</em>, <em>circle</em><big>)</big><a class="reference internal" href="_modules/Features.html#Bead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.Bead" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">SimpleCV.Features.Detection.Circle</span></tt></p>
+<p>The Bead feature describes a bead in an angiogram.</p>
+<dl class="method">
+<dt id="Features.Bead.origin">
+<tt class="descname">origin</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Features.html#Bead.origin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.Bead.origin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the origin of the bead.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(int, int)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Features.HLSG">
+<em class="property">class </em><tt class="descclassname">Features.</tt><tt class="descname">HLSG</tt><big>(</big><em>img</em>, <em>bead</em>, <em>sprouts</em><big>)</big><a class="reference internal" href="_modules/Features.html#HLSG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.HLSG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">SimpleCV.Features.Features.Feature</span></tt></p>
+<p>The High-Level Sprout Geometry (HLSG) feature describes an angiogram by its
+bead and associated sprouts.</p>
+<dl class="method">
+<dt id="Features.HLSG.draw">
+<tt class="descname">draw</tt><big>(</big><em>color</em>, <em>width=4</em><big>)</big><a class="reference internal" href="_modules/Features.html#HLSG.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.HLSG.draw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Features.Sprout">
+<em class="property">class </em><tt class="descclassname">Features.</tt><tt class="descname">Sprout</tt><big>(</big><em>lines</em><big>)</big><a class="reference internal" href="_modules/Features.html#Sprout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.Sprout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">SimpleCV.Features.Features.FeatureSet</span></tt></p>
+<p>The Sprout feature set describes a set of possible lines (possibly
+disjoint) that may comprise an individual sprout.</p>
+<dl class="method">
+<dt id="Features.Sprout.length">
+<tt class="descname">length</tt><big>(</big><em>img</em>, <em>lines</em><big>)</big><a class="reference internal" href="_modules/Features.html#Sprout.length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.Sprout.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of the sprout in pixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(int)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Features.Sprout.restore">
+<tt class="descname">restore</tt><big>(</big><em>color=(255</em>, <em>255</em>, <em>255)</em>, <em>width=1</em>, <em>distanceThreshold=20</em><big>)</big><a class="reference internal" href="_modules/Features.html#Sprout.restore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.Sprout.restore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to restore the sprout segments by drawing on the image
+layers.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -94,12 +160,15 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="Geometry.html" title="Geometry Module"
              >next</a> |</li>
         <li class="right" >
           <a href="Extraction.html" title="Extraction Module"
              >previous</a> |</li>
-        <li><a href="index.html">src  documentation</a> &raquo;</li> 
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

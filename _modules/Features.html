@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Features &mdash; Angiogram Sprout Extraction  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for Features</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">SimpleCV</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="Bead"><a class="viewcode-back" href="../Features.html#Features.Bead">[docs]</a><span class="k">class</span> <span class="nc">Bead</span><span class="p">(</span><span class="n">Circle</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">circle</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">Bead</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+			<span class="n">img</span><span class="p">,</span> 
+			<span class="n">circle</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> 
+			<span class="n">circle</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> 
+			<span class="n">circle</span><span class="o">.</span><span class="n">radius</span><span class="p">())</span>
+
+<div class="viewcode-block" id="Bead.origin"><a class="viewcode-back" href="../Features.html#Features.Bead.origin">[docs]</a>	<span class="k">def</span> <span class="nf">origin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="Sprout"><a class="viewcode-back" href="../Features.html#Features.Sprout">[docs]</a><span class="k">class</span> <span class="nc">Sprout</span><span class="p">(</span><span class="n">FeatureSet</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Sprout.length"><a class="viewcode-back" href="../Features.html#Features.Sprout.length">[docs]</a>	<span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Sprout.restore"><a class="viewcode-back" href="../Features.html#Features.Sprout.restore">[docs]</a>	<span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">WHITE</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">distanceThreshold</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+		<span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">segmentInner</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">segmentOuter</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">segmentOuter</span> <span class="o">==</span> <span class="n">segmentInner</span><span class="p">:</span>
+					<span class="k">continue</span>
+				<span class="n">distance</span> <span class="o">=</span> <span class="n">spsd</span><span class="o">.</span><span class="n">euclidean</span><span class="p">(</span><span class="n">segmentInner</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">segmentOuter</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;</span> <span class="n">distanceThreshold</span><span class="p">:</span>
+					<span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">segmentInner</span><span class="p">,</span> <span class="n">segmentOuter</span><span class="p">))</span>
+
+		<span class="k">for</span> <span class="n">inner</span><span class="p">,</span> <span class="n">outer</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+			<span class="bp">self</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">inner</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">outer</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="HLSG"><a class="viewcode-back" href="../Features.html#Features.HLSG">[docs]</a><span class="k">class</span> <span class="nc">HLSG</span><span class="p">(</span><span class="n">Feature</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">bead</span><span class="p">,</span> <span class="n">sprouts</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bead</span> <span class="o">=</span> <span class="n">bead</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sprouts</span> <span class="o">=</span> <span class="n">sprouts</span>
+		<span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">HLSG</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s">&quot;HLSG at (</span><span class="si">%d</span><span class="s">, </span><span class="si">%d</span><span class="s">) with </span><span class="si">%d</span><span class="s"> sprouts&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sprouts</span><span class="p">))</span>
+
+<div class="viewcode-block" id="HLSG.draw"><a class="viewcode-back" href="../Features.html#Features.HLSG.draw">[docs]</a>	<span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bead</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">sprout</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sprouts</span><span class="p">:</span>
+			<span class="n">sprout</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gio Cielo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

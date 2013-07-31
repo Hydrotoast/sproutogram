@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>ShollAnalysis Module &mdash; src  documentation</title>
+    <title>ShollAnalysis Module &mdash; Angiogram Sprout Extraction  documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="index.html" />
     <link rel="next" title="SproutSegmentation Module" href="SproutSegmentation.html" />
     <link rel="prev" title="SetForest Module" href="SetForest.html" /> 
   </head>
@@ -35,28 +35,17 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="SproutSegmentation.html" title="SproutSegmentation Module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="SetForest.html" title="SetForest Module"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">src  documentation</a> &raquo;</li> 
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <div class="section" id="shollanalysis-module">
-<h1>ShollAnalysis Module<a class="headerlink" href="#shollanalysis-module" title="Permalink to this headline">¶</a></h1>
-</div>
-
-
-          </div>
-        </div>
-      </div>
+    </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
@@ -85,6 +74,152 @@
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-ShollAnalysis">
+<span id="shollanalysis-module"></span><h1>ShollAnalysis Module<a class="headerlink" href="#module-ShollAnalysis" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ShollAnalysis.ShollAnalysisDescriptor">
+<em class="property">class </em><tt class="descclassname">ShollAnalysis.</tt><tt class="descname">ShollAnalysisDescriptor</tt><big>(</big><em>img</em>, <em>crossings</em><big>)</big><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalysisDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalysisDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Descriptor for a Sholl Analysis containing the raw data dump of the
+analysis as well as other derivable calculations.</p>
+<dl class="attribute">
+<dt id="ShollAnalysis.ShollAnalysisDescriptor.criticalValue">
+<tt class="descname">criticalValue</tt><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalysisDescriptor.criticalValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalysisDescriptor.criticalValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the critical value which is defined to be the radius at which
+the maximum number of crossings occur.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ShollAnalysis.ShollAnalysisDescriptor.crossings">
+<tt class="descname">crossings</tt><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalysisDescriptor.crossings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalysisDescriptor.crossings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a cached list of crossings as a function of radius. A crossing
+is an instance of an intersection with a concentric circle of specified
+radius with a sprout blob.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dictionary of {int: int}</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ShollAnalysis.ShollAnalysisDescriptor.img">
+<tt class="descname">img</tt><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalysisDescriptor.img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalysisDescriptor.img" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the image analyzed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ShollAnalysis.ShollAnalysisDescriptor.ramificationIndex">
+<tt class="descname">ramificationIndex</tt><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalysisDescriptor.ramificationIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalysisDescriptor.ramificationIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Shoenen Ramification Index which is a ratio for branching
+factor. This is calculated by dividing the sprout maximum with the
+number of primary sprouts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ShollAnalysis.ShollAnalysisDescriptor.sproutCount">
+<tt class="descname">sproutCount</tt><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalysisDescriptor.sproutCount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalysisDescriptor.sproutCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a count of the primary sprouts. Primary sprouts are those
+sprouts which stem directly from the bead.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ShollAnalysis.ShollAnalysisDescriptor.sproutMaximum">
+<tt class="descname">sproutMaximum</tt><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalysisDescriptor.sproutMaximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalysisDescriptor.sproutMaximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the maximum number of crossings of all radii.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ShollAnalysis.ShollAnalyzer">
+<em class="property">class </em><tt class="descclassname">ShollAnalysis.</tt><tt class="descname">ShollAnalyzer</tt><big>(</big><em>img</em>, <em>bead</em><big>)</big><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An analayzer for quantitatively analyzing the morphological characteristics
+of an angiogram. This analyzer depends on the known position of the bead in
+the angiogram to perform the analysis using concentric circles.</p>
+<dl class="method">
+<dt id="ShollAnalysis.ShollAnalyzer.analyze">
+<tt class="descname">analyze</tt><big>(</big><em>stepSize=1</em><big>)</big><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalyzer.analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalyzer.analyze" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a descriptor of the analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="docutils literal"><span class="pre">ShollAnalysisDescriptor</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ShollAnalysis.ShollAnalyzer.generateCircularCoordinates">
+<tt class="descname">generateCircularCoordinates</tt><big>(</big><em>origin</em>, <em>radius</em><big>)</big><a class="reference internal" href="_modules/ShollAnalysis.html#ShollAnalyzer.generateCircularCoordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ShollAnalysis.ShollAnalyzer.generateCircularCoordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator for circular coordinates starting from the x+ vector and
+iterates counterclockwise.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">generateCircularCoordinates</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">5</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="k">print</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of circular coordinates given a specified origin and radius</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -94,12 +229,15 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="SproutSegmentation.html" title="SproutSegmentation Module"
              >next</a> |</li>
         <li class="right" >
           <a href="SetForest.html" title="SetForest Module"
              >previous</a> |</li>
-        <li><a href="index.html">src  documentation</a> &raquo;</li> 
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
