@@ -12,6 +12,14 @@ class SproutSegmenter(object):
 		self.beads = beads
 
 	def findClosestBead(self, blob):
+		"""
+		Finds the bead of closest to the given blob in terms of Euclidean
+		distance.
+
+		:param blob: blob to find the closest bead for
+		:returns: closest bead
+		:rtype: Bead
+		"""
 		closestBead = None
 		closestDist = float('inf')
 		for bead in self.beads:
@@ -26,8 +34,8 @@ class SproutSegmenter(object):
 		Generates hypothetical connections between blob segments if they are
 		within a thresholded neighborhood of each other.
 
-		Returns:
-			A list of generated, hypothetical connections.
+		:returns: A list of generated, hypothetical connections.
+		:rtype: [(Blob, Blob)]
 		"""
 		connections = []
 		for segmentOuter in blobSegments:
@@ -45,8 +53,8 @@ class SproutSegmenter(object):
 		Generates a list of linear approximations for blobs. That is, blobs are
 		modeled as geometric rays defined radially outward.
 		
-		Returns:
-			A list of generated rays defined radially outward.
+		:returns: A list of generated rays defined radially outward.
+		:rtype: [RadialSegment]
 		"""
 		blobSegments = []
 		if blobs:
@@ -67,8 +75,8 @@ class SproutSegmenter(object):
 		"""
 		Generates the sprout segments as lists of blobs.
 
-		Returns:
-			A list of sprout segments.
+		:returns: A list of sprout segments.
+		:rtype: [Sprout]
 		"""
 		setForest = SetForest(blobSegments)
 		for connection in connections:

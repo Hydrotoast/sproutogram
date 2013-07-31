@@ -23,35 +23,59 @@ class ShollAnalysisDescriptor(object):
 
 	@property
 	def crossings(self):
-		"""Returns a cached list of crossings as a function of radius."""
+		"""
+		Returns a cached list of crossings as a function of radius. A crossing
+		is an instance of an intersection with a concentric circle of specified
+		radius with a sprout blob.
+
+		:rtype: dictionary of {int: int}
+		"""
 		return self.__crossings
 
 	@property
 	def sproutCount(self):
-		"""Returns a count of the primary sprouts."""
+		"""
+		Returns a count of the primary sprouts. Primary sprouts are those
+		sprouts which stem directly from the bead.
+
+		:rtype: int
+		"""
 		if not self.__sproutCount:
 			self.__sproutCount = sum(self.crossings.values()[:5]) / 5
 		return self.__sproutCount
 
 	@property
 	def criticalValue(self):
-		"""Returns the critical value which is the radius at which the maximum
-		number of crossings occur."""
+		"""
+		Returns the critical value which is defined to be the radius at which
+		the maximum number of crossings occur.
+
+		:rtype: int
+		"""
 		if not self.__criticalValue:
 			self.__criticalValue = max(self.crossings.iteritems(), key=operator.itemgetter(1))[0]
 		return self.__criticalValue
 
 	@property
 	def sproutMaximum(self):
-		"""Returns the maximum number of crossings of all radii."""
+		"""
+		Returns the maximum number of crossings of all radii.
+
+		:rtype: int
+		"""
 		if not self.__sproutMaximum:
 			self.__sproutMaximum = max(self.crossings.itervalues())
 		return self.__sproutMaximum
 
 	@property
 	def ramificationIndex(self):
-		"""Returns the Shoenen Ramification Index which is a ratio for
-		branching factor."""
+		"""
+		Returns the Shoenen Ramification Index which is a ratio for branching
+		factor. This is calculated by dividing the sprout maximum with the
+		number of primary sprouts.
+		
+		:rtype: float
+		"""
 		if not self.__ramificationIndex:
 			self.__ramificationIndex = float(self.sproutMaximum) / float(self.sproutCount)
 		return self.__ramificationIndex
@@ -72,8 +96,10 @@ class ShollAnalyzer(object):
 		Generator for circular coordinates starting from the x+ vector and
 		iterates counterclockwise.
 
-		Returns:
-			A list of circular coordinates given a specified origin and radius
+			>>> for x, y in analyzer.generateCircularCoordinates((0, 0), 5):
+			>>>		print x, y
+
+		:returns: A list of circular coordinates given a specified origin and radius
 		"""
 		x = radius
 		y = 0
@@ -113,7 +139,9 @@ class ShollAnalyzer(object):
 				yield point
 
 	def analyze(self, stepSize = 1):
-		"""Returns a descriptor of the analysis."""
+		"""Returns a descriptor of the analysis.
+		
+		:rtype: ``ShollAnalysisDescriptor``"""
 		initRadius = int(self.bead.radius() * 1.814)
 		maxRadius = min([self.bead.x, self.bead.y, self.img.size()[0] -
 			self.bead.x, self.img.size()[1] - self.bead.y])

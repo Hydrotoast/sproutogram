@@ -39,8 +39,7 @@ class BeadExtractor(ExtractorBase):
 	def preprocess(self):
 		cannyMin, cannyMax = (100, 300)
 		self.img = self.img.smooth(sigma=20)
-		self.img = self.img.edges(cannyMin, cannyMax)
-	
+		self.img = self.img.edges(cannyMin, cannyExtraction.py
 	def extract(self):
 		self.preprocess()
 		circles = self.img.findCircle(canny=250, thresh=120, distance=150)

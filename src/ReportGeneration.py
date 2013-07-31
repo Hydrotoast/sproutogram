@@ -10,6 +10,7 @@ class ReportGeneratorBase(object):
 		self.analyses = {}
 
 	def generate(self):
+		"""Generates the report as CSV."""
 		pass
 
 
@@ -23,6 +24,12 @@ class ShollAnalysisReport(ReportGeneratorBase):
 		super(ShollAnalysisReport, self).__init__(filename)
 
 	def addAnalysis(self, filename, analysis):
+		"""
+		Appends an analysis of the specified filename to the report.
+
+		:param filename: name of the file analyzed
+		:param analysis: analysis of the file
+		"""
 		self.analyses[filename] = analysis
 
 	def generate(self):
