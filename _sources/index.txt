@@ -1,0 +1,33 @@
+.. src documentation master file, created by
+   sphinx-quickstart on Tue Jul 30 18:00:19 2013.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to src's documentation!
+===============================
+
+Contents:
+
+.. toctree::
+   :maxdepth: 4
+
+   Driver
+   Extraction
+   Features
+   Geometry
+   REPL
+   ReportGeneration
+   SetForest
+   ShollAnalysis
+   SproutSegmentation
+   SteerableFilter
+   utils
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
