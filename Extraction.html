@@ -94,6 +94,24 @@ transformation to find the center and radius of the bead.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="Extraction.BeadExtractor.extractCircles">
+<tt class="descname">extractCircles</tt><big>(</big><em>canny=250</em>, <em>thresh=120</em>, <em>distance=150</em><big>)</big><a class="headerlink" href="#Extraction.BeadExtractor.extractCircles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts circle features from the target image using the circular
+hough transform. Use this instead of the default <tt class="docutils literal"><span class="pre">image.findCircles()</span></tt>
+algorithm because a maximum radius is supplied here.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of circle features from the target image</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">[Circle]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="Extraction.BeadExtractor.preprocess">
 <tt class="descname">preprocess</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Extraction.html#BeadExtractor.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.BeadExtractor.preprocess" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -174,7 +192,7 @@ a bead and sprouts.</p>
 
 <dl class="class">
 <dt id="Extraction.SproutExtractor">
-<em class="property">class </em><tt class="descclassname">Extraction.</tt><tt class="descname">SproutExtractor</tt><big>(</big><em>img</em>, <em>beads</em>, <em>segmentStrat=&lt;SproutSegmentation.SproutSegmenter object at 0xa5705ac&gt;</em><big>)</big><a class="reference internal" href="_modules/Extraction.html#SproutExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.SproutExtractor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">Extraction.</tt><tt class="descname">SproutExtractor</tt><big>(</big><em>img</em>, <em>beads</em>, <em>segmentStrat=&lt;SproutSegmentation.SproutSegmenter object at 0xb8f3cac&gt;</em><big>)</big><a class="reference internal" href="_modules/Extraction.html#SproutExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.SproutExtractor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#Extraction.ExtractorBase" title="Extraction.ExtractorBase"><tt class="xref py py-class docutils literal"><span class="pre">Extraction.ExtractorBase</span></tt></a></p>
 <p>Extracts sprout features form a target image using segmentation
 strategies and computational geometry. Sprout features extracted
