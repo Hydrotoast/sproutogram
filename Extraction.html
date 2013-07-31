@@ -80,8 +80,123 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="extraction-module">
-<h1>Extraction Module<a class="headerlink" href="#extraction-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-Extraction">
+<span id="extraction-module"></span><h1>Extraction Module<a class="headerlink" href="#module-Extraction" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Extraction.BeadExtractor">
+<em class="property">class </em><tt class="descclassname">Extraction.</tt><tt class="descname">BeadExtractor</tt><big>(</big><em>img</em><big>)</big><a class="reference internal" href="_modules/Extraction.html#BeadExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.BeadExtractor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Extraction.ExtractorBase" title="Extraction.ExtractorBase"><tt class="xref py py-class docutils literal"><span class="pre">Extraction.ExtractorBase</span></tt></a></p>
+<p>Extracts bead features from a target image using a circular hough
+transformation to find the center and radius of the bead.</p>
+<dl class="method">
+<dt id="Extraction.BeadExtractor.extract">
+<tt class="descname">extract</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Extraction.html#BeadExtractor.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.BeadExtractor.extract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Extraction.BeadExtractor.preprocess">
+<tt class="descname">preprocess</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Extraction.html#BeadExtractor.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.BeadExtractor.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Extraction.ExtractorBase">
+<em class="property">class </em><tt class="descclassname">Extraction.</tt><tt class="descname">ExtractorBase</tt><big>(</big><em>img</em><big>)</big><a class="reference internal" href="_modules/Extraction.html#ExtractorBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.ExtractorBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="Extraction.ExtractorBase.extract">
+<tt class="descname">extract</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Extraction.html#ExtractorBase.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.ExtractorBase.extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts a homogenous list of a single feature from a target image. The
+template first applies preprocessing steps and follows with feature
+extraction.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>A homogenous list of a single feature.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Extraction.ExtractorBase.preprocess">
+<tt class="descname">preprocess</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Extraction.html#ExtractorBase.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.ExtractorBase.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocesses a target image before feature extraction is
+performed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Extraction.HLSGExtractor">
+<em class="property">class </em><tt class="descclassname">Extraction.</tt><tt class="descname">HLSGExtractor</tt><big>(</big><em>img</em><big>)</big><a class="reference internal" href="_modules/Extraction.html#HLSGExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.HLSGExtractor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Extraction.ExtractorBase" title="Extraction.ExtractorBase"><tt class="xref py py-class docutils literal"><span class="pre">Extraction.ExtractorBase</span></tt></a></p>
+<p>Extracts High-Level Sprout Geometry (HLSG) features from a target image.
+These features include a heterogenous composition of lower-level features:
+a bead and sprouts.</p>
+<dl class="method">
+<dt id="Extraction.HLSGExtractor.extract">
+<tt class="descname">extract</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Extraction.html#HLSGExtractor.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.HLSGExtractor.extract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Extraction.HLSGExtractor.mapSproutsToBeads">
+<tt class="descname">mapSproutsToBeads</tt><big>(</big><em>sprouts</em>, <em>beads</em><big>)</big><a class="reference internal" href="_modules/Extraction.html#HLSGExtractor.mapSproutsToBeads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.HLSGExtractor.mapSproutsToBeads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a list of HLSGs by mapping sprouts to their associated beads.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of HLSGs by mapping sprouts to their associated beads.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">[HLSG]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Extraction.HLSGExtractor.maskBeads">
+<tt class="descname">maskBeads</tt><big>(</big><em>beads</em><big>)</big><a class="reference internal" href="_modules/Extraction.html#HLSGExtractor.maskBeads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.HLSGExtractor.maskBeads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask the beads.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Extraction.HLSGExtractor.preprocess">
+<tt class="descname">preprocess</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Extraction.html#HLSGExtractor.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.HLSGExtractor.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Extraction.NoBeadException">
+<em class="property">exception </em><tt class="descclassname">Extraction.</tt><tt class="descname">NoBeadException</tt><a class="reference internal" href="_modules/Extraction.html#NoBeadException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.NoBeadException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Extraction.SproutExtractor">
+<em class="property">class </em><tt class="descclassname">Extraction.</tt><tt class="descname">SproutExtractor</tt><big>(</big><em>img</em>, <em>beads</em>, <em>segmentStrat=&lt;SproutSegmentation.SproutSegmenter object at 0xa5705ac&gt;</em><big>)</big><a class="reference internal" href="_modules/Extraction.html#SproutExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.SproutExtractor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Extraction.ExtractorBase" title="Extraction.ExtractorBase"><tt class="xref py py-class docutils literal"><span class="pre">Extraction.ExtractorBase</span></tt></a></p>
+<p>Extracts sprout features form a target image using segmentation
+strategies and computational geometry. Sprout features extracted
+from the image must belong to a specified bead.</p>
+<dl class="method">
+<dt id="Extraction.SproutExtractor.extract">
+<tt class="descname">extract</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Extraction.html#SproutExtractor.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.SproutExtractor.extract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Extraction.SproutExtractor.maskBeads">
+<tt class="descname">maskBeads</tt><big>(</big><em>img</em><big>)</big><a class="reference internal" href="_modules/Extraction.html#SproutExtractor.maskBeads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.SproutExtractor.maskBeads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask the beads.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Extraction.SproutExtractor.preprocess">
+<tt class="descname">preprocess</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/Extraction.html#SproutExtractor.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Extraction.SproutExtractor.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 
 
