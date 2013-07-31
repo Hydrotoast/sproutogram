@@ -4,6 +4,3 @@
 # Auxiliary TeX files
 *.log
 *.aux
-
-# API Docs
-doc/apidoc/**
