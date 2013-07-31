@@ -39,7 +39,8 @@ class BeadExtractor(ExtractorBase):
 	def preprocess(self):
 		cannyMin, cannyMax = (100, 300)
 		self.img = self.img.smooth(sigma=20)
-		self.img = self.img.edges(cannyMin, cannyExtraction.py
+		self.img = self.img.edges(cannyMin, cannyMax)
+
 	def extract(self):
 		self.preprocess()
 		circles = self.img.findCircle(canny=250, thresh=120, distance=150)
@@ -124,6 +125,12 @@ class HLSGExtractor(ExtractorBase):
 		return maskedImg
 
 	def mapSproutsToBeads(self, sprouts, beads):
+		"""
+		Generates a list of HLSGs by mapping sprouts to their associated beads.
+
+		:returns: a list of HLSGs by mapping sprouts to their associated beads.
+		:rtype: [HLSG]
+		"""
 		hlsgs = []
 		hlsgsMapper = {}
 
