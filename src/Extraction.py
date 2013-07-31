@@ -41,9 +41,44 @@ class BeadExtractor(ExtractorBase):
 		self.img = self.img.smooth(sigma=20)
 		self.img = self.img.edges(cannyMin, cannyMax)
 
+	def extractCircles(self, canny=250, thresh=120, distance=150):
+		"""
+		Extracts circle features from the target image using the circular
+		hough transform. Use this instead of the default ``image.findCircles()``
+		algorithm because a maximum radius is supplied here.
+		
+		:returns: a list of circle features from the target image
+		:rtype: [Circle]
+		"""
+		storage = cv.CreateMat(self.img.width, 1, cv.CV_32FC3)
+		if(distance < 0 ):
+			distance = 1 + max(self.img.width, self.img.height)/50
+		cv.HoughCircles(
+			self.img._getGrayscaleBitmap(),
+			storage,
+			cv.CV_HOUGH_GRADIENT,
+			2,
+			distance,
+			canny,
+			thresh,
+			min_radius=30,
+			max_radius=min(self.img.width//6, self.img.height//6))
+		if storage.rows == 0:
+			return None
+		circs = np.asarray(storage)
+		sz = circs.shape
+		circleFS = FeatureSet()
+		for i in range(sz[0]):
+			circleFS.append(Circle(
+				self.img,
+				int(circs[i][0][0]),
+				int(circs[i][0][1]),
+				int(circs[i][0][2])))
+		return circleFS
+
 	def extract(self):
 		self.preprocess()
-		circles = self.img.findCircle(canny=250, thresh=120, distance=150)
+		circles = self.extractCircles()
 		if not circles:
 			raise NoBeadException()
 		beads = [Bead(self.img, circle) for circle in circles]
@@ -85,7 +120,7 @@ class SproutExtractor(ExtractorBase):
 		imgEdges = self.maskBeads(imgEdges)
 
 		dilatedEdges = imgEdges.dilate(dilateCount)
-		skeleton = dilatedEdges.skeletonize(3)
+		skeleton = dilatedEdges.skeletonize(10)
 
 		self.img = skeleton
 
