@@ -14,10 +14,9 @@ def hitmiss(src, element):
 	The algorithm can be described as below:
 
 	.. math::
-		\begin{equation}
-			\mathbf{A} \otimes \mathbf{B} = (\mathbf{A} \ominus \mathbf{B_1})
-				\cap (\overline{\mathbf{A}} \ominus \mathbf{B_2})
-		\end{equation}
+
+		\mathbf{A} \otimes \mathbf{B} = (\mathbf{A} \ominus \mathbf{B_1})
+			\cap (\overline{\mathbf{A}} \ominus \mathbf{B_2})
 	"""
 	k1 = np.array(
 		[[(x==1) for x in row] for row in element], 

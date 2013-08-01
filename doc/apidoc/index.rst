@@ -19,6 +19,7 @@ Contents:
    Extraction: extractors to extract features from an angiogram <Extraction>
    Features: extractable features from an angiogram <Features>
    Geometry: computational geometry objects <Geometry>
+   Morphology: morphological operations <Morphology>
    REPL: Read-Eval-Print-Loop <REPL>
    ReportGeneration: report generators <ReportGeneration>
    SetForest: data structure for the union-find algorithm <SetForest>
