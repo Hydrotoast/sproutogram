@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Morphology &mdash; Angiogram Sprout Extraction  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for Morphology</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">SimpleCV</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="hitmiss"><a class="viewcode-back" href="../Morphology.html#Morphology.hitmiss">[docs]</a><span class="k">def</span> <span class="nf">hitmiss</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Morphological operation for shape detection. The notation for the</span>
+<span class="sd">	structuring element uses ``1`` for foreground, ``-1`` for background and</span>
+<span class="sd">	``0`` for ignore.</span>
+
+<span class="sd">	:param src: source image</span>
+<span class="sd">	:param element: structuring element for the desired shape as a square matrix</span>
+<span class="sd">	:returns: the hit-or-miss transformation of the source image</span>
+<span class="sd">	:rtype: Image</span>
+
+<span class="sd">	The algorithm can be described as below:</span>
+
+<span class="sd">	.. math::</span>
+<span class="sd">		\begin{equation}</span>
+<span class="sd">			\mathbf{A} \otimes \mathbf{B} = (\mathbf{A} \ominus \mathbf{B_1})</span>
+<span class="sd">				\cap (\overline{\mathbf{A}} \ominus \mathbf{B_2})</span>
+<span class="sd">		\end{equation}</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">k1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+		<span class="p">[[(</span><span class="n">x</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">element</span><span class="p">],</span> 
+		<span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+	<span class="n">k2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+		<span class="p">[[(</span><span class="n">x</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">element</span><span class="p">],</span>
+		<span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+	<span class="n">e1</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span>
+		<span class="n">cv2</span><span class="o">.</span><span class="n">erode</span><span class="p">(</span>
+			<span class="n">src</span><span class="o">.</span><span class="n">getGrayNumpyCv2</span><span class="p">(),</span> 
+			<span class="n">k1</span><span class="p">),</span> <span class="n">cv2image</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">e2</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span>
+		<span class="n">cv2</span><span class="o">.</span><span class="n">erode</span><span class="p">(</span>
+			<span class="n">src</span><span class="o">.</span><span class="n">invert</span><span class="p">()</span><span class="o">.</span><span class="n">getGrayNumpyCv2</span><span class="p">(),</span> 
+			<span class="n">k2</span><span class="p">),</span> <span class="n">cv2image</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+	<span class="n">dst</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span>
+		<span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span>
+			<span class="n">e1</span><span class="o">.</span><span class="n">getGrayNumpyCv2</span><span class="p">(),</span> 
+			<span class="n">e2</span><span class="o">.</span><span class="n">getGrayNumpyCv2</span><span class="p">(),</span> 
+			<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])),</span> <span class="n">cv2image</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">dst</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gio Cielo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

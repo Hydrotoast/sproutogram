@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Morphology Module &mdash; Angiogram Sprout Extraction  documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Angiogram Sprout Extraction  documentation" href="index.html" />
+    <link rel="next" title="REPL Module" href="REPL.html" />
+    <link rel="prev" title="Geometry Module" href="Geometry.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="REPL.html" title="REPL Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Geometry.html" title="Geometry Module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Geometry.html"
+                        title="previous chapter">Geometry Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="REPL.html"
+                        title="next chapter">REPL Module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Morphology.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-Morphology">
+<span id="morphology-module"></span><h1>Morphology Module<a class="headerlink" href="#module-Morphology" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="Morphology.hitmiss">
+<tt class="descclassname">Morphology.</tt><tt class="descname">hitmiss</tt><big>(</big><em>src</em>, <em>element</em><big>)</big><a class="reference internal" href="_modules/Morphology.html#hitmiss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Morphology.hitmiss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Morphological operation for shape detection. The notation for the
+structuring element uses <tt class="docutils literal"><span class="pre">1</span></tt> for foreground, <tt class="docutils literal"><span class="pre">-1</span></tt> for background and
+<tt class="docutils literal"><span class="pre">0</span></tt> for ignore.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>src</strong> &#8211; source image</li>
+<li><strong>element</strong> &#8211; structuring element for the desired shape as a square matrix</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the hit-or-miss transformation of the source image</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Image</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The algorithm can be described as below:</p>
+<div class="formula">
+<b>A</b>⊗<b>B</b> = (<b>A</b>⊖<b>B<sub>1</sub></b>)∩(<span class="overline"><b>A</b></span>⊖<b>B<sub>2</sub></b>)
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="REPL.html" title="REPL Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Geometry.html" title="Geometry Module"
+             >previous</a> |</li>
+        <li><a href="index.html">Angiogram Sprout Extraction  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gio Cielo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
