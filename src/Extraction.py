@@ -4,6 +4,7 @@ from SimpleCV import *
 
 from SetForest import *
 from SproutSegmentation import *
+from Morphology import *
 
 class NoBeadException(Exception):
 	pass
@@ -114,13 +115,35 @@ class SproutExtractor(ExtractorBase):
 		return maskedImg
 
 	def preprocess(self):
-		cannyMin, cannyMax = (100, 300)
-		dilateCount = 2
+		cannyMin, cannyMax = (100, 240)
+		dilateCount = 1
 		imgEdges = self.img.edges(cannyMin, cannyMax)
 		imgEdges = self.maskBeads(imgEdges)
 
-		dilatedEdges = imgEdges.dilate(dilateCount)
-		skeleton = dilatedEdges.skeletonize(10)
+		imgEdges = imgEdges.morphClose()
+		imgEdges = imgEdges.convolve(kernel=[
+			[1,0,1],
+			[0,0,1],
+			[1,1,0]])
+		imgEdges = imgEdges.convolve(kernel=[
+			[0,1,1],
+			[1,0,0],
+			[1,0,1]])
+
+		imgEdges = imgEdges.morphClose()
+		skeleton = imgEdges.skeletonize(8)
+		isolatedPoints = hitmiss(
+			skeleton, 
+			[[-1,-1,-1,-1,-1,-1,-1], 
+			[-1,0,0,0,0,0,-1], 
+			[-1,0,0,0,0,0,-1], 
+			[-1,0,0,0,0,0,-1], 
+			[-1,0,0,1,0,0,-1], 
+			[-1,0,0,0,0,0,-1], 
+			[-1,0,0,0,0,0,-1], 
+			[-1,0,0,0,0,0,-1], 
+			[-1,-1,-1,-1,-1,-1,-1]])
+		skeleton = skeleton - isolatedPoints
 
 		self.img = skeleton
 

@@ -16,9 +16,9 @@ class Driver(object):
 		sprouts = sproutExtractor.extract()
 
 		sproutsImg = sprouts[-1].image
-
 		for sprout in sprouts:
-			sprout.restore(width=3, distanceThreshold=10)
+			sprout.restore(width=3, distanceThreshold=15, color=Color.TEAL)
+			sprout.draw(color=Color.BLUE, width=4)
 		sproutsImgRestored = sprouts[-1].image
 		sproutsImgRestored.show()
 
@@ -68,9 +68,14 @@ class Driver(object):
 		return analysis
 
 	def runExtractions(self):
-		monoBead = Image('../data/samples/mono.jpg')
-		monoBead = monoBead.resize(w=800)
-		self.extractSprouts(monoBead)
+		imageSet = ImageSet('../data/samples/selected')
+		# monoBead = Image('../data/samples/mono.jpg')
+		# monoBead = monoBead.resize(w=800)
+		for image in imageSet:
+			filename = os.path.basename(image.filename)
+			print 'Analyzing: %s' % filename		
+			image = image.resize(w=800)
+			self.extractSprouts(image)
 		# self.extractMonoBead(monoBead)
 
 	def extractSelected(self):
@@ -92,5 +97,5 @@ def main():
 
 if __name__ == '__main__':
 	driver = Driver()
-	# driver.runExtractions()
-	driver.extractSelected()
+	driver.runExtractions()
+	# driver.extractSelected()

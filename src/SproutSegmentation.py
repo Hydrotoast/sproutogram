@@ -96,14 +96,16 @@ class SproutSegmenter(object):
 
 		sprouts = []
 		for segments in blobMap.values():
+			if len(segments) == 1 and segments[0].area() < 40:
+				continue
 			sprouts.append(Sprout(segments))
 
 		# --DEBUG
-		# FeatureSet(blobSegments).draw(color=Color.RED, width=4)
+		# FeatureSet(blobSegments).draw(color=Color.BLUE, width=2)
 		return sprouts
 
 	def segment(self):
-		blobs = self.img.findBlobs(minsize=4)
+		blobs = self.img.findBlobs(minsize=1)
 
 		# --DEBUG
 		# blobs.draw(color=Color.RED, width=4)
