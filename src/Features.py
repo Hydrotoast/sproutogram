@@ -40,13 +40,13 @@ class Sprout(FeatureSet):
 		"""Attempts to restore the sprout segments by drawing on the image
 		layers."""
 		connections = []
-		for segmentInner in self:
-			for segmentOuter in self:
-				if segmentOuter == segmentInner:
+		for inner in self:
+			for outer in self:
+				if outer == inner:
 					continue
-				distance = spsd.euclidean(segmentInner.end, segmentOuter.start)
+				distance = spsd.euclidean(inner.end, outer.start)
 				if distance < distanceThreshold:
-					connections.append((segmentInner, segmentOuter))
+					connections.append((inner, outer))
 
 		for inner, outer in connections:
 			self[-1].image.drawLine(inner.end, outer.start, color, width)

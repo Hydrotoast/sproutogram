@@ -28,7 +28,7 @@ class ExtractorBase(object):
 			A homogenous list of a single feature.
 		"""
 		pass
-
+	
 class BeadExtractor(ExtractorBase):
 	"""
 	Extracts bead features from a target image using a circular hough
@@ -37,19 +37,26 @@ class BeadExtractor(ExtractorBase):
 	def __init__(self, img):
 		super(BeadExtractor, self).__init__(img)
 
-	def preprocess(self):
-		cannyMin, cannyMax = (100, 300)
-		self.img = self.img.smooth(sigma=20)
-		self.img = self.img.edges(cannyMin, cannyMax)
-
-	def extractCircles(self, canny=250, thresh=120, distance=150):
+	def extractCircles(self, canny=164, thresh=128, distance=512):
 		"""
 		Extracts circle features from the target image using the circular
-		hough transform. Use this instead of the default ``image.findCircles()``
-		algorithm because a maximum radius is supplied here.
+		hough transform. Use this instead of the default
+		``image.findCircles()`` algorithm because a maximum radius is
+		supplied here.
 		
+		:param canny: upper threshold passed to the canny edge detector
+		:param thresh: accumulator threshold for detecting circles
+		:param distance: the minimum distance between two bead origins
 		:returns: a list of circle features from the target image
 		:rtype: [Circle]
+
+		Relative Parameters
+		-------------------
+
+		It is recommended that the `distance` parameter is at least as long
+		as the average bead diameter because it is physically impossible
+		for beads to overlap. Furthermore, we recommend that the parameter
+		is doubled due to space occupied by sprouts.
 		"""
 		storage = cv.CreateMat(self.img.width, 1, cv.CV_32FC3)
 		if(distance < 0 ):
@@ -62,8 +69,8 @@ class BeadExtractor(ExtractorBase):
 			distance,
 			canny,
 			thresh,
-			min_radius=30,
-			max_radius=min(self.img.width//6, self.img.height//6))
+			min_radius=48,
+			max_radius=min(self.img.width//10, self.img.height//10))
 		if storage.rows == 0:
 			return None
 		circs = np.asarray(storage)
@@ -78,12 +85,11 @@ class BeadExtractor(ExtractorBase):
 		return circleFS
 
 	def extract(self):
-		self.preprocess()
 		circles = self.extractCircles()
 		if not circles:
 			raise NoBeadException()
-		beads = [Bead(self.img, circle) for circle in circles]
-		return FeatureSet(beads)
+		beads = FeatureSet(Bead(self.img, circle) for circle in circles)
+		return beads
 
 class SproutExtractor(ExtractorBase):
 	"""
@@ -131,7 +137,8 @@ class SproutExtractor(ExtractorBase):
 			[1,0,1]])
 
 		imgEdges = imgEdges.morphClose()
-		skeleton = imgEdges.skeletonize(8)
+		imgEdges = imgEdges.dilate(2)
+		skeleton = imgEdges.skeletonize(3)
 		isolatedPoints = hitmiss(
 			skeleton, 
 			[[-1,-1,-1,-1,-1,-1,-1], 

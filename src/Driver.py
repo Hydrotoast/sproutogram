@@ -15,14 +15,16 @@ class Driver(object):
 		sproutExtractor = SproutExtractor(img, beads)
 		sprouts = sproutExtractor.extract()
 
+		print "%d beads detected" % len(beads)
+		print "%d sprout blobs detected" % len(sprouts)
+
 		sproutsImg = sprouts[-1].image
 		for sprout in sprouts:
-			sprout.restore(width=3, distanceThreshold=15, color=Color.TEAL)
-			sprout.draw(color=Color.BLUE, width=4)
+			sprout.restore(width=3, distanceThreshold=48, color=Color.TEAL)
+			# sprout.draw(color=Color.BLUE, width=4)
 		sproutsImgRestored = sprouts[-1].image
-		sproutsImgRestored.show()
 
-		raw_input()
+		sproutsImgRestored.applyLayers().resize(w=1024).show()
 
 	def extractMonoBead(self, img):
 		extractor = HLSGExtractor(img)
@@ -31,52 +33,29 @@ class Driver(object):
 			img.dl().circle((hlsg.bead.x, hlsg.bead.y), hlsg.bead.radius(), color=Color.GREEN, width=5)
 			for sprout in hlsg.sprouts:
 				img.dl().line(sprout.end_points[0], sprout.end_points[1], color=Color.RED, width=3)
-		# hlsgs.draw()
-		img.show()
-		raw_input()
-		# for hlsg in hlsgs:
-		# 	print hlsg
 
 	def analyzeMonoBead(self, img):
 		beadExtractor = BeadExtractor(img)
 		beads = beadExtractor.extract()
 
-		# Preprocessing steps
-		imgEdges = img.edges(100,300)
-		dilatedEdges = imgEdges.dilate(2)
-		skeleton = dilatedEdges.skeletonize(10)
-
-		analyzer = ShollAnalyzer(skeleton, beads[0])
-		analysis = analyzer.analyze()
-		return analysis
-
-	def analyzeMonoBeadWithRestoration(self, img):
-		beadExtractor = BeadExtractor(img)
-		beads = beadExtractor.extract()
-
 		sproutExtractor = SproutExtractor(img, beads)
 		sprouts = sproutExtractor.extract()
-
-		oImg = sproutExtractor.img
-		for sprout in sprouts:
-			sprout.restore(width=3, distanceThreshold=10)
-		sproutsImg = sprouts[-1].image
-		sproutsImg.show()
+		# for sprout in sprouts:
+		# 	sprout.restore(width=3, distanceThreshold=24, color=Color.WHITE)
+		sproutsImg = sprouts[-1].image.applyLayers()
+		sproutsImg.resize(w=800).show()
 
 		analyzer = ShollAnalyzer(sproutsImg, beads[0])
 		analysis = analyzer.analyze()
+		print "\t%d sprouts found" % analysis.sproutCount
 		return analysis
 
 	def runExtractions(self):
 		imageSet = ImageSet('../data/samples/selected')
-		# monoBead = Image('../data/samples/mono.jpg')
-		# monoBead = monoBead.resize(w=800)
 		for image in imageSet:
 			filename = os.path.basename(image.filename)
 			print 'Analyzing: %s' % filename		
-			image = image.resize(w=800)
 			self.extractSprouts(image)
-		# self.extractMonoBead(monoBead)
 
 	def extractSelected(self):
 		imageSet = ImageSet('../data/samples/selected')
@@ -84,8 +63,7 @@ class Driver(object):
 		for image in imageSet:
 			filename = os.path.basename(image.filename)
 			print 'Analyzing: %s' % filename		
-			image = image.resize(w=800)
-			analysis = self.analyzeMonoBeadWithRestoration(image)
+			analysis = self.analyzeMonoBead(image)
 			reportGen.addAnalysis(filename, analysis)
 		reportGen.generate()
 
@@ -97,5 +75,5 @@ def main():
 
 if __name__ == '__main__':
 	driver = Driver()
-	driver.runExtractions()
-	# driver.extractSelected()
+	# driver.runExtractions()
+	driver.extractSelected()

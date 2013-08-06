@@ -37,7 +37,8 @@ class ShollAnalysisReport(ReportGeneratorBase):
 			writer = csv.writer(fh)
 
 			writer.writerow(['Overview'])
-			for filename, analysis in self.analyses.items():
+			sortedItems = sorted(self.analyses.items())
+			for filename, analysis in sortedItems:
 				writer.writerow([filename])
 				writer.writerow(['Sprout Count', analysis.sproutCount])
 				writer.writerow(['Critical Value', analysis.criticalValue])
@@ -45,7 +46,7 @@ class ShollAnalysisReport(ReportGeneratorBase):
 				writer.writerow(['Shoenen Ramification Index', '%.2f' % analysis.ramificationIndex])
 				writer.writerow([])
 
-			for filename, analysis in self.analyses.items():
+			for filename, analysis in sortedItems:
 				writer.writerow([filename])
 				writer.writerow(['Radius'] + analysis.crossings.keys())
 				writer.writerow(['Crossings'] + analysis.crossings.values())
