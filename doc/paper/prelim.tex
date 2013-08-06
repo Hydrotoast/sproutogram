@@ -15,150 +15,278 @@
 
 \begin{document}
 
-\title{High-Level Sprout Geometry Extraction}
+\title{High-Level Sprout Geometry Extraction for Unstained Assays of In Vitro Angiogenesis}
 \author{
-	Gio Carlo Cielo Borje \\
-	\affaddr{gborje@uci.edu} \\
+	Gio Borje and Craig Steinke \\
 	\affaddr{University of California, Irvine}
 }
 \date{\today}
 \maketitle
 
+\begin{abstract}
+	We have developed an automated image analysis system for the
+	quantitative analysis of unstained assays of \emph{in vitro}
+	angiogenesis. The system is designed for fibrin gel bead sprouting
+	assays. The quantification system provides the number primary sprouts,
+	average branching factor and average length for each bead in an imaged
+	assay.
+\end{abstract}
+
 \section{Introduction} % (fold)
 \label{sec:Introduction}
+	Angiogenesis is a mechanism for the formation of new blood vessels from
+	pre-existing vessels. Additionally, angiogenesis is part of a critical
+	phase in of solid tumor growth; tumor growth is stunted to
+	approximately 1-2mm in diameter without new blood vessel supply.
+	Consequently, to assess the impact of angiogenic and antiangiogenic
+	agents in assays, a reliable and automated system is necessary for
+	quantitative analysis.
 
-The objective of this program is to extract the high-level geometric features
-of blood vessel in pictures. The high-level geometry of a blood vessel
-comprises of a bead and several sprouts.
+	The system is designed to detect features, restore features and analyze
+	the features of imaged assays. The high-level geometry of these assays
+	comprise of many beads with several associated sprouts.
 
-In addition to the High-Level Sprout Geometry (HLSG) Extractor, a driver is
-implemented to perform feature extraction on sample images and analyze the
-extracted features.
-
+	In addition to the High-Level Sprout Geometry (HLSG) Extractor, a
+	driver and report generator are implemented to drive functionality on
+	sample images and generate reports on the analyses respectively.
 % section Introduction (end)
 
 \section{Data Structures} % (fold)
 \label{sec:Data Structures}
-
-The following data structures are used to implement the HLSG Extractor.
+	The following data structures are used to implement the HLSG Extractor.
 
 	\subsection{Bead Feature} % (fold)
 	\label{sub:Bead Feature}
-
-	A bead feature is an abstraction of the transverse view of the primary
-	blood vessel from which other blood vessels sprout from. The geometry
-	of the bead is described by the descriptor below.
-	\begin{figure}[!ht]
-		\centering
-		\begin{bytefield}{24}
-			\bitbox{24}{\textbf{Bead}} \\
-			\bitbox{24}{center} \\
-			\bitbox{24}{radius} \\
-			\bitbox{24}{sprouts}
-		\end{bytefield}
-		\caption{Bead Descriptors}
-		\label{fig:beaddesc}
-	\end{figure}
-
+		A bead feature is an abstraction of the physical bead coated with
+		endothelial cells in the assay. The geometry of the bead is intuitively
+		circular; subsequently the geometry can is described by the descriptor
+		in Figure \ref{fig:beaddesc}.
+		\begin{figure}[!ht]
+			\centering
+			\begin{bytefield}{24}
+				\bitbox{24}{\textbf{Bead}} \\
+				\bitbox{24}{center: (int, int)} \\
+				\bitbox{24}{radius: int} \\
+				\bitbox{24}{sprouts: [Sprout]}
+			\end{bytefield}
+			\caption{Bead Descriptors}
+			\label{fig:beaddesc}
+		\end{figure}
 	% subsection Bead Feature (end)
 
 	\subsection{Sprout Feature} % (fold)
 	\label{sub:Sprout Feature}
-
-	A sprout feature is an abstraction of the blood vessels that sprout from a
-	designated bead. Subsequently, sprout feature extraction is dependent upon
-	bead descriptors.
-	\begin{figure}[!ht]
-		\centering
-		\begin{bytefield}{24}
-			\bitbox{24}{\textbf{Sprout}} \\
-			\bitbox{24}{bead} \\
-			\bitbox{24}{centroid} \\
-			\bitbox{24}{length} \\
-			\bitbox{24}{width} \\
-			\bitbox{24}{branches}
-		\end{bytefield}
-		\caption{Sprout Descriptors}
-		\label{fig:sproutdesc}
-	\end{figure}
-	
+		A sprout feature is an abstraction of the blood vessels that
+		develop through angiogenesis from the designed bead. Subsequently,
+		sprout feature extraction is dependent upon
+		bead descriptors.
+		\begin{figure}[!ht]
+			\centering
+			\begin{bytefield}{24}
+				\bitbox{24}{\textbf{Sprout}} \\
+				\bitbox{24}{bead: Bead} \\
+				\bitbox{24}{centroid: (int, int)} \\
+				\bitbox{24}{length: int } \\
+				\bitbox{24}{width: int} \\
+				\bitbox{24}{segments: [RadialSegment]}
+			\end{bytefield}
+			\caption{Sprout Descriptors}
+			\label{fig:sproutdesc}
+		\end{figure}
+		The sprout is actually comprised of a set of pixel segments because
+		of the possibility that a sprout is disconnected.
 	% subsection Sprout Feature (end)
+
+	\subsection{Radial Line Segment} % (fold)
+	\label{sub:Radial Line Segment}
+		Due to the disconnectivity of sprouts, individual sprout segments
+		are represented by a radially defined line segment. That is, we
+		distinguish the end points from its radial distance from the origin
+		of its corresponding bead. Given a line segment, we say that and
+		end point is the \emph{inner point} if it is radially closer than
+		its complementary end point; otherwise, we call the end point the
+		\emph{outer point}.
+
+		In addition to the distinguishable end points, a radial line
+		segment is a line fit onto a corresponding blob of pixels which can
+		be considered a sprout segment.
+	% subsection Radial Line Segment (end)
 
 	\subsection{Driver} % (fold)
 	\label{sub:Driver}
-
-	The Driver is responsible for parsing input from the client and emulating
-	the encoded actions as functions of the HLSG Extractor. That is, the Driver
-	acts similar to a REPL (Read-Eval-Print-Loop) that reads input from the
-	client, evaluates the input and prints the corresponding output in a loop.
-	The set of commands available to the client is outlined Table
-	\ref{tab:commands}.
-	
+		The Driver is responsible for parsing input from the client and emulating
+		the encoded actions as functions of the HLSG Extractor. That is, the Driver
+		acts similar to a REPL (Read-Eval-Print-Loop) that reads input from the
+		client, evaluates the input and prints the corresponding output in a loop.
+		The set of commands available to the client is outlined Table
+		\ref{tab:commands}.
 	% subsection Driver (end)
-
 % section Data Structures (end)
 
 \section{System Architecture} % (fold)
 \label{sec:System Architecture}
+	The system requires Python version 2.7x with the SimpleCV package. The
+	architecture of the system is based on our methodology for
+	quantitatively analyzing in vitro angiogenesis. The system, however,
+	incorporates modules for driving batch processes as well as a
+	Read-Eval-Print-Loop (REPL) for console interaction. Finally, a module
+	incorporated for generating CSV reports of the analysis. The sequence
+	diagram for the system components are shown in Figure
+	\ref{fig:sysarch}.
+	\begin{figure*}[t!]
+		\begin{centering}
+			\input{architecture}
+		\end{centering}
+		\caption{High-Level Architecture}
+		\label{fig:sysarch}
+	\end{figure*}
 
-\begin{figure*}[t]
-	\begin{centering}
-		\input{architecture}
-	\end{centering}
-\end{figure*}
-
-
-\begin{enumerate}[noitemsep]
-	\item A
-\end{enumerate}
-
-\begin{table}
-	\begin{tabular}{| l | l | p{4.5cm} |}
-		\hline
-		\textbf{Command} & \textbf{Output} & \textbf{Description} \\\hline
-		extract [file]] & HLSG of file & Extracts the HLSG of the given file. \\\hline
-		extract [files] & HLSG of files & Extacts the HLSGs of the given files. \\\hline
-		exit & Goodbye & Exits the program. \\\hline
-	\end{tabular}
-	\label{tab:commands}
-	\caption{Commands}
-\end{table}
-
+	The REPL module controls the interaction between the user and the
+	system. Commands available in the REPL are shown in Table
+	\ref{tab:commands}.
+	\begin{table}[h!]
+		\begin{tabular}{| l | l | p{4cm} |}
+			\hline
+			\textbf{Command} & \textbf{Output} & \textbf{Description} \\\hline
+			extract [file] & HLSG of file & Extracts the HLSG of the given file. \\\hline
+			extract [files] & HLSG of files & Extacts the HLSGs of the given files. \\\hline
+			exit & Goodbye & Exits the system. \\\hline
+		\end{tabular}
+		\caption{Commands}
+		\label{tab:commands}
+	\end{table}
 % section System Architecture (end)
 
+\section{Methodology} % (fold)
+\label{sec:Methodology}
+	Our system enables feature set detection, minor feature restoration and
+	quantitative analysis which can be decomposed into four stages. The
+	first two stages detect feature sets: beads as features and then
+	sprouts as features. In the third stage, the system attempts to restore
+	a few of the sprouts by approximating connections between broken sprout
+	segments. Finally, the system quantitatively analyzes the imaged assays
+	through Sholl Analysis.
+
+	\subsection{Bead Extraction} % (fold)
+	\label{sub:Bead Extraction}
+		Bead extraction is a two-step process. To reduce noise, the system
+		first smooths the image using a Gaussian blur. Second, circles in
+		the image are detected using the circular Hough Transform. The
+		circles detected correspond to the beads in the assay.
+		Subsequently, the origin and radius of the bead is obtained.
+	% subsection Bead Extraction (end)
+
+	\subsection{Sprout Extraction} % (fold)
+	\label{sub:Sprout Extraction}
+		Sprout extraction depends on bead extraction because the beads must be
+		masked before sprout extraction occurs to separate beads from sprouts.
+		We mask the beads given the geometry of the circles. Due to the
+		disconnectivity of sprouts in the assay, we begin by obtaining all
+		sprout segments and represent them as line segments. We distinguish the
+		end points of each line segment for connectivity. The start point, $S$,
+		is the end point on the line segment such that it is closer to the
+		origin of the line segment's closest bead. The end point, $E$, is the
+		end point on the line segment such that it is farther from the origin
+		of the line segment's closest bead.
+
+		To determine which line segments belong to the same sprout, we use
+		euclidean distance between their start and end points enforced by
+		the constraint that the end point must by closer to the origin of
+		its closest's bead than the target start point. For example, two
+		line segments are part of the same sprout if the distance between
+		the start and end points are within a specified distance parameter,
+		$d$.
+	% subsection Sprout Extraction (end)
+
+	\subsection{Sprout Restoration} % (fold)
+	\label{sub:Sprout Restoration}
+		The process of restoration is dependent on the successful
+		extraction of HLSGs features from the imaged angiogenesis.
+		Restoration is necessary due to the disjoint sprout segments that
+		appear. Disjoint sprout segments can be caused by the an
+		out-of-focus microscope. % subsection Sprout Restoration (end)
+
+	\subsection{Sholl Analysis} % (fold)
+	\label{sub:Sholl Analysis}
+		Sholl Analysis is a quantitative method for quantitatively analyzing
+		morphological characteristics of neurons. \cite{sholl53}
+	% subsection Sholl Analysis (end)
+% section Methodology (end)
+
+\section{Results} % (fold)
+\label{sec:Results}
+	Display a comparison table with human counts.
+% section Results (end)
+
+\bibliography{prelim}
+\bibliographystyle{plain}
+
+\appendix
 \section{Pseudo Code} % (fold)
 \label{sec:Pseudo Code}
-
-This section outlines the pseudo-code for the Driver and HLSGExtractor
-operations. 
+	This section outlines the pseudo-code for the Driver and HLSGExtractor
+	operations. 
 
 	\subsection{Driver} % (fold)
 	\label{sub:Driver}
+		The following pseudo-code outlines the Driver which reads input from the
+		client, evaluates the input as a command, prints the output as a
+		consequence of executing the command and then repeats this sequence of
+		operations.
+		\begin{algorithm}[ht!]
+			\caption{Driver}
+			\begin{algorithmic}
+				\Procedure{Driver}{}
+					\State running $\gets$ True
+					\While{running}
+						\State input $\gets$ read\_input()
+						\State command $\gets$ parse(input)
+						\State output $\gets$ HLSGExtractor.execute(command)
+						\State print(output)
+					\EndWhile
+				\EndProcedure
+			\end{algorithmic}
+		\end{algorithm}
 
-	The following pseudo-code outlines the Driver which reads input from the
-	client, evaluates the input as a command, prints the output as a
-	consequence of executing the command and then repeats this sequence of
-	operations.
-	\begin{algorithm}[ht!]
-		\caption{Driver}
-		\begin{algorithmic}
-			\Procedure{Driver}{}
-				\State running $\gets$ True
-				\While{running}
-					\State input $\gets$ read\_input()
-					\State command $\gets$ parse(input)
-					\State output $\gets$ HLSGExtractor.execute(command)
-					\State print(output)
-				\EndWhile
-			\EndProcedure
-		\end{algorithmic}
-	\end{algorithm}
-
-	Note that the driver executes while the \lstinline$running$ flag is true.
-	Consequently, the File System is responsible for setting this flag false.
-
+		Note that the driver executes while the \lstinline$running$ flag is
+		true. Consequently, the REPL is responsible for setting this flag
+		false.
 	% subsection Driver (end)
 
+	\subsubsection{Sprout Extractor} % (fold)
+	\label{ssub:Sprout Extractor}
+		Given an imaged assay and a set of bead features, the algorithm
+		proceeds by masking the beads from the image. Next, a segmentation
+		strategy is used to separate individual sprouts from the collection
+		of globally detected sprouts. Finally, the segmentation strategy
+		yields the detected feature set of sprouts.
+		\begin{algorithm}[ht!] \caption{Sprout Extraction}
+			\begin{algorithmic}
+				\Procedure{ExtractSprouts}{img, beads}
+					\State maskedImg $\gets$ maskBeads(img, beads)
+					\State strategy $\gets$ SegmentStrategy(maskedImg,beads)
+					\State sprouts $\gets$ strategy.segment()
+					\State \Return sprouts
+				\EndProcedure
+			\end{algorithmic}
+		\end{algorithm}
+	% subsubsection Sprout Extractor (end)
+
+	\subsubsection{HLSG Extractor} % (fold)
+	\label{ssub:HLSG Extractor}
+		\begin{algorithm}[ht!]
+			\caption{HLSG Extraction}
+			\begin{algorithmic}
+				\Procedure{ExtractHLSGs}{img}
+					\State beads $\gets$ ExtractBeads(img)
+					\State sprouts $\gets$ ExtractSprouts(img, beads)
+					\State hlsgs $\gets$ MapSproutsToBeads(sprouts, beads)
+					\State \Return hlsgs
+				\EndProcedure
+			\end{algorithmic}
+		\end{algorithm}
+	% subsubsection HLSG Extractor (end)
 % section Pseudo Code (end)
+
 
 \end{document}

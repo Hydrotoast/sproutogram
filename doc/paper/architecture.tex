@@ -1,27 +1,28 @@
 \centering
 \begin{sequencediagram}
-\newthread{client}{Client}{}
+\newinst[1]{client}{Client}{}
 \newinst[1]{driver}{Driver}{}
-\newinst[1]{hlsgex}{HLSG Extractor}{}
-\newinst[1]{beadex}{Bead Extractor}{}
-\newinst[1]{sproutex}{Sprout Extractor}{}
+\newinst[2]{ex}{Extractors}{}
+\newinst[3]{anal}{Sholl Analysis}{}
 \newinst[1]{reportgen}{Report Generator}{}
 
-\begin{call}{client}{images}{driver}{}
+\begin{mess}{client}{images}{driver}{}
 	\begin{sdblock}{Main Loop}{}
-		\begin{call}{driver}{extract(img)}{hlsgex}{hlsg}
-			\begin{call}{hlsgex}{extract(img)}{beadex}{beads}
-			\end{call}
+		\begin{call}{driver}{ExtractHLSGs(img)}{ex}{hlsg}
+			\begin{callself}{ex}{ExtractBeads(img)}{beads}
+			\end{callself}
 
 			\begin{sdblock}{Sprout Loop}{}
-				\begin{call}{hlsgex}{extract(img, bead)}{sproutex}{sprouts}
-				\end{call}
+				\begin{callself}{ex}{ExtractSprouts(img, bead)}{sprouts}
+				\end{callself}
 			\end{sdblock}
+		\end{call}
+
+		\begin{call}{driver}{Analyze(hlsg)}{anal}{analysis}
 		\end{call}
 	\end{sdblock}
 
-	\begin{call}{driver}{generateReport(hlsg)}{reportgen}{report}
+	\begin{call}{driver}{GenerateReport(analyses)}{reportgen}{report}
 	\end{call}
-\end{call}
+\end{mess}
 \end{sequencediagram}
-\caption{High-Level Architecture}
