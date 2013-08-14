@@ -53,7 +53,7 @@ class Driver(object):
 	def runExtractions(self):
 		imageSet = ImageSet('../data/samples/selected')
 		for image in imageSet:
-			filename = os.path.basename(image.filename)
+			filename = os.path.splitext(os.path.basename(image.filename))[0]
 			print 'Analyzing: %s' % filename		
 			self.extractSprouts(image)
 
@@ -61,7 +61,7 @@ class Driver(object):
 		imageSet = ImageSet('../data/samples/selected')
 		reportGen = ShollAnalysisReport('../data/reports/selected.csv')
 		for image in imageSet:
-			filename = os.path.basename(image.filename)
+			filename = os.path.splitext(os.path.basename(image.filename))[0]
 			print 'Analyzing: %s' % filename		
 			analysis = self.analyzeMonoBead(image)
 			reportGen.addAnalysis(filename, analysis)

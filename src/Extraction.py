@@ -122,23 +122,29 @@ class SproutExtractor(ExtractorBase):
 
 	def preprocess(self):
 		cannyMin, cannyMax = (100, 240)
-		dilateCount = 1
+		dilateCount = 8
 		imgEdges = self.img.edges(cannyMin, cannyMax)
 		imgEdges = self.maskBeads(imgEdges)
 
 		imgEdges = imgEdges.morphClose()
-		imgEdges = imgEdges.convolve(kernel=[
-			[1,0,1],
-			[0,0,1],
-			[1,1,0]])
-		imgEdges = imgEdges.convolve(kernel=[
-			[0,1,1],
-			[1,0,0],
-			[1,0,1]])
+		blobs = imgEdges.findBlobs()
+		for blob in blobs:
+			if len(blob.mContourAppx) > 2:
+				blob.drawAppx(color=Color.WHITE, width=-1)
+			blob.drawHoles(color=Color.WHITE, width=-1)
+		imgEdges = imgEdges.applyLayers()
 
 		imgEdges = imgEdges.morphClose()
-		imgEdges = imgEdges.dilate(2)
-		skeleton = imgEdges.skeletonize(3)
+		# imgEdges = imgEdges.convolve(kernel=[
+		# 	[1,0,1],
+		# 	[0,0,1],
+		# 	[1,1,0]])
+		# imgEdges = imgEdges.convolve(kernel=[
+		# 	[0,1,1],
+		# 	[1,0,0],
+		# 	[1,0,1]])
+
+		skeleton = imgEdges.dilate(dilateCount).skeletonize(3)
 		isolatedPoints = hitmiss(
 			skeleton, 
 			[[-1,-1,-1,-1,-1,-1,-1], 

@@ -1,5 +1,7 @@
 from Features import HLSG
+from training import HumanCounts
 import csv
+import math
 
 class ReportGeneratorBase(object):
 	"""
@@ -32,12 +34,21 @@ class ShollAnalysisReport(ReportGeneratorBase):
 		"""
 		self.analyses[filename] = analysis
 
+	def calculateRMSE(self, analyses):
+		variance = sum(
+			[(analysis.sproutCount - HumanCounts.data[filename].focusCounts) ** 2
+				for filename, analysis in analyses])
+		return math.sqrt(variance / len(HumanCounts.data))
+
 	def generate(self):
 		with open(self.output, 'w') as fh:
+			sortedItems = sorted(self.analyses.items())
+			rmse = self.calculateRMSE(sortedItems)
 			writer = csv.writer(fh)
 
 			writer.writerow(['Overview'])
-			sortedItems = sorted(self.analyses.items())
+			writer.writerow(['RMSE', rmse])
+			print 'RMSE: ', rmse
 			for filename, analysis in sortedItems:
 				writer.writerow([filename])
 				writer.writerow(['Sprout Count', analysis.sproutCount])
