@@ -1,38 +1,24 @@
 from SimpleCV import *
 
 import os
+import matplotlib.pyplot as plt
 
 from REPL import REPL
 from Extraction import *
 from ShollAnalysis import *
 from ReportGeneration import *
 
-class Driver(object):
-	def extractSprouts(self, img):
-		beadExtractor = BeadExtractor(img)
-		beads = beadExtractor.extract()
-
-		sproutExtractor = SproutExtractor(img, beads)
-		sprouts = sproutExtractor.extract()
-
-		print "%d beads detected" % len(beads)
-		print "%d sprout blobs detected" % len(sprouts)
-
-		sproutsImg = sprouts[-1].image
-		for sprout in sprouts:
-			sprout.restore(width=3, distanceThreshold=48, color=Color.TEAL)
-			# sprout.draw(color=Color.BLUE, width=4)
-		sproutsImgRestored = sprouts[-1].image
-
-		sproutsImgRestored.applyLayers().resize(w=1024).show()
-
-	def extractMonoBead(self, img):
-		extractor = HLSGExtractor(img)
-		hlsgs = extractor.extract()
-		for hlsg in hlsgs:
-			img.dl().circle((hlsg.bead.x, hlsg.bead.y), hlsg.bead.radius(), color=Color.GREEN, width=5)
-			for sprout in hlsg.sprouts:
-				img.dl().line(sprout.end_points[0], sprout.end_points[1], color=Color.RED, width=3)
+"""
+An Extraction task defines an atomic job for extracting and quantitatively
+analyzing an image set of fibrin gel bead sprouting assays.
+"""
+class ExtractionTask(object):
+	def __init__(self, inPath, outPath, reportPath, plotPath):
+		self.inPath = inPath
+		self.outPath = outPath
+		self.reportPath = reportPath
+		self.plotPath = plotPath
+		self.analyzer = ShollAnalyzer()
 
 	def analyzeMonoBead(self, img):
 		beadExtractor = BeadExtractor(img)
@@ -40,32 +26,59 @@ class Driver(object):
 
 		sproutExtractor = SproutExtractor(img, beads)
 		sprouts = sproutExtractor.extract()
-		# for sprout in sprouts:
-		# 	sprout.restore(width=3, distanceThreshold=24, color=Color.WHITE)
+		for sprout in sprouts:
+			sprout.restore(width=3, distanceThreshold=24, color=Color.WHITE)
 		sproutsImg = sprouts[-1].image.applyLayers()
 		sproutsImg.resize(w=800).show()
 
-		analyzer = ShollAnalyzer(sproutsImg, beads[0])
-		analysis = analyzer.analyze()
+		analysis = self.analyzer.analyze(sproutsImg, beads[0])
+
 		print "\t%d sprouts found" % analysis.sproutCount
 		return analysis
 
-	def runExtractions(self):
-		imageSet = ImageSet('../data/samples/selected')
+	def extract(self):
+		imageSet = ImageSet(self.inPath)
+		reportGen = ShollAnalysisReport(self.reportPath)
 		for image in imageSet:
 			filename = os.path.splitext(os.path.basename(image.filename))[0]
-			print 'Analyzing: %s' % filename		
-			self.extractSprouts(image)
 
-	def extractSelected(self):
-		imageSet = ImageSet('../data/samples/selected')
-		reportGen = ShollAnalysisReport('../data/reports/selected.csv')
-		for image in imageSet:
-			filename = os.path.splitext(os.path.basename(image.filename))[0]
 			print 'Analyzing: %s' % filename		
 			analysis = self.analyzeMonoBead(image)
+
+			# Sholl Analysis Plots
+			self.plotShollAnalysis(analysis, filename)
+
+			# Add to overall report
 			reportGen.addAnalysis(filename, analysis)
 		reportGen.generate()
+
+	def plotShollAnalysis(self, analysis, filename):
+		plt.figure(1, figsize=(18, 6))
+		plt.subplot(121)
+		plt.plot(analysis.crossings.keys(), analysis.crossings.values())
+		plt.title('Sholl Analysis for ' + filename)
+		plt.xlabel('Radius')
+		plt.ylabel('Crossings')
+
+		# plt.subplot(122)
+		# plt.plot(analysis.crossings.keys(), analysis._PWConstants)
+		# plt.title('Sholl Analysis for ' + filename)
+		# plt.xlabel('Radius')
+		# plt.ylabel('Crossings')
+		# plt.savefig(os.path.join(self.plotPath, filename + ".png"))
+		# plt.clf()
+
+
+"""
+Drives premade sets of extraction tasks
+"""
+class Driver(object):
+	def extractSelected(self):
+		inPath = '../data/samples/selected'
+		reportPath = '../data/reports/selected.csv'
+		plotPath = '../data/reports/plots'
+		task = ExtractionTask(inPath, inPath, reportPath, plotPath)
+		task.extract()
 
 def main():
 	repl = REPL()
@@ -75,5 +88,4 @@ def main():
 
 if __name__ == '__main__':
 	driver = Driver()
-	# driver.runExtractions()
 	driver.extractSelected()

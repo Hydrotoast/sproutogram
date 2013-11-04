@@ -38,7 +38,7 @@ class ShollAnalysisReport(ReportGeneratorBase):
 		variance = sum(
 			[(analysis.sproutCount - HumanCounts.data[filename].focusCounts) ** 2
 				for filename, analysis in analyses])
-		return math.sqrt(variance / len(HumanCounts.data))
+		return math.sqrt(variance / float(len(HumanCounts.data)))
 
 	def generate(self):
 		with open(self.output, 'w') as fh:
@@ -49,12 +49,14 @@ class ShollAnalysisReport(ReportGeneratorBase):
 			writer.writerow(['Overview'])
 			writer.writerow(['RMSE', rmse])
 			print 'RMSE: ', rmse
+
 			for filename, analysis in sortedItems:
 				writer.writerow([filename])
 				writer.writerow(['Sprout Count', analysis.sproutCount])
 				writer.writerow(['Critical Value', analysis.criticalValue])
 				writer.writerow(['Sprout Maximum', analysis.sproutMaximum])
 				writer.writerow(['Shoenen Ramification Index', '%.2f' % analysis.ramificationIndex])
+				writer.writerow(['Branching Count', '%.2f' % analysis.branchingCount])
 				writer.writerow([])
 
 			for filename, analysis in sortedItems:

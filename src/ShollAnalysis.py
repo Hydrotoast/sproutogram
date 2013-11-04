@@ -1,88 +1,9 @@
-from SimpleCV import Color
+from SimpleCV import Color, np
+
+from strategy import *
 
 from collections import deque
-import operator
-
 import utils
-
-class ShollAnalysisDescriptor(object):
-	"""
-	Descriptor for a Sholl Analysis containing the raw data dump of the
-	analysis as well as other derivable calculations.
-	"""
-	def __init__(self, img, crossings):
-		self.__img = img
-		self.__crossings = crossings
-		self.__sproutCount = None
-		self.__criticalValue = None
-		self.__sproutMaximum = None
-		self.__ramificationIndex = None
-
-	@property
-	def img(self):
-		"""Returns the image analyzed."""
-		return self.__img
-
-	@property
-	def crossings(self):
-		"""
-		Returns a cached list of crossings as a function of radius. A crossing
-		is an instance of an intersection with a concentric circle of specified
-		radius with a sprout blob.
-
-		:rtype: dictionary of {int: int}
-		"""
-		return self.__crossings
-
-	@property
-	def sproutCount(self):
-		"""
-		Returns a count of the primary sprouts. Primary sprouts are those
-		sprouts which stem directly from the bead.
-
-		:rtype: int
-		"""
-		if not self.__sproutCount:
-			subs = utils.lis(self.crossings.values())
-			self.__sproutCount = sum(subs) / len(subs)
-		return self.__sproutCount
-
-	@property
-	def criticalValue(self):
-		"""
-		Returns the critical value which is defined to be the radius at which
-		the maximum number of crossings occur.
-
-		:rtype: int
-		"""
-		if not self.__criticalValue:
-			self.__criticalValue = max(self.crossings.iteritems(), key=operator.itemgetter(1))[0]
-		return self.__criticalValue
-
-	@property
-	def sproutMaximum(self):
-		"""
-		Returns the maximum number of crossings of all radii.
-
-		:rtype: int
-		"""
-		if not self.__sproutMaximum:
-			self.__sproutMaximum = max(self.crossings.itervalues())
-		return self.__sproutMaximum
-
-	@property
-	def ramificationIndex(self):
-		"""
-		Returns the Shoenen Ramification Index which is a ratio for branching
-		factor. This is calculated by dividing the sprout maximum with the
-		number of primary sprouts.
-		
-		:rtype: float
-		"""
-		if not self.__ramificationIndex:
-			self.__ramificationIndex = float(self.sproutMaximum) / float(self.sproutCount)
-		return self.__ramificationIndex
-
 
 class ShollAnalyzer(object):
 	"""
@@ -90,9 +11,8 @@ class ShollAnalyzer(object):
 	of an angiogram. This analyzer depends on the known position of the bead in
 	the angiogram to perform the analysis using concentric circles.
 	"""
-	def __init__(self, img, bead):
-		self.img = img
-		self.bead = bead
+	def __init__(self, strategy=IntegrationStrategy.AveragedAnalysisStrategy()):
+		self.strategy = strategy
 
 	def generateCircularCoordinates(self, origin, radius):
 		"""
@@ -141,22 +61,22 @@ class ShollAnalyzer(object):
 			for point in octant:
 				yield point
 
-	def analyze(self, stepSize = 1):
+	def analyze(self, img, bead, stepSize = 1):
 		"""Returns a descriptor of the analysis.
 		
 		:rtype: ``ShollAnalysisDescriptor``"""
-		initRadius = int(self.bead.radius() * 1.714)
-		maxRadius = min([self.bead.x, self.bead.y, self.img.size()[0] -
-			self.bead.x, self.img.size()[1] - self.bead.y])
+		initRadius = int(bead.radius() * 2)
+		maxRadius = min([bead.x, bead.y, img.size()[0] -
+			bead.x, img.size()[1] - bead.y])
 
 		lastPixel = Color.BLACK[0]
 		crossings = {}
 		for r in range(initRadius, maxRadius, stepSize):
 			crossings.update({r: 0})
-			for x, y in self.generateCircularCoordinates(self.bead.origin(), r):
-				pixel = self.img.getGrayPixel(x, y)
+			for x, y in self.generateCircularCoordinates(bead.origin(), r):
+				pixel = img.getGrayPixel(x, y)
 				if pixel != lastPixel and lastPixel == Color.WHITE[0]:
 					crossings[r] += 1
 				lastPixel = pixel
 
-		return ShollAnalysisDescriptor(self.img, crossings)
+		return ShollAnalysisDescriptor(img, crossings, self.strategy)

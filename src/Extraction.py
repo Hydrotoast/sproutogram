@@ -145,18 +145,18 @@ class SproutExtractor(ExtractorBase):
 		# 	[1,0,1]])
 
 		skeleton = imgEdges.dilate(dilateCount).skeletonize(3)
-		isolatedPoints = hitmiss(
-			skeleton, 
-			[[-1,-1,-1,-1,-1,-1,-1], 
-			[-1,0,0,0,0,0,-1], 
-			[-1,0,0,0,0,0,-1], 
-			[-1,0,0,0,0,0,-1], 
-			[-1,0,0,1,0,0,-1], 
-			[-1,0,0,0,0,0,-1], 
-			[-1,0,0,0,0,0,-1], 
-			[-1,0,0,0,0,0,-1], 
-			[-1,-1,-1,-1,-1,-1,-1]])
-		skeleton = skeleton - isolatedPoints
+		# isolatedPoints = hitmiss(
+		# 	skeleton, 
+		# 	[[-1,-1,-1,-1,-1,-1,-1], 
+		# 	[-1,0,0,0,0,0,-1], 
+		# 	[-1,0,0,0,0,0,-1], 
+		# 	[-1,0,0,0,0,0,-1], 
+		# 	[-1,0,0,1,0,0,-1], 
+		# 	[-1,0,0,0,0,0,-1], 
+		# 	[-1,0,0,0,0,0,-1], 
+		# 	[-1,0,0,0,0,0,-1], 
+		# 	[-1,-1,-1,-1,-1,-1,-1]])
+		# skeleton = skeleton - isolatedPoints
 
 		self.img = skeleton
 
