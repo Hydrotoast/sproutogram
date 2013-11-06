@@ -1,12 +1,16 @@
 from SimpleCV import *
 
 import os
+from multiprocessing import Pool
+
 import matplotlib.pyplot as plt
 
 from REPL import REPL
 from Extraction import *
 from ShollAnalysis import *
 from ReportGeneration import *
+
+from strategy import *
 
 """
 An Extraction task defines an atomic job for extracting and quantitatively
@@ -38,11 +42,13 @@ class ExtractionTask(object):
 
 	def extract(self):
 		imageSet = ImageSet(self.inPath)
+		imageSet.sort()
 		reportGen = ShollAnalysisReport(self.reportPath)
+		counter = 1
 		for image in imageSet:
 			filename = os.path.splitext(os.path.basename(image.filename))[0]
 
-			print 'Analyzing: %s' % filename		
+			print 'Analyzing %d/%d: %s' % (counter, len(imageSet.filelist), filename)	
 			analysis = self.analyzeMonoBead(image)
 
 			# Sholl Analysis Plots
@@ -50,24 +56,28 @@ class ExtractionTask(object):
 
 			# Add to overall report
 			reportGen.addAnalysis(filename, analysis)
+
+			counter += 1
 		reportGen.generate()
 
 	def plotShollAnalysis(self, analysis, filename):
 		plt.figure(1, figsize=(18, 6))
-		plt.subplot(121)
 		plt.plot(analysis.crossings.keys(), analysis.crossings.values())
 		plt.title('Sholl Analysis for ' + filename)
 		plt.xlabel('Radius')
 		plt.ylabel('Crossings')
+		plt.savefig(os.path.join(self.plotPath, filename + ".png"))
+		plt.clf()
 
-		# plt.subplot(122)
-		# plt.plot(analysis.crossings.keys(), analysis._PWConstants)
-		# plt.title('Sholl Analysis for ' + filename)
-		# plt.xlabel('Radius')
-		# plt.ylabel('Crossings')
-		# plt.savefig(os.path.join(self.plotPath, filename + ".png"))
-		# plt.clf()
+class AveragedIntegrationExtractionTask(ExtractionTask):
+	def __init__(self, inPath, outPath, reportPath, plotPath):
+		super(ExtractionTask, self).__init__(inPath, outPath, reportPath, plotPath)
+		self.analyzer = ShollAnalyzer(IntegrationStrategy.AveragedAnalysisStrategy())
 
+class MedianIntegrationExtractionTask(ExtractionTask):
+	def __init__(self, inPath, outPath, reportPath, plotPath):
+		super(ExtractionTask, self).__init__(inPath, outPath, reportPath, plotPath)
+		self.analyzer = ShollAnalyzer(IntegrationStrategy.MedianAnalysisStrategy())
 
 """
 Drives premade sets of extraction tasks

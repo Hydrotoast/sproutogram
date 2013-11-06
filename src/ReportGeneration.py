@@ -40,15 +40,24 @@ class ShollAnalysisReport(ReportGeneratorBase):
 				for filename, analysis in analyses])
 		return math.sqrt(variance / float(len(HumanCounts.data)))
 
+	def calculateBranchingCountRMSE(self, analyses):
+		variance = sum(
+			[(analysis.branchingCount - HumanCounts.data[filename].branchingCount) ** 2
+				for filename, analysis in analyses])
+		return math.sqrt(variance / float(len(HumanCounts.data)))
+
 	def generate(self):
 		with open(self.output, 'w') as fh:
 			sortedItems = sorted(self.analyses.items())
-			rmse = self.calculateRMSE(sortedItems)
+			sproutCountRMSE = self.calculateRMSE(sortedItems)
+			branchingCountRMSE = self.calculateBranchingCountRMSE(sortedItems)
 			writer = csv.writer(fh)
 
 			writer.writerow(['Overview'])
-			writer.writerow(['RMSE', rmse])
-			print 'RMSE: ', rmse
+			writer.writerow(['Sprout Count RMSE: ', sproutCountRMSE])
+			writer.writerow(['Branching Count RMSE: ', branchingCountRMSE])
+			# print 'Sprout Count RMSE: ', sproutCountRMSE
+			# print 'Branching Count RMSE: ', branchingCountRMSE
 
 			for filename, analysis in sortedItems:
 				writer.writerow([filename])

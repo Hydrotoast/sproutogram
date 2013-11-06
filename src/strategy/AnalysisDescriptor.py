@@ -84,18 +84,18 @@ class ShollAnalysisDescriptor(object):
 	Descriptor for a Sholl Analysis containing the raw data dump of the
 	analysis as well as other derivable calculations.
 	"""
-	def __init__(self, img, crossings, strategy=AnalysisStrategy()):
+	def __init__(self, img, crossings, strategy):
 		self.strategy = strategy
 		self.strategy.bind(img, crossings)
 		# self.integrationMethod = 'median'
 
 		self.__img = img
 		self.__crossings = crossings
-		self.__sproutCount = None
-		self.__criticalValue = None
-		self.__sproutMaximum = None
-		self.__ramificationIndex = None
-		self.__branchingCount = None
+		self.__sproutCount = self.strategy.sproutCount
+		self.__criticalValue = self.strategy.criticalValue
+		self.__sproutMaximum = self.strategy.sproutMaximum
+		self.__ramificationIndex = self.strategy.ramificationIndex
+		self.__branchingCount = self.strategy.branchingCount
 
 	@property
 	def img(self):
@@ -121,8 +121,6 @@ class ShollAnalysisDescriptor(object):
 
 		:rtype: int
 		"""
-		if not self.__sproutCount:
-			self.__sproutCount = self.strategy.sproutCount
 		return self.__sproutCount
 
 	@property
@@ -133,8 +131,6 @@ class ShollAnalysisDescriptor(object):
 
 		:rtype: int
 		"""
-		if not self.__criticalValue:
-			self.__criticalValue = self.strategy.criticalValue
 		return self.__criticalValue
 
 	@property
@@ -144,8 +140,6 @@ class ShollAnalysisDescriptor(object):
 
 		:rtype: int
 		"""
-		if not self.__sproutMaximum:
-			self.__sproutMaximum = self.strategy.sproutMaximum
 		return self.__sproutMaximum
 
 	@property
@@ -157,14 +151,15 @@ class ShollAnalysisDescriptor(object):
 		
 		:rtype: float
 		"""
-		if not self.__ramificationIndex:
-			self.__ramificationIndex = self.strategy.ramificationIndex
 		return self.__ramificationIndex
 
 	@property
 	def branchingCount(self):
-		if not self.__branchingCount:
-			self.__branchingCount = self.strategy.branchingCount
+		"""
+		Returns the branching count which is defined to be the number of branches
+		which stem from initial sprouts i.e. sprout maximum - sprout count
+		
+		:rtype: float
+		"""
 		return self.__branchingCount
-
 
