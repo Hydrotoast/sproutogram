@@ -12,9 +12,8 @@ class ReportGeneratorBase(object):
 		self.analyses = {}
 
 	def generate(self):
-		"""Generates the report as CSV."""
+		"""Generates the report."""
 		pass
-
 
 class ShollAnalysisReport(ReportGeneratorBase):
 	"""

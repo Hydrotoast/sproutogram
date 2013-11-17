@@ -17,12 +17,16 @@ An Extraction task defines an atomic job for extracting and quantitatively
 analyzing an image set of fibrin gel bead sprouting assays.
 """
 class ExtractionTask(object):
-	def __init__(self, inPath, outPath, reportPath, plotPath):
+	def __init__(self, inPath, outPath, reportPath):
 		self.inPath = inPath
 		self.outPath = outPath
-		self.reportPath = reportPath
-		self.plotPath = plotPath
-		self.analyzer = ShollAnalyzer()
+		self.methodName = self.__class__.__name__ + str(self.analyzer.beadFactor)
+		self.reportPath = os.path.join(reportPath, self.methodName)
+		self.plotPath = os.path.join(self.reportPath, 'plots')
+		if not os.path.exists(self.reportPath):
+			os.makedirs(self.reportPath)
+		if not os.path.exists(self.plotPath):
+			os.makedirs(self.plotPath)
 
 	def analyzeMonoBead(self, img):
 		beadExtractor = BeadExtractor(img)
@@ -37,18 +41,19 @@ class ExtractionTask(object):
 
 		analysis = self.analyzer.analyze(sproutsImg, beads[0])
 
-		print "\t%d sprouts found" % analysis.sproutCount
+# 		print "\t%d sprouts found" % analysis.sproutCount
 		return analysis
 
 	def extract(self):
 		imageSet = ImageSet(self.inPath)
 		imageSet.sort()
-		reportGen = ShollAnalysisReport(self.reportPath)
+		reportGen = ShollAnalysisReport(os.path.join(self.reportPath, self.methodName + '.csv'))
 		counter = 1
+		print 'Extracting using %s' % self.methodName
 		for image in imageSet:
 			filename = os.path.splitext(os.path.basename(image.filename))[0]
 
-			print 'Analyzing %d/%d: %s' % (counter, len(imageSet.filelist), filename)	
+# 			print 'Analyzing %d/%d: %s' % (counter, len(imageSet.filelist), filename)	
 			analysis = self.analyzeMonoBead(image)
 
 			# Sholl Analysis Plots
@@ -69,15 +74,23 @@ class ExtractionTask(object):
 		plt.savefig(os.path.join(self.plotPath, filename + ".png"))
 		plt.clf()
 
-class AveragedIntegrationExtractionTask(ExtractionTask):
-	def __init__(self, inPath, outPath, reportPath, plotPath):
-		super(ExtractionTask, self).__init__(inPath, outPath, reportPath, plotPath)
-		self.analyzer = ShollAnalyzer(IntegrationStrategy.AveragedAnalysisStrategy())
+class AveragedExtractionTask(ExtractionTask):
+	def __init__(self, inPath, outPath, reportPath, beadFactor=1.5, stepSize=1):
+		self.analyzer = ShollAnalyzer(IntegrationStrategy.AveragedAnalysisStrategy(), beadFactor, stepSize)
+		super(AveragedExtractionTask, self).__init__(inPath, outPath, reportPath)
+
+class ThresholdAverageExtractionTask(ExtractionTask):
+	def __init__(self, inPath, outPath, reportPath, beadFactor=1.5, stepSize=1):
+		self.analyzer = ShollAnalyzer(IntegrationStrategy.ThresholdAverageStrategy(), beadFactor)
+		super(ThresholdAverageExtractionTask, self).__init__(inPath, outPath, reportPath)
 
 class MedianIntegrationExtractionTask(ExtractionTask):
-	def __init__(self, inPath, outPath, reportPath, plotPath):
-		super(ExtractionTask, self).__init__(inPath, outPath, reportPath, plotPath)
-		self.analyzer = ShollAnalyzer(IntegrationStrategy.MedianAnalysisStrategy())
+	def __init__(self, inPath, outPath, reportPath, beadFactor=1.5, stepSize=1):
+		self.analyzer = ShollAnalyzer(IntegrationStrategy.MedianAnalysisStrategy(), beadFactor, stepSize)
+		super(MedianIntegrationExtractionTask, self).__init__(inPath, outPath, reportPath)
+		
+def concurrentExtract(task):
+	task.extract()
 
 """
 Drives premade sets of extraction tasks
@@ -85,16 +98,17 @@ Drives premade sets of extraction tasks
 class Driver(object):
 	def extractSelected(self):
 		inPath = '../data/samples/selected'
-		reportPath = '../data/reports/selected.csv'
-		plotPath = '../data/reports/plots'
-		task = ExtractionTask(inPath, inPath, reportPath, plotPath)
-		task.extract()
-
-def main():
-	repl = REPL()
-	img = Image('../data/samples/mono.jpg')
-	img = img.resize(w=800)
-	repl.run(img)
+		reportPath = '../data/reports/'
+		pool = Pool(4)
+		tasks = []
+# 		for i in np.arange(1.5, 3.1, 0.1):
+# 			task = AveragedExtractionTask(inPath, inPath, reportPath, i)
+# 			task.extract()
+ 		for i in np.arange(1.5, 3.1, 0.1):
+ 			tasks.append(ThresholdAverageExtractionTask(inPath, inPath, reportPath, i))
+# 		for i in np.arange(1.5, 3.1, 0.1):
+# 			tasks.append(MedianIntegrationExtractionTask(inPath, inPath, reportPath, i))
+		pool.map(concurrentExtract, tasks)
 
 if __name__ == '__main__':
 	driver = Driver()

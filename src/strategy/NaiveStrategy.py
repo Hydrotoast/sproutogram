@@ -24,6 +24,8 @@ class NaiveAnalysisStrategy(AnalysisStrategy):
 
 	@property
 	def ramificationIndex(self):
+		if self.sproutCount == 0:
+			return 0
 		return self.sproutMaximum / self.sproutCount
 
 	@property
