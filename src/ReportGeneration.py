@@ -1,7 +1,8 @@
-from Features import HLSG
 from training import HumanCounts
 import csv
 import math
+import sqlite3
+import pickle
 
 class ReportGeneratorBase(object):
 	"""
@@ -11,19 +12,6 @@ class ReportGeneratorBase(object):
 		self.output = filename
 		self.analyses = {}
 
-	def generate(self):
-		"""Generates the report."""
-		pass
-
-class ShollAnalysisReport(ReportGeneratorBase):
-	"""
-	Generates reports given a Sholl Analysis of an angiogram. The report
-	includes the primary sprout count, maximum sprout count raw data dump of
-	the analysis.
-	"""
-	def __init__(self, filename):
-		super(ShollAnalysisReport, self).__init__(filename)
-
 	def addAnalysis(self, filename, analysis):
 		"""
 		Appends an analysis of the specified filename to the report.
@@ -32,6 +20,19 @@ class ShollAnalysisReport(ReportGeneratorBase):
 		:param analysis: analysis of the file
 		"""
 		self.analyses[filename] = analysis
+
+	def generate(self):
+		"""Generates the report."""
+		pass
+
+class CSVReportGenerator(ReportGeneratorBase):
+	"""
+	Generates reports given a Sholl Analysis of an angiogram. The report
+	includes the primary sprout count, maximum sprout count raw data dump of
+	the analysis.
+	"""
+	def __init__(self, filename):
+		super(CSVReportGenerator, self).__init__(filename)
 
 	def calculateRMSE(self, analyses):
 		variance = sum(
@@ -72,3 +73,23 @@ class ShollAnalysisReport(ReportGeneratorBase):
 				writer.writerow(['Radius'] + analysis.crossings.keys())
 				writer.writerow(['Crossings'] + analysis.crossings.values())
 				writer.writerow([])
+
+class DBReportGenerator(CSVReportGenerator):
+	def __init__(self, dbfilename, method):
+		super(DBReportGenerator, self).__init__(dbfilename)
+		self.method = method
+	
+	def generate(self):
+		with sqlite3.connect(self.output) as conn:
+			cur = conn.cursor()
+			sortedItems = sorted(self.analyses.items())
+
+			for filename, analysis in sortedItems:
+				cur.execute("INSERT OR IGNORE INTO feature VALUES ('{0:s}', '{1:s}', '{2:.2f}', '{3:.2f}', '{4:.2f}', '{5:.2f}', '{6:.2f}')"
+							.format(self.method, filename, analysis.sproutCount,
+							analysis.criticalValue, analysis.sproutMaximum,
+							analysis.ramificationIndex, analysis.branchingCount))
+
+			for filename, analysis in sortedItems:
+				cur.execute("INSERT OR IGNORE INTO sholl_analysis VALUES ('{0:s}', '{1:s}')"
+							.format(filename, pickle.dumps(analysis.crossings)))

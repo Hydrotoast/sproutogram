@@ -47,7 +47,8 @@ class ExtractionTask(object):
 	def extract(self):
 		imageSet = ImageSet(self.inPath)
 		imageSet.sort()
-		reportGen = ShollAnalysisReport(os.path.join(self.reportPath, self.methodName + '.csv'))
+		#reportGen = CSVReportGenerator(os.path.join(self.reportPath, self.methodName + '.csv'))
+		reportGen = DBReportGenerator(os.path.join('db', 'extractions.db'), self.methodName)
 		counter = 1
 		print 'Extracting using %s' % self.methodName
 		for image in imageSet:
@@ -88,6 +89,11 @@ class MedianIntegrationExtractionTask(ExtractionTask):
 	def __init__(self, inPath, outPath, reportPath, beadFactor=1.5, stepSize=1):
 		self.analyzer = ShollAnalyzer(IntegrationStrategy.MedianAnalysisStrategy(), beadFactor, stepSize)
 		super(MedianIntegrationExtractionTask, self).__init__(inPath, outPath, reportPath)
+
+class ThresholdMedianIntegrationExtractionTask(ExtractionTask):
+	def __init__(self, inPath, outPath, reportPath, beadFactor=1.5, stepSize=1):
+		self.analyzer = ShollAnalyzer(IntegrationStrategy.MedianAnalysisStrategy(), beadFactor, stepSize)
+		super(ThresholdMedianIntegrationExtractionTask, self).__init__(inPath, outPath, reportPath)
 		
 def concurrentExtract(task):
 	task.extract()
@@ -99,17 +105,23 @@ class Driver(object):
 	def extractSelected(self):
 		inPath = '../data/samples/selected'
 		reportPath = '../data/reports/'
+		AveragedExtractionTask(inPath, inPath, reportPath, 1.5).extract()
+		
+	def extractBatch(self):
+		inPath = '../data/samples/selected'
+		reportPath = '../data/reports/'
 		pool = Pool(4)
 		tasks = []
-# 		for i in np.arange(1.5, 3.1, 0.1):
-# 			task = AveragedExtractionTask(inPath, inPath, reportPath, i)
-# 			task.extract()
+ 		# for i in np.arange(1.5, 3.1, 0.1):
+ 		# 	tasks.append(AveragedExtractionTask(inPath, inPath, reportPath, i))
+ 		# for i in np.arange(1.5, 3.1, 0.1):
+ 		# 	tasks.append(ThresholdAverageExtractionTask(inPath, inPath, reportPath, i))
+ 		# for i in np.arange(1.5, 3.1, 0.1):
+ 		# 	tasks.append(MedianIntegrationExtractionTask(inPath, inPath, reportPath, i))
  		for i in np.arange(1.5, 3.1, 0.1):
- 			tasks.append(ThresholdAverageExtractionTask(inPath, inPath, reportPath, i))
-# 		for i in np.arange(1.5, 3.1, 0.1):
-# 			tasks.append(MedianIntegrationExtractionTask(inPath, inPath, reportPath, i))
+ 			tasks.append(ThresholdMedianIntegrationExtractionTask(inPath, inPath, reportPath, i))
 		pool.map(concurrentExtract, tasks)
 
 if __name__ == '__main__':
 	driver = Driver()
-	driver.extractSelected()
+	driver.extractBatch()

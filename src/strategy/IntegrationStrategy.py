@@ -30,6 +30,14 @@ class MedianAnalysisStrategy(NaiveAnalysisStrategy):
 	def sproutCount(self):
 		return np.median(self.crossings.values()[0:self.criticalValue])
 
+class ThresholdMedianAnalysisStrategy(NaiveAnalysisStrategy):
+	def bind(self, img, crossings, threshold=10):
+		super(NaiveAnalysisStrategy, self).bind(img, crossings)
+
+	@property
+	def sproutCount(self):
+		return np.median(self.crossings.values()[0:self.threshold])
+
 # class AveragedAdaptiveAnalysisStrategy(AveragedAnalysisStrategy):
 # 	def bind(self, img, crossings):
 # 		super(NaiveAnalysisStrategy, self).bind(img, crossings)
