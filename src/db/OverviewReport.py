@@ -7,7 +7,7 @@ def main():
 		cur.execute('SELECT * FROM overview')
 		rows = cur.fetchall()
 		for row in rows:
-			print '{0:s}, {1:.2f}, {2:.2f}'.format(row[0], math.sqrt(row[1]), math.sqrt(row[2]))
+			print '{0:s}, {1:.2f}, {2:.2f}, {3:.2f}'.format(row[0], math.sqrt(row[1]), math.sqrt(row[2]), math.sqrt(row[3]))
 
 if __name__ == '__main__':
 	main()
