@@ -41,10 +41,10 @@
 	analyze fibrin gel bead sprouting assays developed by the laboratory
 	of Dr. Chris Hughes in the Department of Molecular Biology \&
 	Biochemistry at UC Irvine. Our system enumerates sprouts for each
-	bead and calculates the average length for an imaged assay. Our
-	approach reports accurate sprout enumeration when compared with manual
-	counts by an expert observer while significantly reducing the analysis
-	time.
+	bead and calculates the average branching factor and the average
+	length for an imaged assay. Our approach reports accurate sprout
+	enumeration when compared with manual counts by an expert observer
+	while significantly reducing the analysis time.
 \end{abstract}
 
 \section{Introduction} % (fold)
@@ -117,8 +117,9 @@
 	the image, the HLSG Extractor uses structural inpainting to infer
 	which sprout segments emerge belong the same sprout. After structural
 	inpainting, the HLSG Extractor quantitatively analyzed the images
-	using Sholl Analysis to determine the number of primary sprouts and the
-	average length for each bead in the imaged assay.
+	using Sholl Analysis to determine the number of primary sprouts, the
+	average length and the average branching factor for each bead in the
+	imaged assay.
 
 	In addition to the High-Level Sprout Geometry (HLSG) Extractor, a driver
 	and report generator are implemented to drive functionality on sample
@@ -131,40 +132,6 @@
 	properties. Section \ref{sec:System Architecture} shows how the system
 	is designed for modularity and robustness.
 % section Introduction (end)
-
-\section{System Architecture} % (fold)
-\label{sec:System Architecture}
-	The system requires Python version 2.7x with the SimpleCV package. The
-	architecture of the system is based on our methodology for
-	quantitatively analyzing \invitro angiogenesis. The system, however,
-	incorporates modules for driving batch processes as well as a
-	Read-Eval-Print-Loop (REPL) for console interaction. Finally, a module
-	incorporated for generating CSV reports of the analysis. The sequence
-	diagram for the system components are shown in Figure
-	\ref{fig:sysarch}.
-	\begin{figure*}[ht!]
-		\centering
-		\input{architecture}
-		\caption{High-Level Architecture}
-		\label{fig:sysarch}
-	\end{figure*}
-
-	% The REPL module controls the interaction between the user and the
-	% system. Commands available in the REPL are shown in Table
-	% \ref{tab:commands}.
-	% \begin{table}[h!]
-	% 	\begin{tabular}{| l | l | p{4cm} |}
-	% 		\hline
-	% 		\textbf{Command} & \textbf{Output} & \textbf{Description} \\\hline
-	% 		extract [file] & HLSG of file & Extracts the HLSG of the given file. \\\hline
-	% 		extract [files] & HLSG of files & Extracts the HLSGs of the given files. \\\hline
-	% 		exit & Goodbye & Exits the system. \\\hline
-	% 	\end{tabular}
-	% 	\caption{Commands}
-	% 	\label{tab:commands}
-	% \end{table}
-% section System Architecture (end)
-
 
 \section{Methodology} % (fold)
 \label{sec:Methodology}
@@ -292,7 +259,7 @@
 			\centering
 			\subfigure[Thickening]{\includegraphics[width=4.1cm]{images/mono_dilated.jpg}}
 			\subfigure[Thinning and Pruning]{\includegraphics[width=4.1cm]{images/mono_skeletonized.jpg}}
-			\caption{Sprout Detection Outline without Bead Masks}
+			\caption{Sprout Detection Outline}
 			\label{fig:sproutex}
 		\end{figure}
 		We now utilize the disjoint centerlines as sprout segments.
@@ -347,9 +314,7 @@
 						-1 & -1 & -1 & -1 & -1 \\
 					\end{matrix} \right)
 				\]
-				\caption{Hit-and-Miss Transformation Kernel for Isolated
-				Points where $1$ represents foreground, $-1$ represents
-				background and $0$ can be either}
+				\caption{Hit-and-Miss Transformation Kernel for Isolated Points}
 			\end{figure}
 
 			In contrast with noise, holes are points that can be found
@@ -358,7 +323,8 @@
 			edge-detection algorithm since the contours of a capillary
 			encompass the lumen which is detected as background. By the
 			morphology of these structures, we simply find the contours
-			which enclose small holes and perform inpainting.
+			which enclose small holes and perform inpainting by polygon
+			approximation using the Ramer-Douglas-Peucker algorithm.
 		% subsubsection Sprout Restoration (end)
 
 	% subsection Sprout Extraction (end)
@@ -457,12 +423,44 @@
 % 	% subsection Driver (end)
 % % section Data Structures (end)
 
+\section{System Architecture} % (fold)
+\label{sec:System Architecture}
+	The system requires Python version 2.7x with the SimpleCV package. The
+	architecture of the system is based on our methodology for
+	quantitatively analyzing \invitro angiogenesis. The system, however,
+	incorporates modules for driving batch processes as well as a
+	Read-Eval-Print-Loop (REPL) for console interaction. Finally, a module
+	incorporated for generating CSV reports of the analysis. The sequence
+	diagram for the system components are shown in Figure
+	\ref{fig:sysarch}.
+	\begin{figure*}[ht!]
+		\centering
+		\input{architecture}
+		\caption{High-Level Architecture}
+		\label{fig:sysarch}
+	\end{figure*}
+
+	The REPL module controls the interaction between the user and the
+	system. Commands available in the REPL are shown in Table
+	\ref{tab:commands}.
+	\begin{table}[h!]
+		\begin{tabular}{| l | l | p{4cm} |}
+			\hline
+			\textbf{Command} & \textbf{Output} & \textbf{Description} \\\hline
+			extract [file] & HLSG of file & Extracts the HLSG of the given file. \\\hline
+			extract [files] & HLSG of files & Extracts the HLSGs of the given files. \\\hline
+			exit & Goodbye & Exits the system. \\\hline
+		\end{tabular}
+		\caption{Commands}
+		\label{tab:commands}
+	\end{table}
+% section System Architecture (end)
+
 \section{Results} % (fold)
 \label{sec:Results}
-	The results of our sprout counts show a standard error of $1.7$ when
-	compared manual sprout counts of an expert observer (see Table
-	\ref{tab:resultcomp}). In the table, the expert observer sprout counts
-	include only sprouts which are declared to be in-focus.
+	The results of our sprout enumeration show a standard error of $1.7$
+	when compared manual sprout counts of an expert observer (see Table
+	\ref{tab:resultcomp}).
 
 	\begin{table}[htp]
 		\centering
@@ -488,63 +486,13 @@
 		\caption{Expert Observer vs. HLSG Sprout Counts}
 		\label{tab:resultcomp}
 	\end{table}
-
-	The average lengths have also been obtained with arbitrary units;
-	however, there currently exists no average length data from an expert
-	observer for comparison.
 % section Results (end)
 
 \section{Discussion} % (fold)
 \label{sec:Discussion}
-	The sprout count results demonstrate consistency with human observers
-	for in focus sprouts. Our HLSG Extractor, however, also shows a
-	consistent pattern in overestimating the number of sprouts
-	declared to be in-focus by an expert observer. This occurs because
-	our system may also capture sprouts that were declared to be
-	out-of-focus by an expert observer. The preprocessing phase of our
-	methodology uses edge detection to determine which sprouts to
-	count whereas an expert observer may utilize other features beyond
-	a discernable cell wall.
-
-	Furthermore, we speculate that sprouts crossings and sprout
-	discontinuities are the greatest sources of error in sprout counts.
-	Sprout crossings are defined to be the occurrence of two overlapping
-	sprouts. A method of effectively distinguishing sprout branching from
-	sprout crossings is still an open problem. Additionally, more
-	effective sprout restoration methods could improve the accuracy of
-	Sholl Analysis.
+	Although the methodology is similar to AngioQuant, our method operates on
+	two-ridge structures \cite{niemisto05}.
 % section Discussion (end)
-
-\section{Conclusions} % (fold)
-\label{sec:Conclusions}
-	Automated image analysis methods are necessary for the assessment of
-	pro-angiogenic and anti-angiogenic agents in an \invitro angiogenesis
-	assay. Unfortunately, the methodology of contemporary software is
-	insufficient for our data set. Manual methods are also laborious and
-	vulnerable to observer bias.
-
-	To overcome these shortcomings, we have designed an optimized image
-	analysis method for quantitatively analyzing \invitro angiogenesis
-	assays containing HUVEC. The system, HLSG Extractor, obtains sprout
-	counts that are consistent with the accuracy of an expert observer. In
-	addition to sprout counts, the average length of the sprouts per bead
-	have are also obtained. With the versatility of Sholl Analysis,
-	several other morphometrics may become available using further
-	statistical methods.
-
-	%% Future work
-	Potential adjustments to the system may include new implementations
-	and different approaches to the phases of the optimized methodology.
-	For example, given the sprout counts of the bead of an imaged assay,
-	we may reduce the noise from discontinuous sprouts further by a
-	piecewise constant approximation of the sprout counts. Subsequently,
-	methods of integration may be unnecessary. 
-
-	%% Summary
-	Cumulatively, the HLSG Extractor has proven to be a consistent, robust
-	and automated image analysis system of \invitro angiogenesis
-	morphology.
-% section Conclusions (end)
 
 \section{Acknowledgements} % (fold)
 \label{sec:Acknowledgements}
@@ -569,10 +517,6 @@
 
 	\subsection{Sholl Analysis} % (fold)
 	\label{app:Sholl Analysis}
-	Sholl Analysis counts the number of crossings for a set of concentric
-	circles from an initially defined radius to a maximally defined
-	radius. See Algorithm 1 for our precise
-	implementation.
 		\begin{algorithm}[ht!]
 			\caption{Sholl Analysis}
 			\begin{algorithmic}
@@ -628,7 +572,7 @@
 		Hence, we reverse the points calculated for every odd octant and
 		then concatenate their data points.
 
-		\begin{algorithm}[htp!]
+		\begin{algorithm}[ht!]
 			\caption{Ordered Bresenham Circle Algorithm}
 			\begin{algorithmic}
 				\Ensure{points returned are ordered counterclockwise from the positive x-axis}

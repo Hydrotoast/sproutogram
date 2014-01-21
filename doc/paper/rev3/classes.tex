@@ -1,0 +1,19 @@
+\begin{tikzpicture}
+\umlclass[x=0,y=0]{BeadFeature}{
+	+ center : (uint, uint) \\
+	+ radius : uint \\
+	}{}
+\umlclass[x=4.5,y=0]{SproutFeature}{
+	+ centroid : (uint, uint) \\
+	+ length : uint \\
+	+ width : uint \\
+	}{}
+\umlclass[x=4.5,y=-3]{RadialSegment}{
+	+ inner : (uint, uint) \\
+	+ outer : (uint, uint) \\
+	+ blob : Blob
+	}{}
+%% Relations
+\umlaggreg{BeadFeature}{SproutFeature}
+\umluniaggreg{SproutFeature}{RadialSegment}
+\end{tikzpicture}

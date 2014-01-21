@@ -38,13 +38,12 @@
 \begin{abstract}
 	We have developed an automated system for the quantitative analysis of
 	\invitro angiogenesis assays. Specifically, the system is designed to
-	analyze fibrin gel bead sprouting assays developed by the laboratory
-	of Dr. Chris Hughes in the Department of Molecular Biology \&
-	Biochemistry at UC Irvine. Our system enumerates sprouts for each
-	bead and calculates the average length for an imaged assay. Our
-	approach reports accurate sprout enumeration when compared with manual
-	counts by an expert observer while significantly reducing the analysis
-	time.
+	analyze fibrin gel bead sprouting assays developed by the laboratory of
+	Dr. Chris Hughes in the Department of Molecular Biology \& Biochemistry
+	at UC Irvine. Our system enumerates sprouts for each bead and
+	calculates the average length for an imaged assay. Our approach reports
+	consistent sprout enumeration when compared with manual counts by an
+	expert observer while significantly reducing the analysis time.
 \end{abstract}
 
 \section{Introduction} % (fold)
@@ -103,11 +102,11 @@
 	are consistent with an expert observer.
 
 	%% How sprout counts were previously acquired
-	Previously, the number of sprout counts per bead were measured by manual
-	counting on the obtained images. Furthermore, the sprout length was
-	ambiguously measured in arbitrary units \cite{nakatsu03}. Our system
-	relieves the laborious, manual analysis by quickly automating the detection
-	and reliably analyzing of imaged assay features.
+	Previously, the number of sprout counts per bead were measured by
+	manual counting on the obtained images. Furthermore, the sprout length
+	was ambiguously measured in arbitrary units \cite{nakatsu03}. Our
+	system relieves the laborious, manual analysis by quickly automating
+	the detection and reliably analyzing imaged assay features.
 
 	%% Overview of the system
 	Our system, the High-Level Sprout Geometry (HLSG) Extractor, is
@@ -124,12 +123,10 @@
 	and report generator are implemented to drive functionality on sample
 	images and generate reports on the analyses respectively.
 
-	The following sections will proceed as follows. Section
-	\ref{sec:Methodology} will describe an overview of the HLSG feature
-	detection and analysis mechanisms. Section \ref{sec:Data Structures}
-	will describe the data structures used to represent the HLSG and its
-	properties. Section \ref{sec:System Architecture} shows how the system
-	is designed for modularity and robustness.
+	The following sections will proceed as follows. Section \ref{sec:System
+	Architecture} shows how the system is designed for modularity and
+	robustness. Section \ref{sec:Methodology} will describe an overview of
+	the HLSG feature detection and analysis mechanisms. 
 % section Introduction (end)
 
 \section{System Architecture} % (fold)
