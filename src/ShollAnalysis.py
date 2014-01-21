@@ -22,7 +22,7 @@ class ShollAnalyzer(object):
         iterates counterclockwise.
 
             >>> for x, y in analyzer.generateCircularCoordinates((0, 0), 5):
-            >>>		print x, y
+            >>>     print x, y
 
         :returns: A list of circular coordinates given a specified origin and radius
         """

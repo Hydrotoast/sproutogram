@@ -46,7 +46,7 @@ class ExtractionTask(object):
         average_sprout_length /= analysis.sproutCount
         print '\tAverage Sprout Length: %.2f' % average_sprout_length
 
-# 		print "\t%d sprouts found" % analysis.sproutCount
+#       print "\t%d sprouts found" % analysis.sproutCount
         return analysis
 
     def extract(self):
@@ -120,9 +120,9 @@ class Driver(object):
         for i in np.arange(1.5, 3.1, 0.1):
             tasks.append(AveragedExtractionTask(inPath, inPath, reportPath, i))
         # for i in np.arange(1.5, 3.1, 0.1):
-        # 	tasks.append(ThresholdAverageExtractionTask(inPath, inPath, reportPath, i))
+        #   tasks.append(ThresholdAverageExtractionTask(inPath, inPath, reportPath, i))
         # for i in np.arange(1.5, 3.1, 0.1):
-        # 	tasks.append(MedianIntegrationExtractionTask(inPath, inPath, reportPath, i))
+        #   tasks.append(MedianIntegrationExtractionTask(inPath, inPath, reportPath, i))
         # for i in np.arange(1.5, 3.1, 0.1):
         #     tasks.append(ThresholdMedianIntegrationExtractionTask(inPath, inPath, reportPath, i))
         pool.map(concurrentExtract, tasks)
