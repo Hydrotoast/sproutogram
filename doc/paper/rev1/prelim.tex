@@ -23,69 +23,94 @@
 \begin{document}
 
 \title{High-Level Sprout Geometry Extraction for In Vitro Angiogenesis Assays}
-\numberofauthors{2}
+\numberofauthors{4}
 \author{
 	\alignauthor Gio Borje \\
 		\affaddr{University of California, Irvine} \\
 		\email{gborje@uci.edu}
 	\alignauthor Craig Steinke \\
 		\affaddr{University of California, Irvine} \\
-		\email{csteinke@uci.edu}
+		\email{steinkec@uci.edu}
 }
 \date{\today}
 \maketitle
 
 \begin{abstract}
-	We have developed an automated image analysis system for the quantitative
-	analysis of \invitro angiogenesis assays. Specifically, the system is
-	designed for fibrin gel bead sprouting assays. The quantification system
-	provides the number of primary sprouts, average branching factor and
-	average length for each bead in an imaged assay.
+	We have developed an automated system for the quantitative analysis of
+	\invitro angiogenesis assays. Specifically, the system is designed to
+	analyze fibrin gel bead sprouting assays developed by the laboratory
+	of Dr. Chris Hughes in the Department of Molecular Biology \&
+	Biochemistry at UC Irvine. Our system enumerates sprouts for each
+	bead and calculates the average branching factor and the average
+	length for an imaged assay. Our approach reports accurate sprout
+	enumeration when compared with manual counts by an expert observer
+	while significantly reducing the analysis time.
 \end{abstract}
 
 \section{Introduction} % (fold)
 \label{sec:Introduction}
 	%% Motivation
-	Angiogenesis is a mechanism for the formation of new blood vessels from
-	pre-existing vessels. Additionally, angiogenesis is part of a critical
-	phase in of solid tumor growth and metastasis. For solid tumors, the
-	avascular growth phase enables an approximate maximum size of 1--2mm in
-	diameter; on the other hand, the vascular growth phase enables unyielding
-	tumor expansion and metastasis \cite{kerbel99}. Subsequently, \invitro
-	angiogenesis assays are used to assess the impact of pro-angiogenic and
-	antiangiogenic agents.
+	Angiogenesis is a mechanism for the formation of new blood vessels
+	from pre-existing vessels. Tumor angiogenesis in solid tumors is
+	thought to facilitate the transition from a benign tumor to a
+	malignant phenotype. Additionally, the avascular growth phase allows
+	for an an approximate maximum size of 1--2mm in diameter; on the other
+	hand, the vascular growth phase enables unyielding tumor expansion
+	and metastasis \cite{kerbel99}. Subsequently, the analysis of
+	\invitro angiogenesis assays is necessary to assess the impact of
+	pro-angiogenic and anti-angiogenic agents.
+
+	%% Acknowledge existing methods
+	Niemisto et. al developed a general image analysis method for the
+	quantification of similar \invitro angiogenesis assays. Their method
+	provides the length and size of each tubule complex as well as the number
+	of junctions within them \cite{niemisto05}. The TCS Cellworks Angiokit
+	(Buckingham, UK) images used by Niemisto et. al have two distinguishable
+	and ideal properties in contrast to our images that require us to use a
+	variant approach. First, their images have tubule complexes that are
+	solidly filled whereas our images have visible lumens. Second, their images
+	show no distinguishable origin for sprouts whereas our images have a bead
+	from which sprouts originate. Hence, we propose a modified methodology for
+	our image set.
 
 	%% Reference the Hughes Lab FBGSA
-	The fibrin bead assay, developed by the Hughes Lab, begins by culturing
-	endothelial cells as a monolayer on dextran-coated Cytodex beads. The
-	beads are embedded into fibrin gels. In particular, human umbilical vein
-	endothelial cells (HUVEC) are used. This method induces HUVEC to
-	recapitulate multicellular capillaries in fibrin gels. Furthermore, the
-	method for HUVEC promotes sprouting, lumen formation and long-term
-	stability of neovessels. The high-resolution images of beads are then
-	captured on an IX70 Olympus microscope \cite{nakatsu03}. A sample of such
-	an image can be seen on Figure \ref{fig:monobead}.
+	The image set under analysis is provided by the Hughes Lab. Their
+	fibrin bead assay using human umbilical vein endothelial cells (HUVEC)
+	contrasts with fibrin bead assays containing Bovine aortic endothelial
+	cells (BAEC). HUVEC have been the canonical EC model system and more
+	accurately represents angiogenesis in humans. The assay begins by
+	culturing HUVEC as a monolayer on dextran-coated Cytodex beads. This
+	method induces HUVEC to recapitulate multicellular capillaries in
+	fibrin gels.  Furthermore, the method for HUVEC promotes sprouting,
+	lumen formation and long-term stability of neovessels. The
+	high-resolution images of beads are then captured on an IX70 Olympus
+	microscope \cite{nakatsu03}. A sample image can be seen on Figure
+	\ref{fig:monobead}.
 
 	\begin{figure}[ht]
 		\centering
 		\includegraphics[width=6cm]{images/mono.jpg}
-		\caption{Single Bead Image}
+		\caption{Single Bead Image from the Hughes Lab Images}
 		\label{fig:monobead}
 	\end{figure}
 
 	%% How sprout counts were previously acquired
 	Previously, the number of sprout counts per bead were measured by manual
 	counting on the obtained images. Furthermore, the sprout length was
-	measured in arbitrary units \cite{nakatsu03}. Our system relieves the
-	laborious, manual analysis by quickly automating the detection and reliably
-	analyzing of imaged assay features.
+	ambiguously measured in arbitrary units \cite{nakatsu03}. Our system
+	relieves the laborious, manual analysis by quickly automating the detection
+	and reliably analyzing of imaged assay features.
 
-	The system, the High-Level Sprout Geometry (HLSG) Extractor, is designed to
+	%% Overview of the system
+	Our system, the High-Level Sprout Geometry (HLSG) Extractor, is designed to
 	detect features, restore features and analyze the features of imaged
 	assays. Features for detection include the Cytodex bead and its associated
-	multicellular capillaries. However, due to the noise and depth of the image,
-	the HLSG Extractor uses structural inpainting to restore and broken sprout
-	features.
+	multicellular capillaries. Due to the noise and depth of the image, the
+	HLSG Extractor uses structural inpainting to infer which sprout segments
+	emerge belong the same sprout. After structural inpainting, the HLSG
+	Extractor quantitatively analyzed the images using Sholl Analysis to
+	determine the number of primary sprouts, the average length and the average
+	branching factor for each bead in the imaged assay.
 
 	In addition to the High-Level Sprout Geometry (HLSG) Extractor, a driver
 	and report generator are implemented to drive functionality on sample
@@ -101,6 +126,21 @@
 % section Introduction (end)
 
 \section{Methodology} % (fold)
+
+%% SHOLL ANALYSIS
+%% Statistical Analysis
+
+%% BEAD DETECTION
+%% Edge Detection
+%% Hough Transform
+
+%% NON-BEAD DETECTION
+%% Bead Masking
+%% Edge Detection
+%% Thickening
+%% Thinning
+%% Pruning
+
 \label{sec:Methodology}
 	Our system enables feature set detection, minor feature restoration and
 	quantitative analysis which can be decomposed into four stages. The
@@ -109,6 +149,13 @@
 	a few sprout features by approximating and inpainting connections between
 	broken sprout segments as well as filling holes. Finally, the system
 	quantitatively analyzes the imaged assays through Sholl Analysis.
+
+	\begin{figure}[htp!]
+		\centering
+		\input{ideal_bead}
+		\caption{Branching Geometry}
+		\label{fig:beadex}
+	\end{figure}
 
 	\subsection{Bead Extraction} % (fold)
 	\label{sub:Bead Extraction}
@@ -123,13 +170,15 @@
 		Bead extraction is a two-step process. To reduce noise, the system
 		first smooths the image using a Gaussian blur. Second, circles in
 		the image are detected using the circular Hough Transform. The
-		circles detected correspond to the beads in the assay.
-		Subsequently, the origin and radius of the bead is obtained.
+		circles detected correspond to the beads in the assay. It follows that
+		the origin and radius of the bead is obtained.
 
 		In order to avoid false bead detections, we enforce that the minimum
 		distance between the origin of every pair of detected circles be four
 		times the average bead radius i.e. each detected bead should at least
-		be a bead apart.
+		be a bead apart. Beware that we ignore the degenerate case in which two
+		or more beads are within the distance constraint because associating
+		sprouts to beads becomes inaccurate.
 	% subsection Bead Extraction (end)
 
 	\subsection{Sprout Extraction} % (fold)
@@ -141,6 +190,7 @@
 			\caption{Sprout Extraction Outline}
 			\label{fig:beadex}
 		\end{figure}
+
 		Sprout extraction depends on bead extraction because the beads must be
 		masked before sprout extraction occurs to separate beads from sprouts.
 		We mask the beads given the geometry of the circles. Due to the
@@ -154,8 +204,8 @@
 
 		To determine which line segments belong to the same sprout, we use
 		Euclidean distance between their start and end points enforced by
-		the constraint that the end point must by closer to the origin of
-		its closest's bead than the target start point. For example, two
+		the constraint that the end point must be closer to the origin of
+		its closest bead than the target start point. For example, two
 		line segments are part of the same sprout if the distance between
 		the start an end points are within a specified distance parameter,
 		$d$.
@@ -188,23 +238,30 @@
 		\begin{algorithm}[ht!]
 			\caption{Sholl Analysis}
 			\begin{algorithmic}
-				\Procedure{Sholl Analysis}{image, origin, radius}
-					\State minRadius $\gets$ radius
-					\State maxRadius $\gets$ $\min\left\{\text{image.width - origin.x, image.height - origin.y}\right\}$
-					\State maxRadius $\gets$ $\min\left\{\text{maxRadius, origin.x, origin.y}\right\}$
-					\State crossings $\gets$ []
-					\ForAll{r $\in$ $[\text{minRadius}, \text{maxRadius}]$}
-						\State crossings[r] $\gets$ 0
-						\ForAll{pixel $\in$ ConcentricCircle(origin, radius)}
-							\If{crossing detected at pixel}
-								\State crossings[r] $\gets$ crossings[r] + 1
-							\EndIf
-						\EndFor
+				\Procedure{ShollAnalysis}{img, origin, radius}
+					\State $r_{\min} \gets$ radius
+					\State $r_{\max} \gets$ $\min\left\{\text{origin.x, img.width - origin.x}\right\}$
+					\State $r_{\max} \gets$ $\min\left\{r_{\max}, \text{ origin.y, img.height - origin.y}\right\}$
+					\State crossings $\gets$ empty dictionary
+					\ForAll{$r \in [r_{\min}, r_{\max}]$}
+						\State crossings[$r$] $\gets$ \Call{CountCrossings}{img, origin, $r$}
+					\EndFor
+					\State \Return crossings
+				\EndProcedure
+			\end{algorithmic}
+			\begin{algorithmic}
+				\Procedure{CountCrossings}{img, origin, radius}
+					\State crossings $\gets$ 0
+					\ForAll{pixel $\in$ \Call{BresenhamCircle}{origin, radius}}
+						\If{crossing detected at pixel}
+							\State crossings $\gets$ crossings + 1
+						\EndIf
 					\EndFor
 					\State \Return crossings
 				\EndProcedure
 			\end{algorithmic}
 		\end{algorithm}
+
 	% subsection Sholl Analysis (end)
 % section Methodology (end)
 
@@ -256,7 +313,7 @@
 		the encoded actions as functions of the HLSG Extractor. That is, the
 		Driver acts similar to a REPL (Read-Eval-Print-Loop) that reads input
 		from the user, evaluates the input and prints the corresponding output
-		in a loop.  The set of commands available to the user is outlined Table
+		in a loop. The set of commands available to the user is outlined Table
 		\ref{tab:commands}.
 	% subsection Driver (end)
 % section Data Structures (end)
@@ -286,7 +343,7 @@
 			\hline
 			\textbf{Command} & \textbf{Output} & \textbf{Description} \\\hline
 			extract [file] & HLSG of file & Extracts the HLSG of the given file. \\\hline
-			extract [files] & HLSG of files & Extacts the HLSGs of the given files. \\\hline
+			extract [files] & HLSG of files & Extracts the HLSGs of the given files. \\\hline
 			exit & Goodbye & Exits the system. \\\hline
 		\end{tabular}
 		\caption{Commands}
@@ -296,6 +353,9 @@
 
 \section{Results} % (fold)
 \label{sec:Results}
+	The results of our sprout enumeration show a standard error of $2.5$
+	when compared manual sprout counts of an expert observer.
+
 	Display a comparison table with human counts.
 	\begin{table}[h!]
 		\centering
@@ -314,10 +374,8 @@
 
 \section{Discussion} % (fold)
 \label{sec:Discussion}
-
-Although the methodology is similar to AngioQuant, our method operates on
-two-ridge structures \cite{niemisto05}.
-
+	Although the methodology is similar to AngioQuant, our method operates on
+	two-ridge structures \cite{niemisto05}.
 % section Discussion (end)
 
 \bibliography{prelim}
@@ -326,42 +384,16 @@ two-ridge structures \cite{niemisto05}.
 \appendix
 \section{Pseudo Code} % (fold)
 \label{sec:Pseudo Code}
-	This section outlines the pseudo-code for the Driver and HLSGExtractor
+	This section outlines the pseudo-code for the HLSG Extractor
 	operations. 
-
-	\subsection{Driver} % (fold)
-	\label{sub:Driver}
-		The following pseudo-code outlines the Driver which reads input from
-		the user, evaluates the input as a command, prints the output as a
-		consequence of executing the command and then repeats this sequence of
-		operations.
-		\begin{algorithm}[ht!]
-			\caption{Driver}
-			\begin{algorithmic}
-				\Procedure{Driver}{}
-					\State running $\gets$ True
-					\While{running}
-						\State input $\gets$ read\_input()
-						\State command $\gets$ parse(input)
-						\State output $\gets$ HLSGExtractor.execute(command)
-						\State print(output)
-					\EndWhile
-				\EndProcedure
-			\end{algorithmic}
-		\end{algorithm}
-
-		Note that the driver executes while the \lstinline$running$ flag is
-		true. Consequently, the REPL is responsible for setting this flag
-		false.
-	% subsection Driver (end)
 
 	\subsubsection{Sprout Extractor} % (fold)
 	\label{ssub:Sprout Extractor}
 		Given an imaged assay and a set of bead features, the algorithm
 		proceeds by masking the beads from the image. Next, a segmentation
-		strategy is used to separate individual sprouts from the collection
-		of globally detected sprouts. Finally, the segmentation strategy
-		yields the detected feature set of sprouts.
+		strategy is used to separate individual sprouts from the
+		collection of globally detected sprouts. Finally, the segmentation
+		strategy yields the detected feature set of sprouts.
 		\begin{algorithm}[ht!] \caption{Sprout Extraction}
 			\begin{algorithmic}
 				\Procedure{ExtractSprouts}{img, beads}
@@ -388,7 +420,75 @@ two-ridge structures \cite{niemisto05}.
 			\end{algorithmic}
 		\end{algorithm}
 	% subsubsection HLSG Extractor (end)
-% section Pseudo Code (end)
 
+	\subsubsection{Ordered Bresenham Circle Algorithm} % (fold)
+	\label{ssub:Ordered Bresenham Circle Algorithm}
+		Bresenham's circle algorithm is frequently used to determine which
+		pixels should be selected to draw a circle. algorithm utilizes
+		symmetry of a circle in order to reduce the running time by a
+		factor of eight \cite{bresenham77}. For our application with Sholl
+		Analysis, the algorithm must return the points as an ordered set
+		which is defined to be counterclockwise starting from the positive
+		x-axis.
+
+		The algorithm calculates points for all eight octants simultaneously.
+		The octants are labeled with integers starting with zero. We label the
+		octants from starting from the x-positive axis in the counterclockwise
+		direction. The labels can be seen in figure \ref{fig:eightsymmetry}.
+		\begin{figure}[htp]
+			\centering
+			\input{eightwaysymmetry}
+			\caption{Octants in the Eight-Way Symmetry of a Circle}
+			\label{fig:eightsymmetry}
+		\end{figure}
+		Because it is necessary that the points are ordered
+		counterclockwise from the positive x-axis, we modify the
+		algorithm. The algorithm calculates the points from ordered
+		clockwise or counterclockwise from the closest coordinate axis.
+		Hence, we reverse the points calculated for every odd octant and
+		then concatenate their data points.
+
+		\begin{algorithm}[ht!]
+			\caption{Ordered Bresenham Circle Algorithm}
+			\begin{algorithmic}
+				\Ensure{points returned are ordered counterclockwise from the positive x-axis}
+				\Procedure{BresenhamCircle}{origin, radius}
+					\State $x \gets$ radius
+					\State $y \gets 0$
+					\State $r_{\text{error}} \gets 1 - x$
+					\State octants $\gets$ empty array
+					\While{$x \geq y$}
+						\State octants[0] $\Leftarrow$ ($x$ + origin.x, $-y$ + origin.y)
+						\State octants[1] $\Leftarrow$ ($y$ + origin.x, $-x$ + origin.y)
+						\State octants[2] $\Leftarrow$ ($-y$ + origin.x, $-x$ + origin.y)
+						\State octants[3] $\Leftarrow$ ($-x$ + origin.x, $-y$ + origin.y)
+						\State octants[4] $\Leftarrow$ ($-x$ + origin.x, $y$ + origin.y)
+						\State octants[5] $\Leftarrow$ ($-y$ + origin.x, $x$ + origin.y)
+						\State octants[6] $\Leftarrow$ ($y$ + origin.x, $x$ origin.y)
+						\State octants[7] $\Leftarrow$ ($x$ + origin.x, $y$ origin.y)
+						\State $y \gets y + 1$
+						\If{$r_{\text{error}} < 0$}
+							\State $r_{\text{error}} \gets r_{\text{error}} + 2y + 1$
+						\Else
+							\State $x \gets x - 1$
+							\State $r_{\text{error}} \gets r_{\text{error}} + 2(y - x + 1)$
+						\EndIf
+					\EndWhile
+					\State points $\gets$ []
+					\ForAll{octant $\in$ octants}
+						\If{octant is odd}
+							\State reverse the octant
+						\EndIf
+						\ForAll{point $\in$ octant}
+							\State points $\Leftarrow$ point
+						\EndFor
+					\EndFor
+					\State \Return points
+				\EndProcedure
+			\end{algorithmic}
+		\end{algorithm}
+
+	% subsubsection Ordered Bresenham Circle Algorithm (end)
+% section Pseudo Code (end)
 
 \end{document}

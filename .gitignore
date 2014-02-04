@@ -1,3 +1,11 @@
+.idea
+.project
+.pydevproject
+
+data/reports/**
+
+doc/memo/**
+
 # Auxiliary Python files
 *.pyc
 
@@ -7,3 +15,8 @@
 
 *.bbl
 *.blg
+
+*.nav
+*.toc
+*.out
+*.snm
