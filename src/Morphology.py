@@ -1,5 +1,6 @@
 from SimpleCV import *
 
+
 def hitmiss(src, element):
     """
     Morphological operation for shape detection. The notation for the
@@ -19,10 +20,10 @@ def hitmiss(src, element):
             \cap (\overline{\mathbf{A}} \ominus \mathbf{B_2})
     """
     k1 = np.array(
-        [[(x==1) for x in row] for row in element], 
+        [[(x == 1) for x in row] for row in element],
         dtype=np.uint8)
     k2 = np.array(
-        [[(x==-1) for x in row] for row in element],
+        [[(x == -1) for x in row] for row in element],
         dtype=np.uint8)
 
     e1 = Image(

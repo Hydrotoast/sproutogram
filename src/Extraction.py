@@ -1,13 +1,10 @@
-from math import *
-
-from SimpleCV import *
-
-from SetForest import *
 from SproutSegmentation import *
 from Morphology import *
 
+
 class NoBeadException(Exception):
     pass
+
 
 class ExtractorBase(object):
     def __init__(self, img):
@@ -29,6 +26,7 @@ class ExtractorBase(object):
         """
         pass
 
+
 class BeadExtractor(ExtractorBase):
     """
     Extracts bead features from a target image using a circular hough
@@ -37,7 +35,7 @@ class BeadExtractor(ExtractorBase):
     def __init__(self, img):
         super(BeadExtractor, self).__init__(img)
 
-    def extractCircles(self, canny=164, thresh=128, distance=512):
+    def extract_circles(self, canny=164, thresh=128, distance=512):
         """
         Extracts circle features from the target image using the circular
         hough transform. Use this instead of the default
@@ -59,7 +57,7 @@ class BeadExtractor(ExtractorBase):
         is doubled due to space occupied by sprouts.
         """
         storage = cv.CreateMat(self.img.width, 1, cv.CV_32FC3)
-        if(distance < 0 ):
+        if distance < 0:
             distance = 1 + max(self.img.width, self.img.height)/50
         cv.HoughCircles(
             self.img._getGrayscaleBitmap(),
@@ -75,21 +73,22 @@ class BeadExtractor(ExtractorBase):
             return None
         circs = np.asarray(storage)
         sz = circs.shape
-        circleFS = FeatureSet()
+        circle_fs = FeatureSet()
         for i in range(sz[0]):
-            circleFS.append(Circle(
+            circle_fs.append(Circle(
                 self.img,
                 int(circs[i][0][0]),
                 int(circs[i][0][1]),
                 int(circs[i][0][2])))
-        return circleFS
+        return circle_fs
 
     def extract(self):
-        circles = self.extractCircles()
+        circles = self.extract_circles()
         if not circles:
             raise NoBeadException()
         beads = FeatureSet(Bead(self.img, circle) for circle in circles)
         return beads
+
 
 class SproutExtractor(ExtractorBase):
     """
@@ -97,44 +96,44 @@ class SproutExtractor(ExtractorBase):
     strategies and computational geometry. Sprout features extracted
     from the image must belong to a specified bead.
     """
-    def __init__(self, img, beads, segmentStrat = SproutSegmenter()):
+    def __init__(self, img, beads, segment_strat=SproutSegmenter()):
         self.beads = beads
         super(SproutExtractor, self).__init__(img)
 
         # Strategies
-        self.segmentStrat = segmentStrat
+        self.segment_strat = segment_strat
 
-    def maskBeads(self, img):
+    def mask_beads(self, img):
         """Mask the beads."""
-        maskedImg = img
+        masked_img = img
         for bead in self.beads:
-            goldenRatio = 1.614
-            circleMask = Image(self.img.size())
-            circleMask.dl().circle(
+            golden_ratio = 1.614
+            circle_mask = Image(self.img.size())
+            circle_mask.dl().circle(
                 (bead.x, bead.y),
-                bead.radius() * goldenRatio,
-                filled = True,
-                color = Color.WHITE)
-            circleMask = circleMask.applyLayers()
-            maskedImg = maskedImg - circleMask
-            maskedImg = maskedImg.applyLayers()
-        return maskedImg
+                bead.radius() * golden_ratio,
+                filled=True,
+                color=Color.WHITE)
+            circle_mask = circle_mask.applyLayers()
+            masked_img = masked_img - circle_mask
+            masked_img = masked_img.applyLayers()
+        return masked_img
 
     def preprocess(self):
-        cannyMin, cannyMax = (100, 240)
-        dilateCount = 8
-        imgEdges = self.img.edges(cannyMin, cannyMax)
-        imgEdges = self.maskBeads(imgEdges)
+        canny_min, canny_max = (100, 240)
+        dilate_count = 8
+        img_edges = self.img.edges(canny_min, canny_max)
+        img_edges = self.mask_beads(img_edges)
 
-        imgEdges = imgEdges.morphClose()
-        blobs = imgEdges.findBlobs()
+        img_edges = img_edges.morphClose()
+        blobs = img_edges.findBlobs()
         for blob in blobs:
             if len(blob.mContourAppx) > 2:
                 blob.drawAppx(color=Color.WHITE, width=-1)
             blob.drawHoles(color=Color.WHITE, width=-1)
-        imgEdges = imgEdges.applyLayers()
+        img_edges = img_edges.applyLayers()
 
-        imgEdges = imgEdges.morphClose()
+        img_edges = img_edges.morphClose()
         # imgEdges = imgEdges.convolve(kernel=[
         #   [1,0,1],
         #   [0,0,1],
@@ -144,7 +143,7 @@ class SproutExtractor(ExtractorBase):
         #   [1,0,0],
         #   [1,0,1]])
 
-        skeleton = imgEdges.dilate(dilateCount).skeletonize(3)
+        skeleton = img_edges.dilate(dilate_count).skeletonize(3)
         # isolatedPoints = hitmiss(
         #   skeleton,
         #   [[-1,-1,-1,-1,-1,-1,-1],
@@ -162,10 +161,11 @@ class SproutExtractor(ExtractorBase):
 
     def extract(self):
         self.preprocess()
-        self.segmentStrat.injectImg(self.img)
-        self.segmentStrat.injectBeads(self.beads)
-        sprouts = self.segmentStrat.segment()
+        self.segment_strat.inject_img(self.img)
+        self.segment_strat.inject_beads(self.beads)
+        sprouts = self.segment_strat.segment()
         return FeatureSet(sprouts)
+
 
 class HLSGExtractor(ExtractorBase):
     """
@@ -179,23 +179,23 @@ class HLSGExtractor(ExtractorBase):
     def preprocess(self):
         pass
 
-    def maskBeads(self, beads):
+    def mask_beads(self, beads):
         """Mask the beads."""
-        maskedImg = self.img
+        masked_img = self.img
         for bead in beads:
-            goldenRatio = 1.614
-            circleMask = Image(self.img.size())
-            circleMask.dl().circle(
+            golden_ratio = 1.614
+            circle_mask = Image(self.img.size())
+            circle_mask.dl().circle(
                 (bead.x, bead.y),
-                bead.radius() * goldenRatio,
-                filled = True,
-                color = Color.WHITE)
-            circleMask = circleMask.applyLayers()
-            maskedImg = maskedImg - circleMask
-            maskedImg = maskedImg.applyLayers()
-        return maskedImg
+                bead.radius() * golden_ratio,
+                filled=True,
+                color=Color.WHITE)
+            circle_mask = circle_mask.applyLayers()
+            masked_img = masked_img - circle_mask
+            masked_img = masked_img.applyLayers()
+        return masked_img
 
-    def mapSproutsToBeads(self, sprouts, beads):
+    def map_sprouts_to_beads(self, sprouts, beads):
         """
         Generates a list of HLSGs by mapping sprouts to their associated beads.
 
@@ -203,25 +203,25 @@ class HLSGExtractor(ExtractorBase):
         :rtype: [HLSG]
         """
         hlsgs = []
-        hlsgsMapper = {}
+        hlsgs_mapper = {}
 
         # Initialize mapper
         for bead in beads:
-            hlsgsMapper[bead] = []
+            hlsgs_mapper[bead] = []
 
         # Map sprouts
         for sprout in sprouts:
-            closestBead = None
-            closestDist = float('inf')
+            closest_bead = None
+            closest_dist = float('inf')
             for bead in beads:
                 dist = spsd.euclidean((bead.x, bead.y), sprout[0].start)
-                if dist < closestDist:
-                    closestDist = dist
-                    closestBead = bead
-            hlsgsMapper[closestBead].append(sprout)
+                if dist < closest_dist:
+                    closest_dist = dist
+                    closest_bead = bead
+            hlsgs_mapper[closest_bead].append(sprout)
 
         # Generate HLSGs
-        for bead, sprouts in hlsgsMapper.items():
+        for bead, sprouts in hlsgs_mapper.items():
             hlsgs.append(HLSG(self.img, bead, sprouts))
 
         return hlsgs
@@ -229,15 +229,15 @@ class HLSGExtractor(ExtractorBase):
     def extract(self):
         # Extract beads
         try:
-            beadExtractor = BeadExtractor(self.img)
-            beads = beadExtractor.extract()
+            bead_extractor = BeadExtractor(self.img)
+            beads = bead_extractor.extract()
 
             # Extract sprouts
-            maskedImg = self.maskBeads(beads)
-            sproutExtractor = SproutExtractor(maskedImg, beads)
-            sprouts = sproutExtractor.extract()
-            hlsgs = self.mapSproutsToBeads(sprouts, beads)
+            maked_img = self.mask_beads(beads)
+            sprout_extractor = SproutExtractor(maked_img, beads)
+            sprouts = sprout_extractor.extract()
+            hlsgs = self.map_sprouts_to_beads(sprouts, beads)
 
             return FeatureSet(hlsgs)
-        except NoBeadException as e:
+        except NoBeadException:
             return []

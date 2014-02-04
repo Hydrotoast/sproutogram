@@ -1,17 +1,20 @@
-from SimpleCV import *
-
 from Geometry import *
 from SetForest import *
 from Features import *
 
+
 class SproutSegmenter(object):
-    def injectImg(self, img):
+    def __init__(self):
+        self.img = None
+        self.beads = None
+
+    def inject_img(self, img):
         self.img = img
 
-    def injectBeads(self, beads):
+    def inject_beads(self, beads):
         self.beads = beads
 
-    def findClosestBead(self, blob):
+    def find_closest_bead(self, blob):
         """
         Finds the bead of closest to the given blob in terms of Euclidean
         distance.
@@ -20,16 +23,16 @@ class SproutSegmenter(object):
         :returns: closest bead
         :rtype: Bead
         """
-        closestBead = None
-        closestDist = float('inf')
+        closest_bead = None
+        closest_dist = float('inf')
         for bead in self.beads:
             dist = spsd.euclidean((bead.x, bead.y), blob.centroid())
-            if dist < closestDist:
-                closestDist = dist
-                closestBead = bead
-        return bead
+            if dist < closest_dist:
+                closest_dist = dist
+                closest_bead = bead
+        return closest_bead
 
-    def generateConnections(self, blobSegments, distanceThreshold=20):
+    def generate_connections(self, blob_segments, distance_threshold=20):
         """
         Generates hypothetical connections between blob segments if they are
         within a thresholded neighborhood of each other.
@@ -38,17 +41,17 @@ class SproutSegmenter(object):
         :rtype: [(Blob, Blob)]
         """
         connections = []
-        for segmentOuter in blobSegments:
-            for segmentInner in blobSegments:
+        for segment_outer in blob_segments:
+            for segment_inner in blob_segments:
                 # Do not connect segments to each other
-                if segmentOuter == segmentInner:
+                if segment_outer == segment_inner:
                     continue
-                distance = spsd.euclidean(segmentOuter.end, segmentInner.start)
-                if distance < distanceThreshold:
-                    connections.append((segmentOuter, segmentInner))
+                distance = spsd.euclidean(segment_outer.end, segment_inner.start)
+                if distance < distance_threshold:
+                    connections.append((segment_outer, segment_inner))
         return connections
 
-    def generateBlobSegments(self, blobs):
+    def generate_blob_segments(self, blobs):
         """
         Generates a list of linear approximations for blobs. That is, blobs are
         modeled as geometric rays defined radially outward.
@@ -56,46 +59,46 @@ class SproutSegmenter(object):
         :returns: A list of generated rays defined radially outward.
         :rtype: [RadialSegment]
         """
-        blobSegments = []
+        blob_segments = []
         if blobs:
             # Acquire blob segments
             for blob in blobs:
-                bead = self.findClosestBead(blob)
-                sortedContour = sorted(
+                bead = self.find_closest_bead(blob)
+                sorted_contour = sorted(
                     blob.contour(),
-                    key = lambda x: spsd.euclidean(x, (bead.x, bead.y)))
-                start = sortedContour[0]
-                end = sortedContour[-1]
+                    key=lambda x: spsd.euclidean(x, (bead.x, bead.y)))
+                start = sorted_contour[0]
+                end = sorted_contour[-1]
 
-                radialSegment = RadialSegment(self.img, start, end, blob)
-                blobSegments.append(radialSegment)
-        return blobSegments
+                radial_segment = RadialSegment(self.img, start, end, blob)
+                blob_segments.append(radial_segment)
+        return blob_segments
 
-    def generateSproutSegments(self, blobSegments, connections):
+    def generate_sprout_segments(self, blob_segments, connections):
         """
         Generates the sprout segments as lists of blobs.
 
         :returns: A list of sprout segments.
         :rtype: [Sprout]
         """
-        setForest = SetForest(blobSegments)
+        set_forest = SetForest(blob_segments)
         for connection in connections:
-            setForest.union(
-                setForest.find(connection[0]),
-                setForest.find(connection[1]))
+            set_forest.union(
+                set_forest.find(connection[0]),
+                set_forest.find(connection[1]))
 
         seen = set()
-        blobMap = {}
-        for segment in blobSegments:
-            parent = setForest.find(segment)
+        blob_map = {}
+        for segment in blob_segments:
+            parent = set_forest.find(segment)
             if parent not in seen:
-                blobMap.update({parent: list(set([parent, segment]))})
+                blob_map.update({parent: list(set([parent, segment]))})
                 seen.add(parent)
             else:
-                blobMap[parent].append(segment)
+                blob_map[parent].append(segment)
 
         sprouts = []
-        for segments in blobMap.values():
+        for segments in blob_map.values():
             if len(segments) == 1 and segments[0].area() < 40:
                 continue
             sprouts.append(Sprout(segments))
@@ -113,12 +116,12 @@ class SproutSegmenter(object):
         if not blobs:
             return []
 
-        blobSegments = self.generateBlobSegments(blobs)
+        blob_segments = self.generate_blob_segments(blobs)
 
-        if not blobSegments:
+        if not blob_segments:
             return []
 
-        connections = self.generateConnections(blobSegments)
-        sprouts = self.generateSproutSegments(blobSegments, connections)
+        connections = self.generate_connections(blob_segments)
+        sprouts = self.generate_sprout_segments(blob_segments, connections)
 
         return sprouts

@@ -1,9 +1,7 @@
-from SimpleCV import Color, np
-
 from strategy import *
 
 from collections import deque
-import utils
+
 
 class ShollAnalyzer(object):
     """
@@ -11,12 +9,12 @@ class ShollAnalyzer(object):
     of an angiogram. This analyzer depends on the known position of the bead in
     the angiogram to perform the analysis using concentric circles.
     """
-    def __init__(self, strategy=IntegrationStrategy.AveragedAnalysisStrategy(), beadFactor=1.5, stepSize=1):
+    def __init__(self, strategy=IntegrationStrategy.AveragedAnalysisStrategy(), bead_factor=1.5, step_size=1):
         self.strategy = strategy
-        self.beadFactor = beadFactor
-        self.stepSize = stepSize
+        self.bead_factor = bead_factor
+        self.step_size = step_size
 
-    def generateCircularCoordinates(self, origin, radius):
+    def generate_circular_coordinates(self, origin, radius):
         """
         Generator for circular coordinates starting from the x+ vector and
         iterates counterclockwise.
@@ -28,7 +26,7 @@ class ShollAnalyzer(object):
         """
         x = radius
         y = 0
-        radiusError = 1 - x
+        radius_error = 1 - x
 
         octants = []
         for i in range(8):
@@ -53,11 +51,11 @@ class ShollAnalyzer(object):
             octants[7].appendleft((x + origin[0], y + origin[1]))
 
             y += 1
-            if radiusError < 0:
-                radiusError += y << 2 + 1
+            if radius_error < 0:
+                radius_error += y << 2 + 1
             else:
                 x -= 1
-                radiusError += (y - x + 1) << 2
+                radius_error += (y - x + 1) << 2
 
         for octant in octants:
             for point in octant:
@@ -67,18 +65,17 @@ class ShollAnalyzer(object):
         """Returns a descriptor of the analysis.
 
         :rtype: ``ShollAnalysisDescriptor``"""
-        initRadius = int(bead.radius() * self.beadFactor)
-        maxRadius = min([bead.x, bead.y, img.size()[0] -
-            bead.x, img.size()[1] - bead.y])
+        init_radius = int(bead.radius() * self.bead_factor)
+        max_radius = min([bead.x, bead.y, img.size()[0] - bead.x, img.size()[1] - bead.y])
 
-        lastPixel = Color.BLACK[0]
+        last_pixel = Color.BLACK[0]
         crossings = {}
-        for r in range(initRadius, maxRadius, self.stepSize):
+        for r in range(init_radius, max_radius, self.step_size):
             crossings.update({r: 0})
-            for x, y in self.generateCircularCoordinates(bead.origin(), r):
+            for x, y in self.generate_circular_coordinates(bead.origin(), r):
                 pixel = img.getGrayPixel(x, y)
-                if pixel != lastPixel and lastPixel == Color.WHITE[0]:
+                if pixel != last_pixel and last_pixel == Color.WHITE[0]:
                     crossings[r] += 1
-                lastPixel = pixel
+                last_pixel = pixel
 
         return ShollAnalysisDescriptor(img, crossings, self.strategy)

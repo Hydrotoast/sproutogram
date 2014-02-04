@@ -4,6 +4,7 @@ class SetForestNode(object):
         self.data = item
         self.parent = item
 
+
 class SetForest(object):
     """Implementation of a Disjoint Set Forest to use the Union-Find
     algorithms."""
@@ -16,8 +17,8 @@ class SetForest(object):
             node.parent = self.nodes[self.find(node.parent)].data
         return node.parent
 
-    def union(self, nodeA, nodeB):
-        rootA = self.nodes[self.find(nodeA)]
-        rootB = self.nodes[self.find(nodeB)]
+    def union(self, node_a, node_b):
+        root_a = self.nodes[self.find(node_a)]
+        root_b = self.nodes[self.find(node_b)]
 
-        rootB.parent = rootA.data
+        root_b.parent = root_a.data

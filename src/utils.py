@@ -1,5 +1,3 @@
-import operator
-
 def alpharange(start='A', end='Z'):
     """
     Alphabetic generator from a given start letter to end letter. An example
@@ -13,6 +11,7 @@ def alpharange(start='A', end='Z'):
     end = ord(end)
     for letter_ord in range(start, end + 1):
         yield chr(letter_ord)
+
 
 def lis(l):
     """

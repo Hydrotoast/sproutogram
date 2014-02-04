@@ -1,6 +1,5 @@
 from SimpleCV import Line
 
-from math import *
 
 class RadialSegment(Line):
     def __init__(self, img, start, end, blob=None):

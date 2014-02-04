@@ -1,6 +1,7 @@
 from SimpleCV import *
 from numpy import *
 
+
 class Bead(Circle):
     """
     The Bead feature describes a bead in an angiogram.
@@ -18,7 +19,8 @@ class Bead(Circle):
 
         :rtype: (int, int)
         """
-        return (self.x, self.y)
+        return self.x, self.y
+
 
 class Sprout(FeatureSet):
     """
@@ -69,7 +71,7 @@ class Sprout(FeatureSet):
         """
         return sum(line.length() for line in self)
 
-    def restore(self, color=Color.WHITE, width=1, distanceThreshold=20):
+    def restore(self, color=Color.WHITE, width=1, distance_threshold=20):
         """Attempts to restore the sprout segments by drawing on the image
         layers."""
         connections = []
@@ -78,11 +80,12 @@ class Sprout(FeatureSet):
                 if outer == inner:
                     continue
                 distance = spsd.euclidean(inner.end, outer.start)
-                if distance < distanceThreshold:
+                if distance < distance_threshold:
                     connections.append((inner, outer))
 
         for inner, outer in connections:
             self[-1].image.drawLine(inner.end, outer.start, color, width)
+
 
 class HLSG(Feature):
     """
