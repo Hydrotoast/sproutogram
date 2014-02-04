@@ -3,8 +3,8 @@ from operator import itemgetter
 
 
 class NaiveAnalysisStrategy(AnalysisStrategy):
-    def bind(self, img, crossings):
-        super(AnalysisStrategy, self).__init__(img, crossings)
+    def bind(self, img, crossings, bead):
+        super(AnalysisStrategy, self).__init__(img, crossings, bead)
 
     @property
     def sprout_count(self):

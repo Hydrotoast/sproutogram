@@ -1,5 +1,5 @@
 import math
-from numpy import np
+import numpy as np
 
 from NaiveStrategy import NaiveAnalysisStrategy
 
@@ -8,8 +8,8 @@ from operator import itemgetter
 
 
 class AveragedAnalysisStrategy(NaiveAnalysisStrategy):
-    def bind(self, img, crossings):
-        super(NaiveAnalysisStrategy, self).bind(img, crossings)
+    def bind(self, img, crossings, bead):
+        super(NaiveAnalysisStrategy, self).bind(img, crossings, bead)
 
     @property
     def sprout_count(self):
@@ -25,7 +25,7 @@ class AveragedAnalysisStrategy(NaiveAnalysisStrategy):
             radius, hits = ordered_items.popitem()
             diff = int(trocs_counter - math.floor(hits))
             if diff >= 0:
-                trocs = trocs + [radius] * diff
+                trocs = trocs + [radius - self.bead.radius()] * diff
                 trocs_counter -= diff
         print '\tTerminal Radius of Counts: %.2f' % np.mean(trocs)
         return np.mean(trocs)

@@ -1,3 +1,4 @@
+from SimpleCV import Color
 from strategy import *
 
 from collections import deque
@@ -78,4 +79,4 @@ class ShollAnalyzer(object):
                     crossings[r] += 1
                 last_pixel = pixel
 
-        return ShollAnalysisDescriptor(img, crossings, self.strategy)
+        return ShollAnalysisDescriptor(img, crossings, bead, self.strategy)

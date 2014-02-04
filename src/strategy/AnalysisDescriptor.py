@@ -4,10 +4,21 @@ class AnalysisStrategy(object):
 
         self.__img = None
         self.__crossings = None
+        self.__bead = None
 
-    def bind(self, img, crossings):
+    def bind(self, img, crossings, bead):
         self.__img = img
         self.__crossings = crossings
+        self.__bead = bead
+
+    @property
+    def bead(self):
+        """
+        Returns the bead under analysis
+
+        :rtype: Bead
+        """
+        return self.__bead
 
     @property
     def crossings(self):
@@ -76,9 +87,9 @@ class ShollAnalysisDescriptor(object):
     Descriptor for a Sholl Analysis containing the raw data dump of the
     analysis as well as other derivable calculations.
     """
-    def __init__(self, img, crossings, strategy):
+    def __init__(self, img, crossings, bead, strategy):
         self.strategy = strategy
-        self.strategy.bind(img, crossings)
+        self.strategy.bind(img, crossings, bead)
         # self.integrationMethod = 'median'
 
         self.__img = img
