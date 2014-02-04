@@ -17,7 +17,7 @@ class ExtractionTask(object):
     def __init__(self, in_path, out_path, report_path):
         self.in_path = in_path
         self.out_path = out_path
-        self.method_name = self.__class__.__name__ + str(self.analyzer.beadFactor)
+        self.method_name = self.__class__.__name__ + str(self.analyzer.bead_factor)
         self.report_path = os.path.join(report_path, self.method_name)
         self.plot_path = os.path.join(self.report_path, 'plots')
         if not os.path.exists(self.report_path):
@@ -41,7 +41,7 @@ class ExtractionTask(object):
         hlsg_extractor = HLSGExtractor(img)
         hlsgs = hlsg_extractor.extract()
         average_sprout_length = sum(map(lambda sprout: spsd.euclidean(sprout.start, sprout.end), hlsgs[0].sprouts))
-        average_sprout_length /= analysis.sproutCount
+        average_sprout_length /= analysis.sprout_count
         print '\tAverage Sprout Length: %.2f' % average_sprout_length
 
 #       print "\t%d sprouts found" % analysis.sproutCount

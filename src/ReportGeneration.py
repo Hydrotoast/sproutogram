@@ -38,13 +38,13 @@ class CSVReportGenerator(ReportGeneratorBase):
 
     def calculate_rmse(self, analyses):
         variance = sum(
-            [(analysis.sproutCount - HumanCounts.data[filename].focusCounts) ** 2
+            [(analysis.sprout_count - HumanCounts.data[filename].focusCounts) ** 2
                 for filename, analysis in analyses])
         return math.sqrt(variance / float(len(HumanCounts.data)))
 
     def calculate_branching_count_rmse(self, analyses):
         variance = sum(
-            [(analysis.branchingCount - HumanCounts.data[filename].branchingCount) ** 2
+            [(analysis.branching_count - HumanCounts.data[filename].branching_count) ** 2
                 for filename, analysis in analyses])
         return math.sqrt(variance / float(len(HumanCounts.data)))
 
@@ -63,11 +63,11 @@ class CSVReportGenerator(ReportGeneratorBase):
 
             for filename, analysis in sorted_items:
                 writer.writerow([filename])
-                writer.writerow(['Sprout Count', analysis.sproutCount])
-                writer.writerow(['Critical Value', analysis.criticalValue])
-                writer.writerow(['Sprout Maximum', analysis.sproutMaximum])
-                writer.writerow(['Shoenen Ramification Index', '%.2f' % analysis.ramificationIndex])
-                writer.writerow(['Branching Count', '%.2f' % analysis.branchingCount])
+                writer.writerow(['Sprout Count', analysis.sprout_count])
+                writer.writerow(['Critical Value', analysis.critical_value])
+                writer.writerow(['Sprout Maximum', analysis.sprout_maximum])
+                writer.writerow(['Shoenen Ramification Index', '%.2f' % analysis.ramification_index])
+                writer.writerow(['Branching Count', '%.2f' % analysis.branching_count])
                 writer.writerow([])
 
             for filename, analysis in sorted_items:
@@ -89,9 +89,9 @@ class DBReportGenerator(CSVReportGenerator):
 
             for filename, analysis in sorted_items:
                 cur.execute("INSERT OR IGNORE INTO feature VALUES ('{0:s}', '{1:s}', '{2:.2f}', '{3:.2f}', '{4:.2f}', '{5:.2f}', '{6:.2f}', '{7:.2f}')"
-                            .format(self.method, filename, analysis.sproutCount,
-                            analysis.criticalValue, analysis.sproutMaximum,
-                            analysis.ramificationIndex, analysis.branchingCount, analysis.trocAverage))
+                            .format(self.method, filename, analysis.sprout_count,
+                            analysis.critical_value, analysis.sprout_maximum,
+                            analysis.ramification_index, analysis.branching_count, analysis.troc_average))
 
             for filename, analysis in sorted_items:
                 cur.execute("INSERT OR IGNORE INTO sholl_analysis VALUES ('{0:s}', '{1:s}')"

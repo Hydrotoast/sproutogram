@@ -1,38 +1,33 @@
-from SimpleCV import Color, np
-
 from AnalysisDescriptor import AnalysisStrategy
-from PiecewiseConstantApproximation import fullPWConstants
-
-from collections import deque
 from operator import itemgetter
+
 
 class NaiveAnalysisStrategy(AnalysisStrategy):
     def bind(self, img, crossings):
         super(AnalysisStrategy, self).__init__(img, crossings)
 
     @property
-    def sproutCount(self):
+    def sprout_count(self):
         return self.crossings.values()[0]
 
     @property
-    def criticalValue(self):
+    def critical_value(self):
         return max(self.crossings.items(), key=itemgetter(1))[0]
 
     @property
-    def sproutMaximum(self):
+    def sprout_maximum(self):
         return max(self.crossings.values())
 
     @property
-    def ramificationIndex(self):
-        if self.sproutCount == 0:
+    def ramification_index(self):
+        if self.sprout_count == 0:
             return 0
-        return self.sproutMaximum / self.sproutCount
+        return self.sprout_maximum / self.sprout_count
 
     @property
-    def branchingCount(self):
-        return self.sproutMaximum - self.sproutCount
+    def branching_count(self):
+        return self.sprout_maximum - self.sprout_count
 
     @property
-    def trocAverage(self):
-        return self.criticalValue / self.sproutCount
-
+    def troc_average(self):
+        return self.critical_value / self.sprout_count

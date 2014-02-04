@@ -1,21 +1,13 @@
-from SimpleCV import Color, np
-
-from PiecewiseConstantApproximation import fullPWConstants
-
-from collections import deque
-import operator
-
 class AnalysisStrategy(object):
-    def bind(self, img, crossings):
-        self.integrationMethod = 'median'
+    def __init__(self):
+        self.integration_method = 'median'
 
+        self.__img = None
+        self.__crossings = None
+
+    def bind(self, img, crossings):
         self.__img = img
         self.__crossings = crossings
-        self.__sproutCount = None
-        self.__criticalValue = None
-        self.__sproutMaximum = None
-        self.__ramificationIndex = None
-        self.__branchingCount = None
 
     @property
     def crossings(self):
@@ -29,7 +21,7 @@ class AnalysisStrategy(object):
         return self.__crossings
 
     @property
-    def sproutCount(self):
+    def sprout_count(self):
         """
         Returns a count of the primary sprouts. Primary sprouts are those
         sprouts which stem directly from the bead.
@@ -39,7 +31,7 @@ class AnalysisStrategy(object):
         pass
 
     @property
-    def criticalValue(self):
+    def critical_value(self):
         """
         Returns the critical value which is defined to be the radius at which
         the maximum number of crossings occur.
@@ -49,7 +41,7 @@ class AnalysisStrategy(object):
         pass
 
     @property
-    def sproutMaximum(self):
+    def sprout_maximum(self):
         """
         Returns the maximum number of crossings of all radii.
 
@@ -58,7 +50,7 @@ class AnalysisStrategy(object):
         pass
 
     @property
-    def ramificationIndex(self):
+    def ramification_index(self):
         """
         Returns the Shoenen Ramification Index which is a ratio for branching
         factor. This is calculated by dividing the sprout maximum with the
@@ -69,7 +61,7 @@ class AnalysisStrategy(object):
         pass
 
     @property
-    def branchingCount(self):
+    def branching_count(self):
         """
         Returns the branching count which is defined to be the number of branches
         which stem from initial sprouts i.e. sprout maximum - sprout count
@@ -91,12 +83,12 @@ class ShollAnalysisDescriptor(object):
 
         self.__img = img
         self.__crossings = crossings
-        self.__sproutCount = self.strategy.sproutCount
-        self.__criticalValue = self.strategy.criticalValue
-        self.__sproutMaximum = self.strategy.sproutMaximum
-        self.__ramificationIndex = self.strategy.ramificationIndex
-        self.__branchingCount = self.strategy.branchingCount
-        self.__trocAverage = self.strategy.trocAverage
+        self.__sproutCount = self.strategy.sprout_count
+        self.__criticalValue = self.strategy.critical_value
+        self.__sproutMaximum = self.strategy.sprout_maximum
+        self.__ramificationIndex = self.strategy.ramification_index
+        self.__branchingCount = self.strategy.branching_count
+        self.__trocAverage = self.strategy.troc_average
 
     @property
     def img(self):
@@ -115,7 +107,7 @@ class ShollAnalysisDescriptor(object):
         return self.__crossings
 
     @property
-    def sproutCount(self):
+    def sprout_count(self):
         """
         Returns a count of the primary sprouts. Primary sprouts are those
         sprouts which stem directly from the bead.
@@ -125,7 +117,7 @@ class ShollAnalysisDescriptor(object):
         return self.__sproutCount
 
     @property
-    def criticalValue(self):
+    def critical_value(self):
         """
         Returns the critical value which is defined to be the radius at which
         the maximum number of crossings occur.
@@ -135,7 +127,7 @@ class ShollAnalysisDescriptor(object):
         return self.__criticalValue
 
     @property
-    def sproutMaximum(self):
+    def sprout_maximum(self):
         """
         Returns the maximum number of crossings of all radii.
 
@@ -144,7 +136,7 @@ class ShollAnalysisDescriptor(object):
         return self.__sproutMaximum
 
     @property
-    def ramificationIndex(self):
+    def ramification_index(self):
         """
         Returns the Shoenen Ramification Index which is a ratio for branching
         factor. This is calculated by dividing the sprout maximum with the
@@ -155,7 +147,7 @@ class ShollAnalysisDescriptor(object):
         return self.__ramificationIndex
 
     @property
-    def branchingCount(self):
+    def branching_count(self):
         """
         Returns the branching count which is defined to be the number of branches
         which stem from initial sprouts i.e. sprout maximum - sprout count
@@ -165,7 +157,7 @@ class ShollAnalysisDescriptor(object):
         return self.__branchingCount
 
     @property
-    def trocAverage(self):
+    def troc_average(self):
         """
         Returns the average of the terminal radius of crossings.
 
