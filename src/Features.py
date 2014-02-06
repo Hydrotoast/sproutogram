@@ -45,7 +45,7 @@ class Sprout(FeatureSet):
         return map(lambda segment: segment.end, self)
 
     @property
-    def start(self):
+    def origin(self):
         """
         Returns the starting point of the segment closest to the bead.
 
@@ -54,7 +54,7 @@ class Sprout(FeatureSet):
         return min(self.starts)
 
     @property
-    def end(self):
+    def head(self):
         """
         Returns the ending point of the segment farthest from the bead.
 

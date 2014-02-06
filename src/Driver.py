@@ -40,7 +40,7 @@ class ExtractionTask(object):
 
         hlsg_extractor = HLSGExtractor(img)
         hlsgs = hlsg_extractor.extract()
-        average_sprout_length = sum(map(lambda sprout: spsd.euclidean(sprout.start, sprout.end), hlsgs[0].sprouts))
+        average_sprout_length = sum(map(lambda sprout: spsd.euclidean(sprout.origin, sprout.head), hlsgs[0].sprouts))
         average_sprout_length /= analysis.sprout_count
         print '\tAverage Sprout Length: %.2f' % average_sprout_length
 

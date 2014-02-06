@@ -214,7 +214,7 @@ class HLSGExtractor(ExtractorBase):
             closest_bead = None
             closest_dist = float('inf')
             for bead in beads:
-                dist = spsd.euclidean((bead.x, bead.y), sprout[0].start)
+                dist = spsd.euclidean((bead.x, bead.y), sprout[0].origin)
                 if dist < closest_dist:
                     closest_dist = dist
                     closest_bead = bead

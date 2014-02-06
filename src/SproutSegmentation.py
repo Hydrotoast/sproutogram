@@ -46,7 +46,7 @@ class SproutSegmenter(object):
                 # Do not connect segments to each other
                 if segment_outer == segment_inner:
                     continue
-                distance = spsd.euclidean(segment_outer.end, segment_inner.start)
+                distance = spsd.euclidean(segment_outer.head, segment_inner.origin)
                 if distance < distance_threshold:
                     connections.append((segment_outer, segment_inner))
         return connections
