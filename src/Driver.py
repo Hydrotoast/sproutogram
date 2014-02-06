@@ -111,12 +111,14 @@ class Driver(object):
     """
     Drives premade sets of extraction tasks
     """
-    def extract_selected(self):
+    @staticmethod
+    def extract_selected():
         in_path = '../data/samples/selected'
         report_path = '../data/reports/'
         AveragedExtractionTask(in_path, in_path, report_path, 1.5).extract()
 
-    def extract_batch(self):
+    @staticmethod
+    def extract_batch():
         in_path = '../data/samples/selected'
         report_path = '../data/reports/'
         pool = Pool(4)
@@ -133,5 +135,4 @@ class Driver(object):
 
 
 if __name__ == '__main__':
-    driver = Driver()
-    driver.extract_selected()
+    Driver.extract_selected()
