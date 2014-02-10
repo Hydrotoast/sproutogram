@@ -1,12 +1,12 @@
-from multiprocessing import Pool
+from .. import BeadExtractor, SproutExtractor, HLSGExtractor
+from .. import ShollAnalyzer
 
+from ..strategy import integration_strategy
+from ..report_generation import DBReportGenerator
+
+from SimpleCV import ImageSet, Color, spsd
 import matplotlib.pyplot as plt
-
-from Extraction import *
-from ShollAnalysis import *
-from ReportGeneration import *
-
-from strategy import *
+import os
 
 
 class ExtractionTask(object):
@@ -44,7 +44,7 @@ class ExtractionTask(object):
         average_sprout_length /= analysis.sprout_count
         print '\tAverage Sprout Length: %.2f' % average_sprout_length
 
-#       print "\t%d sprouts found" % analysis.sproutCount
+        #       print "\t%d sprouts found" % analysis.sproutCount
         return analysis
 
     def extract(self):
@@ -81,58 +81,25 @@ class ExtractionTask(object):
 
 class AveragedExtractionTask(ExtractionTask):
     def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
-        self.analyzer = ShollAnalyzer(IntegrationStrategy.AveragedAnalysisStrategy(), bead_factor, step_size)
+        self.analyzer = ShollAnalyzer(integration_strategy.AveragedAnalysisStrategy(), bead_factor, step_size)
         super(AveragedExtractionTask, self).__init__(in_path, out_path, report_path)
 
 
 class ThresholdAverageExtractionTask(ExtractionTask):
     def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
-        self.analyzer = ShollAnalyzer(IntegrationStrategy.ThresholdAverageStrategy(), bead_factor)
+        self.analyzer = ShollAnalyzer(integration_strategy.ThresholdAverageStrategy(), bead_factor)
         super(ThresholdAverageExtractionTask, self).__init__(in_path, out_path, report_path)
 
 
 class MedianIntegrationExtractionTask(ExtractionTask):
     def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
-        self.analyzer = ShollAnalyzer(IntegrationStrategy.MedianAnalysisStrategy(), bead_factor, step_size)
+        self.analyzer = ShollAnalyzer(integration_strategy.MedianAnalysisStrategy(), bead_factor, step_size)
         super(MedianIntegrationExtractionTask, self).__init__(in_path, out_path, report_path)
 
 
 class ThresholdMedianIntegrationExtractionTask(ExtractionTask):
     def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
-        self.analyzer = ShollAnalyzer(IntegrationStrategy.MedianAnalysisStrategy(), bead_factor, step_size)
+        self.analyzer = ShollAnalyzer(integration_strategy.MedianAnalysisStrategy(), bead_factor, step_size)
         super(ThresholdMedianIntegrationExtractionTask, self).__init__(in_path, out_path, report_path)
 
 
-def concurrent_extract(task):
-    task.extract()
-
-
-class Driver(object):
-    """
-    Drives premade sets of extraction tasks
-    """
-    @staticmethod
-    def extract_selected():
-        in_path = '../data/samples/selected'
-        report_path = '../data/reports/'
-        AveragedExtractionTask(in_path, in_path, report_path, 1.5).extract()
-
-    @staticmethod
-    def extract_batch():
-        in_path = '../data/samples/selected'
-        report_path = '../data/reports/'
-        pool = Pool(4)
-        tasks = []
-        for i in np.arange(1.5, 3.1, 0.1):
-            tasks.append(AveragedExtractionTask(in_path, in_path, report_path, i))
-        # for i in np.arange(1.5, 3.1, 0.1):
-        #   tasks.append(ThresholdAverageExtractionTask(in_path, in_path, report_path, i))
-        # for i in np.arange(1.5, 3.1, 0.1):
-        #   tasks.append(MedianIntegrationExtractionTask(in_path, in_path, report_path, i))
-        # for i in np.arange(1.5, 3.1, 0.1):
-        #     tasks.append(ThresholdMedianIntegrationExtractionTask(in_path, in_path, report_path, i))
-        pool.map(concurrent_extract, tasks)
-
-
-if __name__ == '__main__':
-    Driver.extract_selected()

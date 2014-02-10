@@ -1,6 +1,6 @@
-from Geometry import *
-from SetForest import *
-from Features import *
+from geometry import *
+from set_forest import *
+from features import *
 
 
 class SproutSegmenter(object):

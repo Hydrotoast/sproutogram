@@ -1,8 +1,9 @@
 from SimpleCV import *
 
-from Extraction import *
+from extraction import *
 
 import os
+
 
 class REPL(object):
     """Read-Eval-Print-Loop for interacting with the BVSproutExtractor."""

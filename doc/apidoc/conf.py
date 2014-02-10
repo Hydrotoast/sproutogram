@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# src documentation build configuration file, created by
+# angiogram documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul 30 18:00:19 2013.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -12,7 +12,7 @@
 # serve to show the default.
 
 import sys, os
-sys.path.insert(0, '../../src')
+sys.path.insert(0, '../../angiogram')
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -187,7 +187,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'src.tex', u'Angiogram Sprout Extraction Documentation',
+  ('index', 'angiogram.tex', u'Angiogram Sprout Extraction Documentation',
    u'Gio Cielo', 'manual'),
 ]
 
@@ -217,7 +217,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'src', u'Angiogram Sprout Extraction Documentation',
+    ('index', 'angiogram', u'Angiogram Sprout Extraction Documentation',
      [u'Gio Cielo'], 1)
 ]
 
@@ -231,7 +231,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'src', u'Angiogram Sprout Extraction Documentation',
+  ('index', 'angiogram', u'Angiogram Sprout Extraction Documentation',
    u'Gio Cielo', 'Angiogram Sprout Extraction', 'A medical imaging tool for extracting and analyzing in vitro blood vessel sprouts and its associated properties including sprout count, branching factor, average sprout length and average sprout width.',
    'Miscellaneous'),
 ]

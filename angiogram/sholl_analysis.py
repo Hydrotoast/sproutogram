@@ -10,12 +10,13 @@ class ShollAnalyzer(object):
     of an angiogram. This analyzer depends on the known position of the bead in
     the angiogram to perform the analysis using concentric circles.
     """
-    def __init__(self, strategy=IntegrationStrategy.AveragedAnalysisStrategy(), bead_factor=1.5, step_size=1):
+    def __init__(self, strategy=integration_strategy.AveragedAnalysisStrategy(), bead_factor=1.5, step_size=1):
         self.strategy = strategy
         self.bead_factor = bead_factor
         self.step_size = step_size
 
-    def generate_circular_coordinates(self, origin, radius):
+    @staticmethod
+    def generate_circular_coordinates(origin, radius):
         """
         Generator for circular coordinates starting from the x+ vector and
         iterates counterclockwise.
@@ -73,7 +74,7 @@ class ShollAnalyzer(object):
         crossings = {}
         for r in range(init_radius, max_radius, self.step_size):
             crossings.update({r: 0})
-            for x, y in self.generate_circular_coordinates(bead.origin(), r):
+            for x, y in ShollAnalyzer.generate_circular_coordinates(bead.origin(), r):
                 pixel = img.getGrayPixel(x, y)
                 if pixel != last_pixel and last_pixel == Color.WHITE[0]:
                     crossings[r] += 1

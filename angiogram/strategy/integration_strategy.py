@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-from NaiveStrategy import NaiveAnalysisStrategy
+from naive_strategy import NaiveAnalysisStrategy
 
 from collections import OrderedDict
 from operator import itemgetter

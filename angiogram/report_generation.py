@@ -1,4 +1,4 @@
-from training import HumanCounts
+from training import human_counts
 import csv
 import math
 import sqlite3
@@ -38,15 +38,15 @@ class CSVReportGenerator(ReportGeneratorBase):
 
     def calculate_rmse(self, analyses):
         variance = sum(
-            [(analysis.sprout_count - HumanCounts.data[filename].focusCounts) ** 2
+            [(analysis.sprout_count - human_counts.data[filename].focusCounts) ** 2
                 for filename, analysis in analyses])
-        return math.sqrt(variance / float(len(HumanCounts.data)))
+        return math.sqrt(variance / float(len(human_counts.data)))
 
     def calculate_branching_count_rmse(self, analyses):
         variance = sum(
-            [(analysis.branching_count - HumanCounts.data[filename].branching_count) ** 2
+            [(analysis.branching_count - human_counts.data[filename].branching_count) ** 2
                 for filename, analysis in analyses])
-        return math.sqrt(variance / float(len(HumanCounts.data)))
+        return math.sqrt(variance / float(len(human_counts.data)))
 
     def generate(self):
         with open(self.output, 'w') as fh:

@@ -35,14 +35,14 @@ class Sprout(FeatureSet):
         """
         Returns the starting point of each segment.
         """
-        return map(lambda segment: segment.start, self)
+        return map(lambda segment: segment.origin, self)
 
     @property
     def ends(self):
         """
         Returns the ending point of each segment.
         """
-        return map(lambda segment: segment.end, self)
+        return map(lambda segment: segment.head, self)
 
     @property
     def origin(self):
@@ -79,12 +79,12 @@ class Sprout(FeatureSet):
             for outer in self:
                 if outer == inner:
                     continue
-                distance = spsd.euclidean(inner.end, outer.start)
+                distance = spsd.euclidean(inner.head, outer.origin)
                 if distance < distance_threshold:
                     connections.append((inner, outer))
 
         for inner, outer in connections:
-            self[-1].image.drawLine(inner.end, outer.start, color, width)
+            self[-1].image.drawLine(inner.head, outer.origin, color, width)
 
 
 class HLSG(Feature):

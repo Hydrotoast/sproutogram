@@ -1,6 +1,6 @@
 from SimpleCV import np
 
-from NaiveStrategy import NaiveAnalysisStrategy
+from naive_strategy import NaiveAnalysisStrategy
 
 
 def lis(l):

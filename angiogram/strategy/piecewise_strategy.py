@@ -1,5 +1,5 @@
-from NaiveStrategy import NaiveAnalysisStrategy
-from PiecewiseConstantApproximation import full_piecewise_constants
+from naive_strategy import NaiveAnalysisStrategy
+from piecewise_constant_approximation import full_piecewise_constants
 
 
 class PWAnalysisStrategy(NaiveAnalysisStrategy):
