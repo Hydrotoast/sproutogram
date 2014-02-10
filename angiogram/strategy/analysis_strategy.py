@@ -1,26 +1,24 @@
-class ShollAnalysisDescriptor(object):
-    """
-    Descriptor for a Sholl Analysis containing the raw data dump of the
-    analysis as well as other derivable calculations.
-    """
-    def __init__(self, img, crossings, bead, strategy):
-        self.strategy = strategy
-        self.strategy.bind(img, crossings, bead)
-        # self.integrationMethod = 'median'
+class AnalysisStrategy(object):
+    def __init__(self):
+        self.integration_method = 'median'
 
+        self.__img = None
+        self.__crossings = None
+        self.__bead = None
+
+    def bind(self, img, crossings, bead):
         self.__img = img
         self.__crossings = crossings
-        self.__sproutCount = self.strategy.sprout_count
-        self.__criticalValue = self.strategy.critical_value
-        self.__sproutMaximum = self.strategy.sprout_maximum
-        self.__ramificationIndex = self.strategy.ramification_index
-        self.__branchingCount = self.strategy.branching_count
-        self.__trocAverage = self.strategy.troc_average
+        self.__bead = bead
 
     @property
-    def img(self):
-        """Returns the image analyzed."""
-        return self.__img
+    def bead(self):
+        """
+        Returns the bead under analysis
+
+        :rtype: Bead
+        """
+        return self.__bead
 
     @property
     def crossings(self):
@@ -41,7 +39,7 @@ class ShollAnalysisDescriptor(object):
 
         :rtype: int
         """
-        return self.__sproutCount
+        pass
 
     @property
     def critical_value(self):
@@ -51,7 +49,7 @@ class ShollAnalysisDescriptor(object):
 
         :rtype: int
         """
-        return self.__criticalValue
+        pass
 
     @property
     def sprout_maximum(self):
@@ -60,7 +58,7 @@ class ShollAnalysisDescriptor(object):
 
         :rtype: int
         """
-        return self.__sproutMaximum
+        pass
 
     @property
     def ramification_index(self):
@@ -71,7 +69,7 @@ class ShollAnalysisDescriptor(object):
 
         :rtype: float
         """
-        return self.__ramificationIndex
+        pass
 
     @property
     def branching_count(self):
@@ -81,13 +79,4 @@ class ShollAnalysisDescriptor(object):
 
         :rtype: float
         """
-        return self.__branchingCount
-
-    @property
-    def troc_average(self):
-        """
-        Returns the average of the terminal radius of crossings.
-
-        :rtype: float
-        """
-        return self.__trocAverage
+        pass

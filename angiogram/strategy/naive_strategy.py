@@ -1,4 +1,4 @@
-from analysis_descriptor import AnalysisStrategy
+from analysis_strategy import AnalysisStrategy
 from operator import itemgetter
 
 
