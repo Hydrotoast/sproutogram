@@ -16,7 +16,6 @@ class ShollAnalyzer(object):
         self.step_size = step_size
 
     @staticmethod
-    n
     def generate_circular_coordinates(origin, radius):
         """
         Generator for circular coordinates starting from the x+ vector and
