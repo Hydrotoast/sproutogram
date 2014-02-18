@@ -5,7 +5,7 @@ from operator import itemgetter
 
 
 def main():
-    with sqlite3.connect('extractions.db') as conn:
+    with sqlite3.connect('extractions.repositories') as conn:
         cur = conn.cursor()
         cur.execute('SELECT DISTINCT method FROM feature')
         methods = [m[0] for m in cur.fetchall()]

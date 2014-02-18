@@ -20,7 +20,7 @@ def main():
     data.append(('Ang1 100ng_ml 3 Day 7', 12, 7, 1, 7))
 
 
-    with sqlite3.connect('extractions.db') as conn:
+    with sqlite3.connect('extractions.repositories') as conn:
         cur = conn.cursor()
         cur.executemany('INSERT INTO training VALUES (?, ?, ?, ?, ?)', data)
 

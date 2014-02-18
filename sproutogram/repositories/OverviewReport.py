@@ -3,7 +3,7 @@ import sqlite3 as sqlite
 
 
 def main():
-    with sqlite.connect('extractions.db') as conn:
+    with sqlite.connect('extractions.repositories') as conn:
         cur = conn.cursor()
         cur.execute('SELECT * FROM overview')
         rows = cur.fetchall()
