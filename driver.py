@@ -1,4 +1,4 @@
-from angiogram.experiments.extractor import AveragedExtractionTask
+from sproutogram.experiments.extractor import AveragedExtractionTask
 
 from multiprocessing import Pool
 import numpy as np
