@@ -16,6 +16,7 @@ class ShollAnalyzer(object):
         self.step_size = step_size
 
     @staticmethod
+    n
     def generate_circular_coordinates(origin, radius):
         """
         Generator for circular coordinates starting from the x+ vector and
@@ -80,4 +81,5 @@ class ShollAnalyzer(object):
                     crossings[r] += 1
                 last_pixel = pixel
 
-        return ShollAnalysisDescriptor(img, crossings, bead, self.strategy)
+        self.strategy.bind(img, crossings, bead, self.strategy)
+        return self.strategy.build_descriptor()

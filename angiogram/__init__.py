@@ -5,3 +5,5 @@ from .sholl_analysis import ShollAnalyzer
 from sqlalchemy import create_engine
 
 engine = create_engine('sqlite:///db/development.db', echo=True)
+
+from .db import models
