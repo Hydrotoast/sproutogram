@@ -1,8 +1,8 @@
 class HumanData(object):
-	def __init__(self, maxCounts, focusCounts, branchingCount):
-		self.maxCounts = maxCounts
-		self.focusCounts = focusCounts
-		self.branchingCount = branchingCount
+    def __init__(self, focus_sprout_counts, auxiliary_branch_count, total_branch_count):
+        self.focus_sprout_count = focus_sprout_counts
+        self.auxiliary_branch_count = auxiliary_branch_count
+        self.total_branch_count = total_branch_count
 
 data = {}
 data.update({'Ang1 250 ng_ml 1 Day 7': HumanData(14, 8, 2)})
