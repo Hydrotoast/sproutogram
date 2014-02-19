@@ -1,5 +1,5 @@
-from sprout_segmentation import *
-from morphology import *
+from ..sprout_segmentation import *
+from ..morphology import *
 
 
 class NoBeadException(Exception):
