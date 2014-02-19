@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Column, Integer, Float, String, Text
+from sqlalchemy import ForeignKeyConstraint, Column, Integer, Float, String
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -9,7 +9,9 @@ class Experiment(Base):
     __tablename__ = 'experiments'
 
     name = Column(String(255), primary_key=True)
-    params = Column(Text(), primary_key=True)
+    params = Column(String(255), primary_key=True)
+
+    analyses = relationship('Analysis', backref='experiment')
 
     def __repr__(self):
         return "<Experiment(name='%s', params='%s')>" % (self.name, self.params)
@@ -17,20 +19,24 @@ class Experiment(Base):
 
 class Analysis(Base):
     __tablename__ = 'analyses'
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ['experiment_name', 'experiment_params'],
+            ['experiments.name', 'experiments.params']),
+    )
 
     filename = Column(String(), primary_key=True)
 
     # Belongs to an experiment.
-    experiment_name = Column(String(), ForeignKey('experiments.name'))
-    experiment_params = Column(Text(), ForeignKey('experiments.params'))
-    experiment = relationship('Experiment', backref=backref('analyses', order_by=filename))
+    experiment_name = Column(String(255))
+    experiment_params = Column(String(255))
 
     sprout_count = Column(Float())
     critical_value = Column(Float())
     total_branch_count = Column(Float())
-    aux_branch_count = Column(Float())
+    auxiliary_branch_count = Column(Float())
     branching_factor = Column(Float())
-    average_troc_length = Column(Float())
+    average_troc = Column(Float())
 
     def __repr__(self):
         return "<Analysis(" \
@@ -38,12 +44,12 @@ class Analysis(Base):
                "total_branch_count='%s', " \
                "auxiliary_branch_count='%s', " \
                "branching_factor='%s', " \
-               "average_sprout_length='%s'" \
+               "average_troc='%s'" \
                % (self.sprout_count,
                   self.total_branch_count,
-                  self.aux_branch_count,
+                  self.auxiliary_branch_count,
                   self.branching_factor,
-                  self.average_sprout_length)
+                  self.average_troc)
 
 
 class TrainData(Base):
