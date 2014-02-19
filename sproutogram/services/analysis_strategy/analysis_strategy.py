@@ -15,7 +15,8 @@ class AnalysisStrategy(object):
         self.__bead = bead
 
     def make_analysis_descriptor(self):
-        return Analysis(sprout_count=self.sprout_count,
+        return Analysis(filename=self.__img.filename,
+                        sprout_count=self.sprout_count,
                         critical_value=self.critical_value,
                         total_branch_count=self.total_branch_count,
                         auxiliary_branch_count=self.auxiliary_branch_count,

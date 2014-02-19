@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from ..services.sholl_analysis import ShollAnalyzer
 from ..sproutogram.services.strategy import NaiveAnalysisStrategy
 from .extractor import BeadExtractor
-from ..repositories.models import Experiment
+from ..repositories.train_data import Experiment
 
 
 # ORM
@@ -27,7 +27,6 @@ class NaiveAnalysisExperiment(object):
         analyzer = ShollAnalyzer(NaiveAnalysisStrategy())
         analysis = analyzer.analyze(self.__img, beads[0])
 
-        analysis.filename = self.__img.filename
         analysis.experiment = self.__experiment
         session.add(analysis)
         session.commit()
