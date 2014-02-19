@@ -1,12 +1,11 @@
-from .. import BeadExtractor, SproutExtractor, HLSGExtractor
-from .. import ShollAnalyzer
-
-from ..strategy import integration_strategy
-from ..report_generation import DBReportGenerator
+import os
 
 from SimpleCV import ImageSet, Color, spsd
 import matplotlib.pyplot as plt
-import os
+
+from .. import BeadExtractor, SproutExtractor, HLSGExtractor
+from .. import ShollAnalyzer
+from sproutogram.services.analysis_strategy import integration_strategy
 
 
 class ExtractionTask(object):
@@ -44,14 +43,13 @@ class ExtractionTask(object):
         average_sprout_length /= analysis.sprout_count
         print '\tAverage Sprout Length: %.2f' % average_sprout_length
 
-        #       print "\t%d sprouts found" % analysis.sproutCount
         return analysis
 
     def extract(self):
         image_set = ImageSet(self.in_path)
         image_set.sort()
         #reportGen = CSVReportGenerator(os.path.join(self.reportPath, self.methodName + '.csv'))
-        report_gen = DBReportGenerator(os.path.join('db', 'extractions.db'), self.method_name)
+        #report_gen = DBReportGenerator(os.path.join('repositories', 'extractions.repositories'), self.method_name)
         counter = 1
         print 'Extracting using %s' % self.method_name
         for image in image_set:
@@ -64,10 +62,10 @@ class ExtractionTask(object):
             self.plot_sholl_analysis(analysis, filename)
 
             # Add to overall report
-            report_gen.add_analysis(filename, analysis)
+            #report_gen.add_analysis(filename, analysis)
 
             counter += 1
-        report_gen.generate()
+        #report_gen.generate()
 
     def plot_sholl_analysis(self, analysis, filename):
         plt.figure(1, figsize=(18, 6))
