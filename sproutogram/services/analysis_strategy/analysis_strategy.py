@@ -1,4 +1,4 @@
-from ...repositories import models
+from ...repositories.analysis import Analysis
 
 
 class AnalysisStrategy(object):
@@ -15,12 +15,12 @@ class AnalysisStrategy(object):
         self.__bead = bead
 
     def make_analysis_descriptor(self):
-        return models.Analysis(sprout_count=self.sprout_count,
-                               critical_value=self.critical_value,
-                               total_branch_count=self.total_branch_count,
-                               auxiliary_branch_count=self.auxiliary_branch_count,
-                               branching_factor=self.branching_factor,
-                               average_troc=self.average_troc)
+        return Analysis(sprout_count=self.sprout_count,
+                        critical_value=self.critical_value,
+                        total_branch_count=self.total_branch_count,
+                        auxiliary_branch_count=self.auxiliary_branch_count,
+                        branching_factor=self.branching_factor,
+                        average_troc=self.average_troc)
 
     @property
     def bead(self):

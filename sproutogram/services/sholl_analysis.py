@@ -2,7 +2,7 @@ from collections import deque
 
 from SimpleCV import Color
 
-from ..strategy import *
+from .analysis_strategy import *
 
 
 class ShollAnalyzer(object):
