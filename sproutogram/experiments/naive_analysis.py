@@ -1,16 +1,9 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
 from ..services.sholl_analysis import ShollAnalyzer
-from ..sproutogram.services.strategy import NaiveAnalysisStrategy
+from ..services.analysis_strategy.naive_strategy import NaiveAnalysisStrategy
 from .extractor import BeadExtractor
-from ..repositories.train_data import Experiment
 
-
-# ORM
-engine = create_engine('sqlite:///db/development.db')
-Session = sessionmaker(bind=engine)
-session = Session()
+from ..repositories import Experiment
+from ..repositories import session
 
 
 class NaiveAnalysisExperiment(object):
