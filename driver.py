@@ -1,4 +1,6 @@
+from SimpleCV import Image
 from sproutogram.experiments.extractor import AveragedExtractionTask
+from sproutogram.experiments.naive_analysis import NaiveAnalysisExperiment
 
 from multiprocessing import Pool
 import numpy as np
@@ -36,4 +38,6 @@ class Driver(object):
 
 
 if __name__ == '__main__':
-    Driver.extract_selected()
+    # Driver.extract_selected()
+    experiment = NaiveAnalysisExperiment(img=Image('data/samples/mono.jpg'))
+    experiment.execute()
