@@ -5,13 +5,19 @@ from .extractor import BeadExtractor
 from ..repositories import Experiment
 from ..repositories import session
 
+from .exception import ExperimentAlreadyCompleteException
+
 
 class NaiveAnalysisExperiment(object):
     def __init__(self, **kwargs):
         self.__img = kwargs['img']
 
-        self.__experiment = Experiment(name=self.__class__.__name__, params=str(kwargs))
-        session.add(self.__experiment)
+        instance = session.query(Experiment).filter_by(name=self.__class__.__name__, params=str(kwargs))
+        if instance:
+            raise ExperimentAlreadyCompleteException()
+        else:
+            self.__experiment = Experiment(name=self.__class__.__name__, params=str(kwargs))
+            session.add(self.__experiment)
 
     def execute(self):
         bead_extractor = BeadExtractor(self.__img)

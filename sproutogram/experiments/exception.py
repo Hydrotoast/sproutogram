@@ -1,0 +1,2 @@
+class ExperimentAlreadyCompleteException(Exception):
+    pass
