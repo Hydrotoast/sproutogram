@@ -18,7 +18,7 @@ class AveragedAnalysisStrategy(NaiveAnalysisStrategy):
     @property
     def average_troc(self):
         trocs = [self.critical_value]
-        trocs_counter = self.sprout_maximum - 1
+        trocs_counter = self.total_branch_count - 1
         start_radius = self.critical_value + 1
         ordered_items = OrderedDict(sorted(self.crossings.items()[start_radius:], key=itemgetter(0), reverse=True))
         while trocs_counter > 0 and len(ordered_items) > 0:

@@ -38,6 +38,6 @@ class Driver(object):
 
 
 if __name__ == '__main__':
-    # Driver.extract_selected()
-    experiment = NaiveAnalysisExperiment(img=Image('data/samples/mono.jpg'))
-    experiment.execute()
+    Driver.extract_selected()
+    # experiment = NaiveAnalysisExperiment(img=Image('data/samples/mono.jpg'))
+    # experiment.execute()

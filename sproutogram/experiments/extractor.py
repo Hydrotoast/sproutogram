@@ -59,22 +59,22 @@ class ExtractionTask(object):
             print 'Analyzing %d/%d: %s' % (counter, len(image_set.filelist), filename)
 
             # Sholl Analysis Plots
-            self.plot_sholl_analysis(analysis, filename)
+            # self.plot_sholl_analysis(analysis, filename)
 
             # Add to overall report
             #report_gen.add_analysis(filename, analysis)
 
             counter += 1
         #report_gen.generate()
-
-    def plot_sholl_analysis(self, analysis, filename):
-        plt.figure(1, figsize=(18, 6))
-        plt.plot(analysis.crossings.keys(), analysis.crossings.values())
-        plt.title('Sholl Analysis for ' + filename)
-        plt.xlabel('Radius')
-        plt.ylabel('Crossings')
-        plt.savefig(os.path.join(self.plot_path, filename + ".png"))
-        plt.clf()
+    #
+    # def plot_sholl_analysis(self, analysis, filename):
+    #     plt.figure(1, figsize=(18, 6))
+    #     plt.plot(analysis.crossings.keys(), analysis.crossings.values())
+    #     plt.title('Sholl Analysis for ' + filename)
+    #     plt.xlabel('Radius')
+    #     plt.ylabel('Crossings')
+    #     plt.savefig(os.path.join(self.plot_path, filename + ".png"))
+    #     plt.clf()
 
 
 class AveragedExtractionTask(ExtractionTask):
