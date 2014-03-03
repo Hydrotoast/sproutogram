@@ -7,14 +7,14 @@ import pickle
 
 def calculate_rmse(analyses):
     variance = sum(
-        [(analysis.sprout_count - human_counts.data[filename].focusCounts) ** 2
+        [(analysis.sprout_count - human_counts.data[filename].focus_sprout_count) ** 2
          for filename, analysis in analyses])
     return math.sqrt(variance / float(len(human_counts.data)))
 
 
 def calculate_branching_count_rmse(analyses):
     variance = sum(
-        [(analysis.auxiliary_branch_count - human_counts.data[filename].branching_count) ** 2
+        [(analysis.auxiliary_branch_count - human_counts.data[filename].auxiliary_branch_count) ** 2
          for filename, analysis in analyses])
     return math.sqrt(variance / float(len(human_counts.data)))
 
@@ -68,12 +68,6 @@ class CSVReportGenerator(ReportGeneratorBase):
                 writer.writerow(['Total Branch Count', analysis.total_branch_count])
                 writer.writerow(['Branching Factor', '%.2f' % analysis.branching_factor])
                 writer.writerow(['Auxiliary Branch Count', '%.2f' % analysis.auxiliary_branch_count])
-                writer.writerow([])
-
-            for filename, analysis in sorted_items:
-                writer.writerow([filename])
-                writer.writerow(['Radius'] + analysis.crossings.keys())
-                writer.writerow(['Crossings'] + analysis.crossings.values())
                 writer.writerow([])
 
 

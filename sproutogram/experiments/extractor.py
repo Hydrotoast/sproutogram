@@ -7,7 +7,7 @@ from .. import ShollAnalyzer
 from ..report_generation import CSVReportGenerator
 from sproutogram.services.analysis_strategy import integration_strategy
 
-from ..repositories import Experiment
+from ..repositories import Experiment, Analysis
 from ..repositories import session
 
 
@@ -62,17 +62,22 @@ class ExtractionTask(object):
         image_set = ImageSet(self.in_path)
         image_set.sort()
         report_gen = CSVReportGenerator(os.path.join(self.report_path, self.__experiment.name + '.csv'))
-        #report_gen = DBReportGenerator(os.path.join('repositories', 'extractions.repositories'), self.method_name)
         counter = 1
         print 'Extracting using %s' % self.method_name
         for image in sorted(image_set, key=lambda img: img.filename):
             filename = os.path.splitext(os.path.basename(image.filename))[0]
 
-            analysis = self.analyze_mono_bead(image)
-            analysis.experiment = self.__experiment
-            session.add(analysis)
+            instance = session.query(Analysis).filter_by(filename=image.filename,
+                                                         experiment_name=self.__experiment.name,
+                                                         experiment_params=self.__experiment.params).first()
+            if instance:
+                analysis = instance
+            else:
+                analysis = self.analyze_mono_bead(image)
+                analysis.experiment = self.__experiment
+                session.add(analysis)
 
-            print 'Analyzing %d/%d: %s' % (counter, len(image_set.filelist), filename)
+                print 'Analyzing %d/%d: %s' % (counter, len(image_set.filelist), filename)
 
             # Sholl Analysis Plots
             # self.plot_sholl_analysis(analysis, filename)
@@ -82,8 +87,8 @@ class ExtractionTask(object):
 
             counter += 1
         session.commit()
-        #report_gen.generate()
-    #
+        report_gen.generate()
+
     # def plot_sholl_analysis(self, analysis, filename):
     #     plt.figure(1, figsize=(18, 6))
     #     plt.plot(analysis.crossings.keys(), analysis.crossings.values())
