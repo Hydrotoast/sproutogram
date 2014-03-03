@@ -17,12 +17,14 @@ class AveragedAnalysisStrategy(NaiveAnalysisStrategy):
         return sum(self.crossings.values()[0:self.critical_value]) / float(self.critical_value)
 
     @property
-    def auxiliary_branch_count(self):
+    def total_branch_count(self):
         subs = approximate_piecewise_constants(self.crossings.values())
         diffs = [r - l for l, r in zip(subs[:-1], subs[1:]) if r > l]
-        branches = sum(diffs) - self.sprout_count
-        print '\tAuxiliary Branches: %.2f' % branches
-        return branches
+        return sum(diffs)
+
+    @property
+    def auxiliary_branch_count(self):
+        return self.total_branch_count - self.sprout_count
 
     @property
     def average_troc(self):

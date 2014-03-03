@@ -11,7 +11,7 @@ from ..repositories import Experiment, Analysis
 from ..repositories import session
 
 
-class ExtractionTask(object):
+class ExtractionExperiment(object):
     """
     An Extraction task defines an atomic job for extracting and quantitatively
     analyzing an image set of fibrin gel bead sprouting assays.
@@ -99,10 +99,10 @@ class ExtractionTask(object):
     #     plt.clf()
 
 
-class AveragedExtractionTask(ExtractionTask):
+class AveragedExtraction(ExtractionExperiment):
     def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
         self.analyzer = ShollAnalyzer(integration_strategy.AveragedAnalysisStrategy(), bead_factor, step_size)
-        super(AveragedExtractionTask, self).__init__(in_path=in_path, out_path=out_path, report_path=report_path)
+        super(AveragedExtraction, self).__init__(in_path=in_path, out_path=out_path, report_path=report_path)
 
 
 # class ThresholdAverageExtractionTask(ExtractionTask):
