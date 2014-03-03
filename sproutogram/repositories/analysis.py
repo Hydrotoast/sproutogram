@@ -13,8 +13,8 @@ class Analysis(Base):
     filename = Column(String(), primary_key=True)
 
     # Belongs to an experiment.
-    experiment_name = Column(String(255))
-    experiment_params = Column(String(255))
+    experiment_name = Column(String(255), primary_key=True)
+    experiment_params = Column(String(255), primary_key=True)
 
     sprout_count = Column(Float())
     critical_value = Column(Float())
