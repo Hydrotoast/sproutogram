@@ -1,4 +1,4 @@
-from training import human_counts
+from .repositories import session, TrainData
 import csv
 import math
 import sqlite3
@@ -6,17 +6,21 @@ import pickle
 
 
 def calculate_rmse(analyses):
+    train_data = session.query(TrainData).all()
+    human_counts = dict(zip(map(lambda train_datum: train_datum.filename, train_data), train_data))
     variance = sum(
-        [(analysis.sprout_count - human_counts.data[filename].focus_sprout_count) ** 2
+        [(analysis.sprout_count - human_counts[filename].focus_sprout_count) ** 2
          for filename, analysis in analyses])
-    return math.sqrt(variance / float(len(human_counts.data)))
+    return math.sqrt(variance / float(len(human_counts)))
 
 
 def calculate_branching_count_rmse(analyses):
+    train_data = session.query(TrainData).all()
+    human_counts = dict(zip(map(lambda train_datum: train_datum.filename, train_data), train_data))
     variance = sum(
-        [(analysis.auxiliary_branch_count - human_counts.data[filename].auxiliary_branch_count) ** 2
+        [(analysis.auxiliary_branch_count - human_counts[filename].auxiliary_branch_count) ** 2
          for filename, analysis in analyses])
-    return math.sqrt(variance / float(len(human_counts.data)))
+    return math.sqrt(variance / float(len(human_counts)))
 
 
 class ReportGeneratorBase(object):
