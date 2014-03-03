@@ -5,8 +5,6 @@ from .extractor import BeadExtractor
 from ..repositories import Experiment
 from ..repositories import session
 
-from .exception import ExperimentAlreadyCompleteException
-
 
 class NaiveAnalysisExperiment(object):
     def __init__(self, **kwargs):
@@ -14,10 +12,11 @@ class NaiveAnalysisExperiment(object):
 
         instance = session.query(Experiment).filter_by(name=self.__class__.__name__, params=str(kwargs)).first()
         if instance:
-            raise ExperimentAlreadyCompleteException()
+            self.__experiment = instance
         else:
             self.__experiment = Experiment(name=self.__class__.__name__, params=str(kwargs))
             session.add(self.__experiment)
+            session.commit()
 
     def execute(self):
         bead_extractor = BeadExtractor(self.__img)

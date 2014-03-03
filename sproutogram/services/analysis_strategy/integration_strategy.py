@@ -5,6 +5,7 @@ from operator import itemgetter
 import numpy as np
 
 from sproutogram.services.analysis_strategy.naive_strategy import NaiveAnalysisStrategy
+from .piecewise_constant_approximation import approximate_piecewise_constants
 
 
 class AveragedAnalysisStrategy(NaiveAnalysisStrategy):
@@ -14,6 +15,14 @@ class AveragedAnalysisStrategy(NaiveAnalysisStrategy):
     @property
     def sprout_count(self):
         return sum(self.crossings.values()[0:self.critical_value]) / float(self.critical_value)
+
+    @property
+    def auxiliary_branch_count(self):
+        subs = approximate_piecewise_constants(self.crossings.values())
+        diffs = [r - l for l, r in zip(subs[:-1], subs[1:]) if r > l]
+        branches = sum(diffs) - self.sprout_count
+        print '\tAuxiliary Branches: %.2f' % branches
+        return branches
 
     @property
     def average_troc(self):
