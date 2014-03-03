@@ -5,6 +5,20 @@ import sqlite3
 import pickle
 
 
+def calculate_rmse(analyses):
+    variance = sum(
+        [(analysis.sprout_count - human_counts.data[filename].focusCounts) ** 2
+         for filename, analysis in analyses])
+    return math.sqrt(variance / float(len(human_counts.data)))
+
+
+def calculate_branching_count_rmse(analyses):
+    variance = sum(
+        [(analysis.auxiliary_branch_count - human_counts.data[filename].branching_count) ** 2
+         for filename, analysis in analyses])
+    return math.sqrt(variance / float(len(human_counts.data)))
+
+
 class ReportGeneratorBase(object):
     """
     Abstract base class for generating reports as CSV files.
@@ -36,38 +50,24 @@ class CSVReportGenerator(ReportGeneratorBase):
     def __init__(self, filename):
         super(CSVReportGenerator, self).__init__(filename)
 
-    def calculate_rmse(self, analyses):
-        variance = sum(
-            [(analysis.sprout_count - human_counts.data[filename].focusCounts) ** 2
-                for filename, analysis in analyses])
-        return math.sqrt(variance / float(len(human_counts.data)))
-
-    def calculate_branching_count_rmse(self, analyses):
-        variance = sum(
-            [(analysis.branching_count - human_counts.data[filename].branching_count) ** 2
-                for filename, analysis in analyses])
-        return math.sqrt(variance / float(len(human_counts.data)))
-
     def generate(self):
         with open(self.output, 'w') as fh:
             sorted_items = sorted(self.analyses.items())
-            sprount_count_rmse = self.calculate_rmse(sorted_items)
-            branching_count_rmse = self.calculate_branching_count_rmse(sorted_items)
+            sprount_count_rmse = calculate_rmse(sorted_items)
+            auxiliary_branch_count_rmse = calculate_branching_count_rmse(sorted_items)
             writer = csv.writer(fh)
 
             writer.writerow(['Overview'])
             writer.writerow(['Sprout Count RMSE: ', sprount_count_rmse])
-            writer.writerow(['Branching Count RMSE: ', branching_count_rmse])
-            # print 'Sprout Count RMSE: ', sproutCountRMSE
-            # print 'Branching Count RMSE: ', branchingCountRMSE
+            writer.writerow(['Branching Count RMSE: ', auxiliary_branch_count_rmse])
 
             for filename, analysis in sorted_items:
                 writer.writerow([filename])
                 writer.writerow(['Sprout Count', analysis.sprout_count])
                 writer.writerow(['Critical Value', analysis.critical_value])
-                writer.writerow(['Sprout Maximum', analysis.sprout_maximum])
-                writer.writerow(['Shoenen Ramification Index', '%.2f' % analysis.ramification_index])
-                writer.writerow(['Branching Count', '%.2f' % analysis.branching_count])
+                writer.writerow(['Total Branch Count', analysis.total_branch_count])
+                writer.writerow(['Branching Factor', '%.2f' % analysis.branching_factor])
+                writer.writerow(['Auxiliary Branch Count', '%.2f' % analysis.auxiliary_branch_count])
                 writer.writerow([])
 
             for filename, analysis in sorted_items:
