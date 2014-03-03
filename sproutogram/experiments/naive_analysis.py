@@ -12,7 +12,7 @@ class NaiveAnalysisExperiment(object):
     def __init__(self, **kwargs):
         self.__img = kwargs['img']
 
-        instance = session.query(Experiment).filter_by(name=self.__class__.__name__, params=str(kwargs))
+        instance = session.query(Experiment).filter_by(name=self.__class__.__name__, params=str(kwargs)).first()
         if instance:
             raise ExperimentAlreadyCompleteException()
         else:
