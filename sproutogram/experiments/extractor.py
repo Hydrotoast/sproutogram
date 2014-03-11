@@ -50,12 +50,6 @@ class ExtractionExperiment(object):
 
         analysis = self.analyzer.analyze(sprouts_img, beads[0])
 
-        hlsg_extractor = HLSGExtractor(img)
-        hlsgs = hlsg_extractor.extract()
-        average_sprout_length = sum(map(lambda sprout: spsd.euclidean(sprout.origin, sprout.head), hlsgs[0].sprouts))
-        average_sprout_length /= analysis.sprout_count
-        print '\tAverage Sprout Length: %.2f' % average_sprout_length
-
         return analysis
 
     def extract(self):
@@ -123,3 +117,13 @@ class AveragedExtraction(ExtractionExperiment):
 #         super(ThresholdMedianIntegrationExtractionTask, self).__init__(in_path, out_path, report_path)
 #
 
+class AveragedSproutPostRisingEdgeExperiment(ExtractionExperiment):
+    def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
+        self.analyzer = ShollAnalyzer(integration_strategy.AveragedSproutPostRisingEdge(), bead_factor, step_size)
+        super(AveragedSproutPostRisingEdgeExperiment, self).__init__(in_path=in_path, out_path=out_path, report_path=report_path)
+
+
+class MPlusDelta2(ExtractionExperiment):
+    def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
+        self.analyzer = ShollAnalyzer(integration_strategy.MPlusDelta2(), bead_factor, step_size)
+        super(MPlusDelta2, self).__init__(in_path=in_path, out_path=out_path, report_path=report_path)

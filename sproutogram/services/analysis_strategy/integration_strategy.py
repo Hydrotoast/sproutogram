@@ -42,6 +42,34 @@ class AveragedAnalysisStrategy(NaiveAnalysisStrategy):
         return np.mean(trocs)
 
 
+class AveragedSproutPostRisingEdge(AveragedAnalysisStrategy):
+    @property
+    def total_branch_count(self):
+        return self.sprout_count + self.auxiliary_branch_count
+
+    @property
+    def auxiliary_branch_count(self):
+        start_radius = self.critical_value
+        ordered_items = OrderedDict(sorted(self.crossings.items(), key=itemgetter(0))[start_radius:])
+        subs = approximate_piecewise_constants(ordered_items.values())
+        diffs = [r - l for l, r in zip(subs[:-1], subs[1:]) if r > l]
+        return sum(diffs)
+
+
+class MPlusDelta2(AveragedAnalysisStrategy):
+    @property
+    def total_branch_count(self):
+        return max(self.crossings.values()) + self.auxiliary_branch_count
+
+    @property
+    def auxiliary_branch_count(self):
+        start_radius = self.critical_value
+        ordered_items = OrderedDict(sorted(self.crossings.items(), key=itemgetter(0))[start_radius:])
+        subs = approximate_piecewise_constants(ordered_items.values())
+        diffs = [r - l for l, r in zip(subs[:-1], subs[1:]) if r > l]
+        return sum(diffs)
+
+
 class ThresholdAverageStrategy(NaiveAnalysisStrategy):
     def __init__(self):
         super(NaiveAnalysisStrategy, self).__init__()

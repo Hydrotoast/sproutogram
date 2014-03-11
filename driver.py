@@ -1,5 +1,5 @@
 from SimpleCV import Image
-from sproutogram.experiments.extractor import AveragedExtraction
+from sproutogram.experiments.extractor import *
 from sproutogram.experiments.naive_analysis import NaiveAnalysisExperiment
 
 from multiprocessing import Pool
@@ -18,7 +18,7 @@ class Driver(object):
     def extract_selected():
         in_path = 'data/samples/selected'
         report_path = 'data/reports/'
-        AveragedExtraction(in_path, in_path, report_path, 1.5).extract()
+        MPlusDelta2(in_path, in_path, report_path, 1.5).extract()
 
     @staticmethod
     def extract_batch():
