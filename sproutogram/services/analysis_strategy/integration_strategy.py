@@ -14,7 +14,8 @@ class AveragedAnalysisStrategy(NaiveAnalysisStrategy):
 
     @property
     def sprout_count(self):
-        return sum(self.crossings.values()[0:self.critical_value]) / float(self.critical_value)
+        ordered_items = OrderedDict(sorted(self.crossings.items(), key=itemgetter(0)))[0:self.critical_value]
+        return sum(ordered_items.values()) / float(self.critical_value)
 
     @property
     def total_branch_count(self):

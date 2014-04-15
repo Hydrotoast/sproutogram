@@ -1,6 +1,8 @@
 from SimpleCV import Image
 from sproutogram.experiments.extractor import *
 from sproutogram.experiments.naive_analysis import NaiveAnalysisExperiment
+from sproutogram.experiments.noise_analysis import NoiseAnalysis
+from sproutogram.services.analysis_strategy import integration_strategy
 
 from multiprocessing import Pool
 import numpy as np
@@ -18,7 +20,7 @@ class Driver(object):
     def extract_selected():
         in_path = 'data/samples/selected'
         report_path = 'data/reports/'
-        MPlusDelta2(in_path, in_path, report_path, 1.5).extract()
+        NoiseAnalysis(in_path=in_path, out_path=in_path, report_path=report_path).analyze()
 
     @staticmethod
     def extract_batch():
