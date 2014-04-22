@@ -89,7 +89,9 @@ class BeadExtractor(ExtractorBase):
     def extract(self):
         circles = self.extract_circles()
         if not circles:
-            raise NoBeadException()
+            circles = self.extract_circles(thresh=64)
+            if not circles:
+                raise NoBeadException()
         beads = FeatureSet(Bead(self.img, circle) for circle in circles)
         return beads
 
