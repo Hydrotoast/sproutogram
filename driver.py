@@ -18,9 +18,9 @@ class Driver(object):
     """
     @staticmethod
     def extract_selected():
-        in_path = 'data/samples/selected'
-        report_path = 'data/reports/'
-        NoiseAnalysis(in_path=in_path, out_path=in_path, report_path=report_path).analyze()
+        in_path = 'data/samples2'
+        report_path = 'data/reports2'
+        AveragedExtraction(in_path=in_path, out_path=in_path, report_path=report_path, bead_factor=1.2).extract()
 
     @staticmethod
     def extract_batch():
