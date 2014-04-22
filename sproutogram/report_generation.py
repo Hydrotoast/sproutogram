@@ -57,22 +57,22 @@ class CSVReportGenerator(ReportGeneratorBase):
     def generate(self):
         with open(self.output, 'w') as fh:
             sorted_items = sorted(self.analyses.items())
-            sprount_count_rmse = calculate_rmse(sorted_items)
-            auxiliary_branch_count_rmse = calculate_branching_count_rmse(sorted_items)
+            # sprount_count_rmse = calculate_rmse(sorted_items)
+            # auxiliary_branch_count_rmse = calculate_branching_count_rmse(sorted_items)
             writer = csv.writer(fh)
 
             writer.writerow(['Overview'])
-            writer.writerow(['Sprout Count RMSE: ', sprount_count_rmse])
-            writer.writerow(['Branching Count RMSE: ', auxiliary_branch_count_rmse])
+            # writer.writerow(['Sprout Count RMSE: ', sprount_count_rmse])
+            # writer.writerow(['Branching Count RMSE: ', auxiliary_branch_count_rmse])
 
+            writer.writerow(['Filename', 'Sprout Count', 'Critical Value', 'Total Branch Count', 'Branching Factor', 'Auxiliary Branch Count'])
             for filename, analysis in sorted_items:
-                writer.writerow([filename])
-                writer.writerow(['Sprout Count', analysis.sprout_count])
-                writer.writerow(['Critical Value', analysis.critical_value])
-                writer.writerow(['Total Branch Count', analysis.total_branch_count])
-                writer.writerow(['Branching Factor', '%.2f' % analysis.branching_factor])
-                writer.writerow(['Auxiliary Branch Count', '%.2f' % analysis.auxiliary_branch_count])
-                writer.writerow([])
+                writer.writerow([filename,
+                                 analysis.sprout_count,
+                                 analysis.critical_value,
+                                 analysis.total_branch_count,
+                                 analysis.branching_factor,
+                                 analysis.auxiliary_branch_count])
 
 
 class DBReportGenerator(CSVReportGenerator):
