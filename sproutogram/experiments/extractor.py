@@ -5,6 +5,7 @@ from SimpleCV import ImageSet, Color, spsd
 from .. import BeadExtractor, SproutExtractor, HLSGExtractor
 from .. import ShollAnalyzer
 from ..report_generation import CSVReportGenerator
+from ..services.extraction import NoBeadException, NoSproutsException
 from sproutogram.services.analysis_strategy import integration_strategy
 
 from ..repositories import Experiment, Analysis
@@ -18,6 +19,9 @@ class ExtractionExperiment(object):
     """
     def __init__(self, **kwargs):
         instance = session.query(Experiment).filter_by(name=self.__class__.__name__, params=str(kwargs)).first()
+        for analysis in instance.analyses:
+            session.delete(analysis)
+        session.commit()
         if instance:
             self.__experiment = instance
         else:
@@ -40,15 +44,24 @@ class ExtractionExperiment(object):
         bead_extractor = BeadExtractor(img)
         beads = bead_extractor.extract()
 
-        sprout_extractor = SproutExtractor(img, beads)
-        sprouts = sprout_extractor.extract()
-        for sprout in sprouts:
-            sprout.restore(width=3, distance_threshold=24, color=Color.WHITE)
-        sprouts_img = sprouts[-1].image.applyLayers()
-        sprouts_img.resize(w=800).show()
-        sprouts_img.filename = img.filename
+        try:
+            sprout_extractor = SproutExtractor(img, beads)
+            sprouts = sprout_extractor.extract()
+            for sprout in sprouts:
+                sprout.restore(width=3, distance_threshold=24, color=Color.WHITE)
+            sprouts_img = sprouts[-1].image.applyLayers()
+            sprouts_img.resize(w=800).show()
+            sprouts_img.filename = img.filename
 
-        analysis = self.analyzer.analyze(sprouts_img, beads[0])
+            analysis = self.analyzer.analyze(sprouts_img, beads[0])
+        except NoSproutsException:
+            return Analysis(filename=img.filename,
+                            sprout_count=0,
+                            critical_value=0,
+                            total_branch_count=0,
+                            auxiliary_branch_count=0,
+                            branching_factor=0,
+                            average_troc=0)
 
         return analysis
 
@@ -67,9 +80,12 @@ class ExtractionExperiment(object):
             if instance:
                 analysis = instance
             else:
-                analysis = self.analyze_mono_bead(image)
-                analysis.experiment = self.__experiment
-                session.add(analysis)
+                try:
+                    analysis = self.analyze_mono_bead(image)
+                    analysis.experiment = self.__experiment
+                    session.add(analysis)
+                except NoBeadException:
+                    pass
 
                 print 'Analyzing %d/%d: %s' % (counter, len(image_set.filelist), filename)
 

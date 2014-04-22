@@ -6,6 +6,10 @@ class NoBeadException(Exception):
     pass
 
 
+class NoSproutsException(Exception):
+    pass
+
+
 class ExtractorBase(object):
     def __init__(self, img):
         self.img = img
@@ -127,10 +131,14 @@ class SproutExtractor(ExtractorBase):
 
         img_edges = img_edges.morphClose()
         blobs = img_edges.findBlobs()
-        for blob in blobs:
-            if len(blob.mContourAppx) > 2:
-                blob.drawAppx(color=Color.WHITE, width=-1)
-            blob.drawHoles(color=Color.WHITE, width=-1)
+        if blobs:
+            for blob in blobs:
+                if len(blob.mContourAppx) > 2:
+                    blob.drawAppx(color=Color.WHITE, width=-1)
+                blob.drawHoles(color=Color.WHITE, width=-1)
+        else:
+            raise NoSproutsException()
+
         img_edges = img_edges.applyLayers()
 
         img_edges = img_edges.morphClose()
@@ -164,6 +172,8 @@ class SproutExtractor(ExtractorBase):
         self.segment_strat.inject_img(self.img)
         self.segment_strat.inject_beads(self.beads)
         sprouts = self.segment_strat.segment()
+        if len(sprouts) == 0:
+            raise NoSproutsException()
         return FeatureSet(sprouts)
 
 
