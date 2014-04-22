@@ -97,10 +97,21 @@
 	%% A few definitions
 	Components of an image are described as follows. A \emph{bead} refers
 	to the Cytodex bead. The \emph{sprouts} are the multicellular
-	capillary structures formed by endothelial cells. The \emph{sprout
-	count} refers to the number of sprouts per bead. For quantitative
-	analysis, the objective of the system is to yield sprout counts that
-	are consistent with an expert observer.
+	capillary structures formed by endothelial cells. Abstractly, a sprout has
+	a single origin and several ending points. The origin of a sprout is the
+	end of a sprout that is closest to its associated bead. Each ending point
+	uniquely identifies a branch of a sprout. The \emph{main branch} is the
+	branch with the furthest ending point from the origin of the sprout. All
+	branches except the main branch comprise the set of \emph{auxiliary
+	branches}.
+	
+	Regarding the statistics of these components, there are further
+	definitions. The \emph{sprout count} is the number of sprouts per
+	bead. The \emph{auxiliary branch count} is the total number of auxiliary
+	branches detected on a bead. The \emph{average length} is the average
+	length of all branches on a bead. For quantitative analysis, the objective
+	of the system is to yield sprout counts, auxiliary branch counts and
+	average lengths that are consistent with an expert observer.
 
 	%% How sprout counts were previously acquired
 	Previously, the number of sprout counts per bead were measured by manual
@@ -185,6 +196,10 @@
 
 	%% SHOLL ANALYSIS
 	%% Statistical Analysis
+	%% Sprout Count
+	%% Total Branching Count
+	%% Auxiliary Branching Count
+	%% Average Sprout Length
 
 	Our system enables detection of high-level features and quantitative
 	analysis of morphometrics which can be decomposed into four stages.
@@ -300,12 +315,12 @@
 		\subsubsection{Sprout Segment Connectivity} % (fold)
 		\label{ssub:Sprout Segment Connectivity}
 			Due to the discontinuity of sprouts in the assay, we begin by
-			collecting all sprout segments and represent them as line
+			collecting all sprout segments and respresenting them as line
 			segments. We distinguish the end points of each line segment
-			as either an inner point or outer point. The inner point, $I$,
+			as either an inner point or outer point. The inner point, $I_i$,
 			is the end point on the line segment such that it is closer to
 			the origin of the line segment's closest bead. The outer
-			point, $O$, is the end point on the line segment such that it
+			point, $O_i$, is the end point on the line segment such that it
 			is farther from the origin of the line segment's closest bead.
 
 			To determine which line segments belong to the same sprout, we
@@ -365,10 +380,10 @@
 
 	\subsection{Sholl Analysis} % (fold)
 	\label{sub:Sholl Analysis}
-		Sholl Analysis is a quantitative method for quantitatively
-		analyzing morphological characteristics of neurons \cite{sholl53}.
-		We use Sholl Analysis because the morphology of our imaged assays
-		closely resembles neuron images after our preprocessing steps.
+		Sholl Analysis is a method for quantitatively analyzing morphological
+		characteristics of neurons \cite{sholl53}.  We use Sholl Analysis
+		because the morphology of our imaged assays closely resembles neuron
+		images after our preprocessing steps.
 
 		Briefly, Sholl Analysis consists of counting the number of
 		foreground to background crossings given concentric circles of a
@@ -384,36 +399,59 @@
 		the maximum number of crossings occur. See \ref{app:Sholl
 		Analysis} for the pseudo code using an optimized Bresenham Circle
 		Algorithm.
+
+		With the crossings from Sholl Analysis, we are able to approximate
+		sprout counts, auxiliary branching counts and the average length of
+		sprouts.
 		
-		For posterior analysis, we define longest increasing subsequence
-		(LIS) of $N(r)$ as $\text{LIS}(N)$ with the domain constrained
-		between $[r_{\min}, \text{CV}(N)]$. The longest decreasing
-		subsequence (LDS), $\text{LDS}(N)$ is defined similarly with the
-		domain constrained to $[\text{CV}(N), r_{\max}]$. The LIS and LDS
-		guarantee that we have strictly increasing counts to ignore gaps
-		as noise.
+		% For posterior analysis, we define longest increasing subsequence
+		% (LIS) of $N(r)$ as $\text{LIS}(N)$ with the domain constrained
+		% between $[r_{\min}, \text{CV}(N)]$. The longest decreasing
+		% subsequence (LDS), $\text{LDS}(N)$ is defined similarly with the
+		% domain constrained to $[\text{CV}(N), r_{\max}]$. The LIS and LDS
+		% guarantee that we have strictly increasing counts to ignore gaps
+		% as noise.
 
-		From the number of crossings, we determine the sprout counts and
-		average length. The sprout counts, $c_N$, are determined by a
-		median of the $\text{LIS}(r)$. To determine the average length,
-		$l_N$, we define a proecdure. First, we define by the radius at
-		which $\text{LDS}(N)$ has a value of $1$ as $l_{\max}$ and we
-		define the radius at which $\text{LDS}(N)$ has a value of
-		$c_N$ as $l_{\min}$. Then, we calculate $l_N$ as the average
-		of $l_{\max}$ and $l_{\min}$.
+		% From the number of crossings, we determine the sprout counts and
+		% average length. The sprout counts, $c_N$, are determined by a
+		% median of the $\text{LIS}(r)$. To determine the average length,
+		% $l_N$, we define a proecdure. First, we define by the radius at
+		% which $\text{LDS}(N)$ has a value of $1$ as $l_{\max}$ and we
+		% define the radius at which $\text{LDS}(N)$ has a value of
+		% $c_N$ as $l_{\min}$. Then, we calculate $l_N$ as the average
+		% of $l_{\max}$ and $l_{\min}$.
 
-		\subsubsection{Branching Counts} % (fold)
+		\subsubsection{Sprout Count} % (fold)
+		\label{ssub:Sprout Counts}
+			The sprout count is the average of the crossings from the initial
+			concentric circle to to the concentric circle with a radius at
+			the critical value.
+		% subsubsection Sprout Counts (end)
+
+		\subsubsection{Total Branching Count} % (fold)
+		\label{ssub:Total Branching Count}
+			We approximate the total branching count by finding the maximum of
+			all crossings. The assumption here is that branching usually occurs
+			simultaneously across current sprouts.
+		% subsubsection Total Branching Count (end)
+
+		\subsubsection{Branching Count}
 		\label{ssub:Branching Counts}
-			Since the total count is the sum of sprout counts and branching
-			counts, we simply calculate the branching count as the total
-			count minus the sprout count.
+			Since the total branching count is the sum of sprout counts and
+			auxiliary branching counts, we simply calculate the auxiliary
+			branching count as the total branching count minus the sprout
+			count.
 		% subsubsection Branching Counts (end)
 
 		\subsubsection{Average Sprout Length} % (fold)
+		\label{ssub:Average Sprout Length}
 			The average sprout length is the average length of the initial
 			sprouts. The average does not include the length of branches.
-		\label{ssub:Average Sprout Length}
-		
+			Given $n$ as the sprout count, we compute the average sprout length
+			by finding the radii at which the derivative of the crossings is
+			decreasing in order from the critical value. We call such structures
+			\emph{falling edges}. The average sprout length is thus the average
+			of the first $n$ falling edges from the critical value.
 		% subsubsection Average Sprout Length (end)
 	% subsection Sholl Analysis (end)
 % section Methodology (end)
@@ -510,6 +548,10 @@
 
 \section{Discussion} % (fold)
 \label{sec:Discussion}
+	%% Sprout count result interpretations
+	%% Auxiliary branch count result interpretations
+	%% Average length result interpretations
+
 	The sprout count results demonstrate consistency with human observers
 	for in focus sprouts. Our HLSG Extractor, however, also shows a
 	consistent pattern in overestimating the number of sprouts
