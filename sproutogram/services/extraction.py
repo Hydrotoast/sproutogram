@@ -102,12 +102,16 @@ class SproutExtractor(ExtractorBase):
     strategies and computational geometry. Sprout features extracted
     from the image must belong to a specified bead.
     """
-    def __init__(self, img, beads, segment_strat=SproutSegmenter()):
+    def __init__(self, img, beads, **kwargs):
         self.beads = beads
         super(SproutExtractor, self).__init__(img)
 
+        self.canny_min = kwargs.get('canny_min', default=60)
+        self.canny_max = kwargs.get('canny_max', default=160)
+        self.dilate_count = kwargs.get('dilate_count', default=8)
+
         # Strategies
-        self.segment_strat = segment_strat
+        self.segment_strat = kwargs.get('segment_strat', default=SproutSegmenter())
 
     def mask_beads(self, img):
         """Mask the beads."""
@@ -125,9 +129,7 @@ class SproutExtractor(ExtractorBase):
             masked_img = masked_img.applyLayers()
         return masked_img
 
-    def preprocess(self):
-        canny_min, canny_max = (100, 240)
-        dilate_count = 8
+    def preprocess(self, canny_min=60, canny_max=160, dilate_count=8):
         img_edges = self.img.edges(canny_min, canny_max)
         img_edges = self.mask_beads(img_edges)
 
@@ -170,7 +172,7 @@ class SproutExtractor(ExtractorBase):
         self.img = skeleton
 
     def extract(self):
-        self.preprocess()
+        self.preprocess(canny_min=self.canny_min, canny_max=self.canny_max, dilate_count=self.dilate_count)
         self.segment_strat.inject_img(self.img)
         self.segment_strat.inject_beads(self.beads)
         sprouts = self.segment_strat.segment()
