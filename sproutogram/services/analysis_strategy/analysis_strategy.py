@@ -15,6 +15,14 @@ class AnalysisStrategy(object):
         self.__bead = bead
 
     def make_analysis_descriptor(self):
+        if not self.__crossings:
+            return Analysis(filename=self.__img.filename,
+                            sprout_count=0,
+                            critical_value=0,
+                            total_branch_count=0,
+                            auxiliary_branch_count=0,
+                            branching_factor=0,
+                            average_troc=0)
         return Analysis(filename=self.__img.filename,
                         sprout_count=self.sprout_count,
                         critical_value=self.critical_value,

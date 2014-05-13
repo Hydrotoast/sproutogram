@@ -19,9 +19,6 @@ class ExtractionExperiment(object):
     """
     def __init__(self, **kwargs):
         instance = session.query(Experiment).filter_by(name=self.__class__.__name__, params=str(kwargs)).first()
-        for analysis in instance.analyses:
-            session.delete(analysis)
-        session.commit()
         if instance:
             self.__experiment = instance
         else:
@@ -84,10 +81,9 @@ class ExtractionExperiment(object):
                     analysis = self.analyze_mono_bead(image)
                     analysis.experiment = self.__experiment
                     session.add(analysis)
+                    print 'Analyzing %d/%d: %s' % (counter, len(image_set.filelist), filename)
                 except NoBeadException:
-                    pass
-
-                print 'Analyzing %d/%d: %s' % (counter, len(image_set.filelist), filename)
+                    print 'No Bead Exception: %s' % filename
 
             # Sholl Analysis Plots
             # self.plot_sholl_analysis(analysis, filename)

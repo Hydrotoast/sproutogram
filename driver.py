@@ -18,8 +18,8 @@ class Driver(object):
     """
     @staticmethod
     def extract_selected():
-        in_path = 'data/samples2'
-        report_path = 'data/reports2'
+        in_path = 'data/samples3'
+        report_path = 'data/reports3'
         AveragedExtraction(in_path=in_path, out_path=in_path, report_path=report_path, bead_factor=1.2).extract()
 
     @staticmethod

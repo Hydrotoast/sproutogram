@@ -38,6 +38,7 @@ class BeadExtractor(ExtractorBase):
     """
     def __init__(self, img):
         super(BeadExtractor, self).__init__(img)
+        self.__thresholds = [16, 32, 64, 96, 128]
 
     def extract_circles(self, canny=164, thresh=128, distance=512):
         """
@@ -88,10 +89,12 @@ class BeadExtractor(ExtractorBase):
 
     def extract(self):
         circles = self.extract_circles()
+        threshold = self.__thresholds.pop()
+        while not circles and self.__thresholds:
+            circles = self.extract_circles(thresh=threshold)
+            threshold = self.__thresholds.pop()
         if not circles:
-            circles = self.extract_circles(thresh=64)
-            if not circles:
-                raise NoBeadException()
+            raise NoBeadException()
         beads = FeatureSet(Bead(self.img, circle) for circle in circles)
         return beads
 
@@ -106,12 +109,12 @@ class SproutExtractor(ExtractorBase):
         self.beads = beads
         super(SproutExtractor, self).__init__(img)
 
-        self.canny_min = kwargs.get('canny_min', default=60)
-        self.canny_max = kwargs.get('canny_max', default=160)
-        self.dilate_count = kwargs.get('dilate_count', default=8)
+        self.canny_min = kwargs.get('canny_min', 60)
+        self.canny_max = kwargs.get('canny_max', 160)
+        self.dilate_count = kwargs.get('dilate_count', 8)
 
         # Strategies
-        self.segment_strat = kwargs.get('segment_strat', default=SproutSegmenter())
+        self.segment_strat = kwargs.get('segment_strat', SproutSegmenter())
 
     def mask_beads(self, img):
         """Mask the beads."""
