@@ -2,7 +2,6 @@ from SimpleCV import Image
 from sproutogram.experiments.extractor import *
 from sproutogram.experiments.naive_analysis import NaiveAnalysisExperiment
 from sproutogram.experiments.noise_analysis import NoiseAnalysis
-from sproutogram.services.analysis_strategy import integration_strategy
 
 from multiprocessing import Pool
 import numpy as np
@@ -18,8 +17,8 @@ class Driver(object):
     """
     @staticmethod
     def extract_selected():
-        in_path = 'data/samples3'
-        report_path = 'data/reports3'
+        in_path = 'data/drug'
+        report_path = 'data/drug_report'
         AveragedExtraction(in_path=in_path, out_path=in_path, report_path=report_path, bead_factor=1.2).extract()
 
     @staticmethod

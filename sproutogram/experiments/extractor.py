@@ -1,13 +1,13 @@
 import os
 
-from SimpleCV import ImageSet, Color, spsd
+from SimpleCV import ImageSet, Color
+import matplotlib.pyplot as plt
 
-from .. import BeadExtractor, SproutExtractor, HLSGExtractor
+from .. import BeadExtractor, SproutExtractor
 from .. import ShollAnalyzer
 from ..report_generation import CSVReportGenerator
 from ..services.extraction import NoBeadException, NoSproutsException
 from sproutogram.services.analysis_strategy import integration_strategy
-
 from ..repositories import Experiment, Analysis
 from ..repositories import session
 
@@ -19,6 +19,9 @@ class ExtractionExperiment(object):
     """
     def __init__(self, **kwargs):
         instance = session.query(Experiment).filter_by(name=self.__class__.__name__, params=str(kwargs)).first()
+        for analysis in instance.analyses:
+            session.delete(analysis)
+        session.commit()
         if instance:
             self.__experiment = instance
         else:
@@ -95,14 +98,16 @@ class ExtractionExperiment(object):
         session.commit()
         report_gen.generate()
 
-    # def plot_sholl_analysis(self, analysis, filename):
-    #     plt.figure(1, figsize=(18, 6))
-    #     plt.plot(analysis.crossings.keys(), analysis.crossings.values())
-    #     plt.title('Sholl Analysis for ' + filename)
-    #     plt.xlabel('Radius')
-    #     plt.ylabel('Crossings')
-    #     plt.savefig(os.path.join(self.plot_path, filename + ".png"))
-    #     plt.clf()
+    def plot_sholl_analysis(self, analysis, filename):
+        if not analysis.crossings:
+            return
+        plt.figure(1, figsize=(18, 6))
+        plt.plot(analysis.crossings.keys(), analysis.crossings.values())
+        plt.title('Sholl Analysis for ' + filename)
+        plt.xlabel('Radius')
+        plt.ylabel('Crossings')
+        plt.savefig(os.path.join(self.plot_path, filename + ".png"))
+        plt.clf()
 
 
 class AveragedExtraction(ExtractionExperiment):
