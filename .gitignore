@@ -5,8 +5,6 @@
 data/reports/**
 *.db
 
-doc/memo/**
-
 # Auxiliary Python files
 *.pyc
 
