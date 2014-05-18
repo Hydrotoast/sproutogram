@@ -1,0 +1,108 @@
+Overview
+Sprout Count RMSE: ,2.0212199755119182
+Branching Count RMSE: ,3.0785377839763366
+10k 1 Day 7
+Sprout Count,10.424460431654676
+Critical Value,139.0
+Total Branch Count,10.42446043165469
+Branching Factor,1.00
+Auxiliary Branch Count,0.00
+
+10k 5 Day 7
+Sprout Count,9.25
+Critical Value,212.0
+Total Branch Count,11.526389761787552
+Branching Factor,1.25
+Auxiliary Branch Count,2.28
+
+1k 2 Day 7
+Sprout Count,6.931726907630522
+Critical Value,249.0
+Total Branch Count,6.931726907630525
+Branching Factor,1.00
+Auxiliary Branch Count,0.00
+
+1k 3 Day 7
+Sprout Count,13.067901234567902
+Critical Value,162.0
+Total Branch Count,17.12659688713644
+Branching Factor,1.31
+Auxiliary Branch Count,4.06
+
+20k 1 Day 7
+Sprout Count,11.17142857142857
+Critical Value,140.0
+Total Branch Count,11.171428571428583
+Branching Factor,1.00
+Auxiliary Branch Count,0.00
+
+20k 2 Day 7
+Sprout Count,14.130612244897959
+Critical Value,245.0
+Total Branch Count,16.87126115022305
+Branching Factor,1.19
+Auxiliary Branch Count,2.74
+
+20k 3 Day 7
+Sprout Count,9.827067669172932
+Critical Value,133.0
+Total Branch Count,10.987841900025304
+Branching Factor,1.12
+Auxiliary Branch Count,1.16
+
+20k 5 Day 7
+Sprout Count,8.965957446808511
+Critical Value,235.0
+Total Branch Count,9.96595744680852
+Branching Factor,1.11
+Auxiliary Branch Count,1.00
+
+Ang1 100ng_ml 3 Day 7
+Sprout Count,7.160583941605839
+Critical Value,274.0
+Total Branch Count,7.160583941605841
+Branching Factor,1.00
+Auxiliary Branch Count,0.00
+
+Ang1 100ng_ml 5 Day 7
+Sprout Count,7.529411764705882
+Critical Value,255.0
+Total Branch Count,7.529411764705883
+Branching Factor,1.00
+Auxiliary Branch Count,0.00
+
+Ang1 250 ng_ml 1 Day 7
+Sprout Count,7.6103896103896105
+Critical Value,154.0
+Total Branch Count,9.539064169498822
+Branching Factor,1.25
+Auxiliary Branch Count,1.93
+
+Control 1 Day 7
+Sprout Count,11.840277777777779
+Critical Value,144.0
+Total Branch Count,16.092859933316998
+Branching Factor,1.36
+Auxiliary Branch Count,4.25
+
+Control 2 Day 7
+Sprout Count,13.523489932885907
+Critical Value,149.0
+Total Branch Count,14.190156600297607
+Branching Factor,1.05
+Auxiliary Branch Count,0.67
+
+Control 4 Day 7
+Sprout Count,10.466911764705882
+Critical Value,272.0
+Total Branch Count,13.371673669467793
+Branching Factor,1.28
+Auxiliary Branch Count,2.90
+
+Control 5 Day 7
+Sprout Count,7.813432835820896
+Critical Value,268.0
+Total Branch Count,7.813432835820896
+Branching Factor,1.00
+Auxiliary Branch Count,0.00
+
