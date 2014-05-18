@@ -19,24 +19,23 @@ class ExtractionExperiment(object):
     """
     def __init__(self, **kwargs):
         instance = session.query(Experiment).filter_by(name=self.__class__.__name__, params=str(kwargs)).first()
-        for analysis in instance.analyses:
-            session.delete(analysis)
-        session.commit()
         if instance:
             self.__experiment = instance
+            for analysis in instance.analyses:
+                session.delete(analysis)
+            session.commit()
         else:
             self.__experiment = Experiment(name=self.__class__.__name__, params=str(kwargs))
             session.add(self.__experiment)
             session.commit()
 
-        self.in_path = kwargs['in_path']
-        self.out_path = kwargs['out_path']
+        self.data_path = kwargs['data_path']
         self.method_name = self.__class__.__name__ + str(self.analyzer.bead_factor)
-        self.report_path = os.path.join(kwargs['report_path'], self.method_name)
-        self.plot_path = os.path.join(self.report_path, 'plots')
+        self.result_path = os.path.join(kwargs['result_path'], self.method_name)
+        self.plot_path = os.path.join(self.result_path, 'plots')
 
-        if not os.path.exists(self.report_path):
-            os.makedirs(self.report_path)
+        if not os.path.exists(self.result_path):
+            os.makedirs(self.result_path)
         if not os.path.exists(self.plot_path):
             os.makedirs(self.plot_path)
 
@@ -66,9 +65,9 @@ class ExtractionExperiment(object):
         return analysis
 
     def extract(self):
-        image_set = ImageSet(self.in_path)
+        image_set = ImageSet(self.data_path)
         image_set.sort()
-        report_gen = CSVReportGenerator(os.path.join(self.report_path, self.__experiment.name + '.csv'))
+        report_gen = CSVReportGenerator(os.path.join(self.result_path, self.__experiment.name + '.csv'))
         counter = 1
         print 'Extracting using %s' % self.method_name
         for image in sorted(image_set, key=lambda img: img.filename):
@@ -111,36 +110,36 @@ class ExtractionExperiment(object):
 
 
 class AveragedExtraction(ExtractionExperiment):
-    def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
+    def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
         self.analyzer = ShollAnalyzer(integration_strategy.AveragedAnalysisStrategy(), bead_factor, step_size)
-        super(AveragedExtraction, self).__init__(in_path=in_path, out_path=out_path, report_path=report_path)
+        super(AveragedExtraction, self).__init__(data_path=data_path, result_path=result_path)
 
 
 # class ThresholdAverageExtractionTask(ExtractionTask):
-#     def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
+#     def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
 #         self.analyzer = ShollAnalyzer(integration_strategy.ThresholdAverageStrategy(), bead_factor)
-#         super(ThresholdAverageExtractionTask, self).__init__(in_path, out_path, report_path)
+#         super(ThresholdAverageExtractionTask, self).__init__(data_path, result_path)
 #
 #
 # class MedianIntegrationExtractionTask(ExtractionTask):
-#     def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
+#     def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
 #         self.analyzer = ShollAnalyzer(integration_strategy.MedianAnalysisStrategy(), bead_factor, step_size)
-#         super(MedianIntegrationExtractionTask, self).__init__(in_path, out_path, report_path)
+#         super(MedianIntegrationExtractionTask, self).__init__(data_path, result_path)
 #
 #
 # class ThresholdMedianIntegrationExtractionTask(ExtractionTask):
-#     def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
+#     def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
 #         self.analyzer = ShollAnalyzer(integration_strategy.MedianAnalysisStrategy(), bead_factor, step_size)
-#         super(ThresholdMedianIntegrationExtractionTask, self).__init__(in_path, out_path, report_path)
+#         super(ThresholdMedianIntegrationExtractionTask, self).__init__(data_path, result_path)
 #
 
 class AveragedSproutPostRisingEdgeExperiment(ExtractionExperiment):
-    def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
+    def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
         self.analyzer = ShollAnalyzer(integration_strategy.AveragedSproutPostRisingEdge(), bead_factor, step_size)
-        super(AveragedSproutPostRisingEdgeExperiment, self).__init__(in_path=in_path, out_path=out_path, report_path=report_path)
+        super(AveragedSproutPostRisingEdgeExperiment, self).__init__(data_path=data_path, result_path=result_path)
 
 
 class MPlusDelta2(ExtractionExperiment):
-    def __init__(self, in_path, out_path, report_path, bead_factor=1.5, step_size=1):
+    def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
         self.analyzer = ShollAnalyzer(integration_strategy.MPlusDelta2(), bead_factor, step_size)
-        super(MPlusDelta2, self).__init__(in_path=in_path, out_path=out_path, report_path=report_path)
+        super(MPlusDelta2, self).__init__(data_path=data_path, result_path=result_path)
