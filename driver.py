@@ -1,8 +1,5 @@
 from sproutogram.experiments.extractor import *
 
-from multiprocessing import Pool
-import numpy as np
-
 import os
 
 
@@ -10,25 +7,10 @@ DATA_DIR = "data"
 RESULT_DIR = "result"
 
 
-def extract_selection(selection):
-    data_path = os.path.join(DATA_DIR, selection)
-    result_path = os.path.join(RESULT_DIR, selection)
+def extract_dataset(dataset):
+    data_path = os.path.join(DATA_DIR, dataset)
+    result_path = os.path.join(RESULT_DIR, dataset)
     AveragedExtraction(data_path=data_path, result_path=result_path, bead_factor=1.2).extract()
-
-def extract_batch():
-    data_path = 'data/samples/selected'
-    result_path = 'data/reports/'
-    pool = Pool(4)
-    tasks = []
-    for i in np.arange(1.5, 3.1, 0.1):
-        tasks.append(AveragedExtraction(data_path, result_path, i))
-    # for i in np.arange(1.5, 3.1, 0.1):
-    #   tasks.append(ThresholdAverageExtractionTask(data_path, result_path, i))
-    # for i in np.arange(1.5, 3.1, 0.1):
-    #   tasks.append(MedianIntegrationExtractionTask(data_path, result_path, i))
-    # for i in np.arange(1.5, 3.1, 0.1):
-    #     tasks.append(ThresholdMedianIntegrationExtractionTask(data_path, result_path, i))
-    pool.map(concurrent_extract, tasks)
 
 
 def list_datasets():
@@ -41,13 +23,22 @@ def list_datasets():
 
 
 def select_dataset(datasets):
+    print("Datasets available")
+    candidates = []
     for index, name in enumerate(datasets):
+        candidates.append(index)
         print("({}) {}".format(index, name)) 
     selection = int(input("Please select a dataset: "))
+
+    # Validation
+    if selection not in candidates:
+        print("Invalid selection. Please try again.\n")
+        return select_dataset(datasets)
+
     return datasets[selection]
 
 
 if __name__ == '__main__':
     datasets = list_datasets()
-    selection = select_dataset(datasets)
-    extract_selection(selection)
+    dataset = select_dataset(datasets)
+    extract_selection(dataset)
