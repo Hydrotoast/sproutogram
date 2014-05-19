@@ -41,4 +41,4 @@ def select_dataset(datasets):
 if __name__ == '__main__':
     datasets = list_datasets()
     dataset = select_dataset(datasets)
-    extract_selection(dataset)
+    extract_dataset(dataset)
