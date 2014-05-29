@@ -88,7 +88,7 @@ class ExtractionExperiment(object):
                     print 'No Bead Exception: %s' % filename
 
             # Sholl Analysis Plots
-            # self.plot_sholl_analysis(analysis, filename)
+            self.plot_sholl_analysis(analysis, filename)
 
             # Add to overall report
             report_gen.add_analysis(filename, analysis)
