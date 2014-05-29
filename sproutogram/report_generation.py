@@ -65,7 +65,13 @@ class CSVReportGenerator(ReportGeneratorBase):
             # writer.writerow(['Sprout Count RMSE: ', sprount_count_rmse])
             # writer.writerow(['Branching Count RMSE: ', auxiliary_branch_count_rmse])
 
-            writer.writerow(['Filename', 'Sprout Count', 'Critical Value', 'Total Branch Count', 'Branching Factor', 'Auxiliary Branch Count', 'Average Troc'])
+            writer.writerow(['Filename',
+                             'Sprout Count',
+                             'Critical Value',
+                             'Total Branch Count',
+                             'Branching Factor',
+                             'Auxiliary Branch Count',
+                             'Average Troc'])
             for filename, analysis in sorted_items:
                 writer.writerow([filename,
                                  analysis.sprout_count,
