@@ -10,7 +10,7 @@ RESULT_DIR = "result"
 def extract_dataset(dataset):
     data_path = os.path.join(DATA_DIR, dataset)
     result_path = os.path.join(RESULT_DIR, dataset)
-    AveragedExtraction(data_path=data_path, result_path=result_path, bead_factor=1.2).extract()
+    AveragedExtraction(data_path=data_path, result_path=result_path, bead_factor=1.5).extract()
 
 
 def list_datasets():
