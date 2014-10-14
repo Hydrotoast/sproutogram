@@ -44,7 +44,7 @@ class ExtractionExperiment(object):
         beads = bead_extractor.extract()
 
         try:
-            sprout_extractor = SproutExtractor(img, beads)
+            sprout_extractor = SproutExtractor(img, beads, canny_min=40, canny_max=120)
             sprouts = sprout_extractor.extract()
             for sprout in sprouts:
                 sprout.restore(width=3, distance_threshold=24, color=Color.WHITE)
@@ -88,7 +88,7 @@ class ExtractionExperiment(object):
                     print 'No Bead Exception: %s' % filename
 
             # Sholl Analysis Plots
-            self.plot_sholl_analysis(analysis, filename)
+            #self.plot_sholl_analysis(analysis, filename)
 
             # Add to overall report
             report_gen.add_analysis(filename, analysis)
@@ -98,7 +98,7 @@ class ExtractionExperiment(object):
         report_gen.generate()
 
     def plot_sholl_analysis(self, analysis, filename):
-        if not analysis.crossings:
+        if not analysis.crossings():
             return
         plt.figure(1, figsize=(18, 6))
         plt.plot(analysis.crossings.keys(), analysis.crossings.values())
