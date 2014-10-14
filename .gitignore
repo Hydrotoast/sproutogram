@@ -7,6 +7,8 @@ data/**
 !data/samples
 *.db
 
+result/**
+
 # Auxiliary Python files
 *.pyc
 
