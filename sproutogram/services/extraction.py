@@ -147,30 +147,9 @@ class SproutExtractor(ExtractorBase):
             raise NoSproutsException()
 
         img_edges = img_edges.applyLayers()
-
         img_edges = img_edges.morphClose()
-        # imgEdges = imgEdges.convolve(kernel=[
-        #   [1,0,1],
-        #   [0,0,1],
-        #   [1,1,0]])
-        # imgEdges = imgEdges.convolve(kernel=[
-        #   [0,1,1],
-        #   [1,0,0],
-        #   [1,0,1]])
 
         skeleton = img_edges.dilate(dilate_count).skeletonize(3)
-        # isolatedPoints = hitmiss(
-        #   skeleton,
-        #   [[-1,-1,-1,-1,-1,-1,-1],
-        #   [-1,0,0,0,0,0,-1],
-        #   [-1,0,0,0,0,0,-1],
-        #   [-1,0,0,0,0,0,-1],
-        #   [-1,0,0,1,0,0,-1],
-        #   [-1,0,0,0,0,0,-1],
-        #   [-1,0,0,0,0,0,-1],
-        #   [-1,0,0,0,0,0,-1],
-        #   [-1,-1,-1,-1,-1,-1,-1]])
-        # skeleton = skeleton - isolatedPoints
 
         self.img = skeleton
 
