@@ -1,8 +1,10 @@
 .idea
 .project
 .pydevproject
+.ipynb_checkpoints
 
-data/reports/**
+data/**
+!data/samples
 *.db
 
 # Auxiliary Python files
