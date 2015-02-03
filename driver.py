@@ -11,6 +11,10 @@ def extract_dataset(dataset):
     """Performs extraction on the specified dataset."""
     data_path = os.path.join(DATA_DIR, dataset)
     result_path = os.path.join(RESULT_DIR, dataset)
+
+    print("Data Path: {}".format(data_path))
+    print("Result Path: {}".format(result_path))
+
     AveragedExtraction(data_path=data_path, result_path=result_path, bead_factor=1.5).extract()
 
 
