@@ -1,4 +1,6 @@
+PIL
 scipy
 matplotlib
 Pygame
+svgwrite
 SimpleCV
