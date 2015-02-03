@@ -8,37 +8,48 @@ RESULT_DIR = "result"
 
 
 def extract_dataset(dataset):
+    """Performs extraction on the specified dataset."""
     data_path = os.path.join(DATA_DIR, dataset)
     result_path = os.path.join(RESULT_DIR, dataset)
     AveragedExtraction(data_path=data_path, result_path=result_path, bead_factor=1.5).extract()
 
 
 def list_datasets():
-    datasets = sorted(
-        name 
-        for name in os.listdir(DATA_DIR) 
-        if os.path.isdir(os.path.join(DATA_DIR, name))
-    )
-    return datasets
+    """Returns a sorted list of datasets available."""
+    datasets = []
+    for name in os.listdir(DATA_DIR):
+        if os.path.isdir(os.path.join(DATA_DIR, name)):
+            datasets.append(name)
+    return sorted(datasets)
 
 
-def select_dataset(datasets):
-    print("Datasets available")
-    candidates = []
+def show_candidates(datasets):
+    """Shows a list of the candidate datasets."""
     for index, name in enumerate(datasets):
-        candidates.append(index)
-        print("({}) {}".format(index, name)) 
-    selection = int(input("Please select a dataset: "))
+        print("({}) {}".format(index, name))
 
-    # Validation
-    if selection not in candidates:
+
+def validate_selection(datasets, selection):
+    """Validates the user selection and returns a valid selection."""
+    if selection not in range(len(datasets)):
         print("Invalid selection. Please try again.\n")
         return select_dataset(datasets)
-
     return datasets[selection]
 
 
-if __name__ == '__main__':
+def select_dataset(datasets):
+    """Prompts the user to select a dataset from the collection of datasets."""
+    print("Datasets available")
+    show_candidates(datasets)
+    selection = int(input("Please select a dataset: "))
+    return validate_selection(datasets, selection)
+
+
+def main():
     datasets = list_datasets()
     dataset = select_dataset(datasets)
     extract_dataset(dataset)
+
+
+if __name__ == '__main__':
+    main()
