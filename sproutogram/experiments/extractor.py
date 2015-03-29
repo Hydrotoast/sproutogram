@@ -18,9 +18,9 @@ class ExtractionExperiment(object):
     analyzing an image set of fibrin gel bead sprouting assays.
     """
     def __init__(self, **kwargs):
-        self.params_str = str(kwargs)
+        self.params = kwargs
         instance = session.query(Experiment).filter_by(
-            name=self.__class__.__name__, params=self.params_str).first()
+            name=self.__class__.__name__, params=str(self.params)).first()
         if instance:
             self.__experiment = instance
             for analysis in instance.analyses:
@@ -28,7 +28,7 @@ class ExtractionExperiment(object):
             session.commit()
         else:
             self.__experiment = Experiment(name=self.__class__.__name__,
-                                           params=self.params_str)
+                                           params=str(self.params))
             session.add(self.__experiment)
             session.commit()
 
@@ -77,7 +77,7 @@ class ExtractionExperiment(object):
         image_set.sort()
         output_path = os.path.join(self.result_path,
                                    self.__experiment.name + '.csv')
-        report_gen = CSVReportGenerator(output_path, params=self.params_str)
+        report_gen = CSVReportGenerator(output_path, params=self.params)
         counter = 1
         print 'Extracting using %s' % self.method_name
         for image in sorted(image_set, key=lambda img: img.filename):
