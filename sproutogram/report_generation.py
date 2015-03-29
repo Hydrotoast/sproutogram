@@ -65,8 +65,8 @@ class CSVReportGenerator(ReportGeneratorBase):
             writer = csv.writer(fh)
 
             writer.writerow(['Overview'])
-            for key, value in self.params:
-                writer.writerow([key, value])
+            for key, value in self.params.items():
+                writer.writerow([key, str(value)])
             # writer.writerow(['Sprout Count RMSE: ', sprount_count_rmse])
             # writer.writerow(['Branching Count RMSE: ', auxiliary_branch_count_rmse])
 
