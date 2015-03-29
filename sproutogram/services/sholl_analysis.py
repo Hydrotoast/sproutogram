@@ -11,10 +11,20 @@ class ShollAnalyzer(object):
     of an angiogram. This analyzer depends on the known position of the bead in
     the angiogram to perform the analysis using concentric circles.
     """
-    def __init__(self, strategy=integration_strategy.AveragedAnalysisStrategy(), bead_factor=1.5, step_size=1):
-        self.strategy = strategy
+    def __init__(self,
+                 strategy=integration_strategy.AveragedAnalysisStrategy(),
+                 bead_factor=1.5, step_size=1):
+        self.__strategy = strategy
         self.bead_factor = bead_factor
         self.step_size = step_size
+
+    @property
+    def strategy(self):
+        return self.__strategy
+
+    @strategy.setter
+    def strategy(self, strategy):
+        self.__strategy = strategy
 
     @staticmethod
     def generate_circular_coordinates(origin, radius):

@@ -27,8 +27,9 @@ class ReportGeneratorBase(object):
     """
     Abstract base class for generating reports as CSV files.
     """
-    def __init__(self, filename):
-        self.output = filename
+    def __init__(self, filename, params={}):
+        self.output = filename + str(params)
+        self.params = params
         self.analyses = {}
 
     def add_analysis(self, filename, analysis):
@@ -51,8 +52,8 @@ class CSVReportGenerator(ReportGeneratorBase):
     includes the primary sprout count, maximum sprout count raw data dump of
     the analysis.
     """
-    def __init__(self, filename):
-        super(CSVReportGenerator, self).__init__(filename)
+    def __init__(self, filename, params={}):
+        super(CSVReportGenerator, self).__init__(filename, params=params)
 
     def generate(self):
         with open(self.output, 'w') as fh:
@@ -62,6 +63,7 @@ class CSVReportGenerator(ReportGeneratorBase):
             writer = csv.writer(fh)
 
             writer.writerow(['Overview'])
+            writer.writerow(['Params: ', str(self.params)])
             # writer.writerow(['Sprout Count RMSE: ', sprount_count_rmse])
             # writer.writerow(['Branching Count RMSE: ', auxiliary_branch_count_rmse])
 

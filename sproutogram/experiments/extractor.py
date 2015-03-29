@@ -18,14 +18,17 @@ class ExtractionExperiment(object):
     analyzing an image set of fibrin gel bead sprouting assays.
     """
     def __init__(self, **kwargs):
-        instance = session.query(Experiment).filter_by(name=self.__class__.__name__, params=str(kwargs)).first()
+        self.params_str = str(kwargs)
+        instance = session.query(Experiment).filter_by(
+            name=self.__class__.__name__, params=self.params_str).first()
         if instance:
             self.__experiment = instance
             for analysis in instance.analyses:
                 session.delete(analysis)
             session.commit()
         else:
-            self.__experiment = Experiment(name=self.__class__.__name__, params=str(kwargs))
+            self.__experiment = Experiment(name=self.__class__.__name__,
+                                           params=self.params_str)
             session.add(self.__experiment)
             session.commit()
 
@@ -33,6 +36,9 @@ class ExtractionExperiment(object):
         self.method_name = self.__class__.__name__ + str(self.analyzer.bead_factor)
         self.result_path = os.path.join(kwargs['result_path'], self.method_name)
         self.plot_path = os.path.join(self.result_path, 'plots')
+
+        self.canny_min = kwargs.get('canny_min', 40)
+        self.canny_max = kwargs.get('canny_max', 120)
 
         if not os.path.exists(self.result_path):
             os.makedirs(self.result_path)
@@ -44,7 +50,9 @@ class ExtractionExperiment(object):
         beads = bead_extractor.extract()
 
         try:
-            sprout_extractor = SproutExtractor(img, beads, canny_min=40, canny_max=120)
+            sprout_extractor = SproutExtractor(img, beads,
+                                               canny_min=self.canny_min,
+                                               canny_max=self.canny_max)
             sprouts = sprout_extractor.extract()
             for sprout in sprouts:
                 sprout.restore(width=3, distance_threshold=24, color=Color.WHITE)
@@ -67,7 +75,9 @@ class ExtractionExperiment(object):
     def extract(self):
         image_set = ImageSet(self.data_path)
         image_set.sort()
-        report_gen = CSVReportGenerator(os.path.join(self.result_path, self.__experiment.name + '.csv'))
+        output_path = os.path.join(self.result_path,
+                                   self.__experiment.name + '.csv')
+        report_gen = CSVReportGenerator(output_path, params=self.params_str)
         counter = 1
         print 'Extracting using %s' % self.method_name
         for image in sorted(image_set, key=lambda img: img.filename):
@@ -110,36 +120,30 @@ class ExtractionExperiment(object):
 
 
 class AveragedExtraction(ExtractionExperiment):
-    def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
-        self.analyzer = ShollAnalyzer(integration_strategy.AveragedAnalysisStrategy(), bead_factor, step_size)
-        super(AveragedExtraction, self).__init__(data_path=data_path, result_path=result_path)
+    def __init__(self, data_path, result_path, **kwargs):
+        self.analyzer = ShollAnalyzer(
+            bead_factor=kwargs.get('bead_factor', 1.5),
+            step_size=kwargs.get('step_size', 1))
+        super(AveragedExtraction, self).__init__(
+            data_path=data_path, result_path=result_path, **kwargs)
 
-
-# class ThresholdAverageExtractionTask(ExtractionTask):
-#     def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
-#         self.analyzer = ShollAnalyzer(integration_strategy.ThresholdAverageStrategy(), bead_factor)
-#         super(ThresholdAverageExtractionTask, self).__init__(data_path, result_path)
-#
-#
-# class MedianIntegrationExtractionTask(ExtractionTask):
-#     def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
-#         self.analyzer = ShollAnalyzer(integration_strategy.MedianAnalysisStrategy(), bead_factor, step_size)
-#         super(MedianIntegrationExtractionTask, self).__init__(data_path, result_path)
-#
-#
-# class ThresholdMedianIntegrationExtractionTask(ExtractionTask):
-#     def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
-#         self.analyzer = ShollAnalyzer(integration_strategy.MedianAnalysisStrategy(), bead_factor, step_size)
-#         super(ThresholdMedianIntegrationExtractionTask, self).__init__(data_path, result_path)
-#
 
 class AveragedSproutPostRisingEdgeExperiment(ExtractionExperiment):
-    def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
-        self.analyzer = ShollAnalyzer(integration_strategy.AveragedSproutPostRisingEdge(), bead_factor, step_size)
-        super(AveragedSproutPostRisingEdgeExperiment, self).__init__(data_path=data_path, result_path=result_path)
+    def __init__(self, data_path, result_path, **kwargs):
+        self.analyzer = ShollAnalyzer(
+            bead_factor=kwargs.get('bead_factor', 1.5),
+            step_size=kwargs.get('step_size', 1))
+        self.analyzer.strategy = \
+            integration_strategy.AveragedSproutPostRisingEdge()
+        super(AveragedSproutPostRisingEdgeExperiment, self).__init__(
+            data_path=data_path, result_path=result_path, **kwargs)
 
 
 class MPlusDelta2(ExtractionExperiment):
-    def __init__(self, data_path, result_path, bead_factor=1.5, step_size=1):
-        self.analyzer = ShollAnalyzer(integration_strategy.MPlusDelta2(), bead_factor, step_size)
-        super(MPlusDelta2, self).__init__(data_path=data_path, result_path=result_path)
+    def __init__(self, data_path, result_path, **kwargs):
+        self.analyzer = ShollAnalyzer(
+            bead_factor=kwargs.get('bead_factor', 1.5),
+            step_size=kwargs.get('step_size', 1))
+        self.analyzer.strategy = integration_strategy.MPlusDelta2()
+        super(MPlusDelta2, self).__init__(
+            data_path=data_path, result_path=result_path, **kwargs)

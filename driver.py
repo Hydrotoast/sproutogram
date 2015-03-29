@@ -15,7 +15,9 @@ def extract_dataset(dataset):
     print("Data Path: {}".format(data_path))
     print("Result Path: {}".format(result_path))
 
-    AveragedExtraction(data_path=data_path, result_path=result_path, bead_factor=1.5).extract()
+    AveragedExtraction(data_path=data_path,
+                       result_path=result_path,
+                       bead_factor=1.2).extract()
 
 
 def list_datasets():
