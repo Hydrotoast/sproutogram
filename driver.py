@@ -17,7 +17,9 @@ def extract_dataset(dataset):
 
     AveragedExtraction(data_path=data_path,
                        result_path=result_path,
-                       bead_factor=1.2).extract()
+                       bead_factor=1.5,
+                       canny_min=40,
+                       canny_max=120).extract()
 
 
 def list_datasets():
